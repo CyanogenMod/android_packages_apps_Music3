@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/search_container"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="12dp"
+	android:background="#77333333">
+	<AutoCompleteTextView
+			android:id="@+id/search_textview"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLargeInverse"
+			android:singleLine="true"
+			android:hint="@string/search_hint"
+			android:editable="true"
+			android:visibility="visible"
+			/>
+</RelativeLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    >
+<!--        android:background="#55ff0000"-->
+    	<!--	our progress bar...   -->
+    	
+	<org.abrantix.rockon.rockonnggl.ProgressBarView
+		android:id="@+id/progress_bar"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		/>
+		
+	<TextView
+		android:id="@+id/song_name"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	   	android:layout_marginBottom="1dp"
+	   	android:layout_marginTop="3dp"
+	    android:layout_marginLeft="3dp"
+	    android:layout_marginRight="3dp"
+	    android:singleLine="true"
+	    android:ellipsize="marquee"
+	    android:textSize="20dp"
+	    android:textStyle="bold"
+	    android:textColor="#ffffffff"
+	    android:gravity="center_horizontal"
+	    android:text=""
+	    />
+	<TextView
+		android:id="@+id/artist_name"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="fill_parent"
+	    android:layout_below="@id/song_name"
+	    android:layout_marginTop="1dp"
+	    android:layout_marginBottom="3dp"
+	    android:layout_marginLeft="3dp"
+	    android:layout_marginRight="3dp"
+	    android:singleLine="true"
+	    android:ellipsize="marquee"
+	    android:textSize="16dp"
+	    android:textColor="#ffaaaaaa"
+	    android:gravity="center_horizontal"
+	    android:text=""
+	    />
+	    
+
+	
+</RelativeLayout>

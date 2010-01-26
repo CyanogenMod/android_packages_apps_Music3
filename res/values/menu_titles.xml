@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_option_title_get_art">
+		Get Art
+	</string>
+	<string name="menu_option_title_preferences">
+		Preferences
+	</string>
+	<string name="menu_option_title_playlist_id">
+		Playlists
+	</string>
+	<string name="menu_option_title_concerts">
+		Concerts
+	</string>
+</resources>
+

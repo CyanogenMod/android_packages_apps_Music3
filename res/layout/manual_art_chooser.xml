@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/manual_art_chooser_main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff000000"
+    >
+    <GridView
+    	android:id="@+id/manual_art_grid"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:numColumns="auto_fit"
+    	android:columnWidth="@dimen/album_art_dimension"
+    	android:stretchMode="columnWidth"/>
+
+</RelativeLayout>

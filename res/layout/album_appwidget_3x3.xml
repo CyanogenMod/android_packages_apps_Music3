@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+ 
+ 
+     <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:paddingTop="6dp"
+    	android:layout_alignParentBottom="true"
+    	android:background="#88000000"
+    	android:orientation="horizontal">
+    	
+	    <ImageButton
+	        android:id="@+id/control_play_bogus"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="fill_parent"
+	        android:padding="@dimen/widget_small_button_padding"
+	        android:src="@drawable/play_selector"
+	        android:scaleType="fitCenter"
+	        android:visibility="invisible"
+	        />
+	</LinearLayout>
+	
+<!--     <ImageView-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_weight="1"-->
+<!--        android:layout_height="64dip"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:src="#99000000"-->
+<!--        />-->
+    <ImageView
+    	android:id="@+id/widget_album_cover"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="@dimen/widget_cover_margin_top"
+        android:layout_marginBottom="@dimen/widget_cover_margin_top"
+        android:layout_marginLeft="@dimen/widget_cover_margin_top"
+        android:layout_marginRight="@dimen/widget_cover_margin_top"
+        android:scaleType="fitCenter"
+        />
+          
+    <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentBottom="true"
+    	android:orientation="horizontal"> 
+	    <ImageButton
+	        android:id="@+id/control_previous"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="fill_parent"
+	        android:padding="@dimen/widget_small_button_padding"
+	        android:src="@drawable/previous_selector"
+	        android:background="#00000000"
+	        android:scaleType="fitCenter"
+	        />
+	    
+	    <ImageButton
+	        android:id="@+id/control_play"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="fill_parent"
+	        android:padding="@dimen/widget_small_button_padding"
+	        android:src="@drawable/play_selector"
+	        android:background="#00000000"
+	        android:scaleType="fitCenter"
+	        />
+	        
+	    <ImageButton
+	        android:id="@+id/control_next"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="fill_parent"
+	        android:padding="@dimen/widget_small_button_padding"
+	        android:src="@drawable/next_selector"
+	        android:background="#00000000"
+	        android:scaleType="fitCenter"
+	        />
+	</LinearLayout>
+</RelativeLayout>

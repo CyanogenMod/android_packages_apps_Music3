@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!--	INTRO SCREEN-->
+    <string name="intro_text_1">Rock</string>
+    <string name="intro_text_2">On</string>
+    <string name="intro_text_3">NextGen</string>
+    <string name="app_name">³</string>
+    
+	<!--    ALBUM ART MESSAGES-->
+	<string name="get_art_dialog_title">RockOn Album Art</string>
+	<string name="get_art_dialog_message">
+		RockOn can fetch missing art for your albums from the Internet. Do you want to do it now? (It will take ~1 min for each 10 albums and it is recommended to be performed over a Wifi connection).
+	</string>
+	<string name="get_art_dialog_yes">Yes!</string>
+	<string name="get_art_dialog_no">I'll do it later.</string>
+	
+	<!--	ART DOWNLOAD MESSAGES-->
+	<string name="art_download_no_inet">Internet connection unavailable!</string>
+	<string name="art_download_progress_title">Downloading Album Art</string>
+	<string name="art_download_cancel">Cancel</string>
+	<string name="art_download_progress_initial_message">Searching album art...</string>
+	
+	<!--	NO SDCARD MESSAGES -->
+	<string name="no_sd_card_dialog_title">No SD card!</string>
+	<string name="no_sd_card_dialog_message">Please insert an SD card...</string>
+	<string name="no_sd_card_dialog_continue_anyway">Continue anyway</string>
+	<string name="no_sd_card_dialog_exit">Exit</string>
+	<!--	NO MUSIC MESSAGES -->
+	<string name="no_music_dialog_title">No music on SD card!</string>
+	<string name="no_music_dialog_message">Could not find any music on your SD card, please reload the application...</string>
+	<string name="no_music_dialog_continue_anyway">Continue anyway</string>
+	<string name="no_music_dialog_exit">Exit</string>
+	
+	
+	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
+	<string name="concert_app_install_dialog_title">Install Concerts³</string>
+	<string name="concert_app_install_dialog_message">This feature requires the installation of Concerts³. Do you want to do it now?</string>
+	<string name="concert_app_install_dialog_ok">Yes</string>
+	<string name="concert_app_install_dialog_cancel">No. Leave me alone!</string>
+	
+	<!--	TOASTER MESSAGES	-->
+	<string name="song_added_to_playlist">Song queued</string>
+	<string name="song_removed_from_playlist">Song removed</string>
+	<string name="album_art_changed">Album art changed</string>
+	<string name="playlist_empty_toast">Error! Playlist is empty!</string>
+	<string name="playqueue_empty_toast">Queue is empty!</string>
+	
+	<!-- 	SEARCH -->
+	<string name="search_hint">Song Title or Artist Name</string>
+	
+	<!--	PLAY QUEUE	-->
+	<string name="play_queue_title">Play Queue</string>
+	<string name="clear_playlist_dialog_option">Clear</string>
+	
+	<!--	ALBUM SONG LIST DIALOG -->
+	<string name="album_song_list_play_all">Play all</string>
+	<string name="album_song_list_queue_all">Queue all</string>
+	
+	<!--	PLAYLIST DIALOG		-->
+	<string name="playlist_dialog_title">Choose playlist</string>
+	<string name="playlist_dialog_cancel">Cancel</string>
+	<string name="playlist_all_title">Play all</string>
+	<string name="playlist_most_recent_title">Recent</string>
+	<string name="playlist_most_played_title">Most played</string>
+	
+	<!--	ACTIVITY INTENTS (some of them)-->
+	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+	
+	<!--	NOTIFICATION STRINGS -->
+	<string name="unknown_album_name">Unknown Album</string>
+	<string name="unknown_artist_name">Unknown Artist</string>
+	
+	<!-- 	MANUAL ALBUM ART MSGS -->
+	<string name="manual_albumart_error">Error</string>
+	<string name="manual_albumart_no_album_specified">No album specified!</string>
+	<string name="manual_albumart_source">Source</string>
+	<string name="manual_albumart_source_local">local</string>
+	<string name="manual_albumart_source_internet">internet</string>
+	<string name="manual_albumart_resolution_loading">loading...</string>
+	<string name="manual_albumart_resolution_unavailable">unavailable</string>
+	
+	<!--	BUG REPORTS	-->
+	<string name="bug_report_intro_part_one">Sorry!\n\nRockOn v</string>
+	<string name="bug_report_intro_part_two">crashed! Please send this mail, so that we can analyze/fix the issue.\n</string>
+	
+<!--	<string name="bug_report_intro">-->
+<!--		"Sorry!\n\nRockOn v\"-->
+<!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
+<!--	</string>-->
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="147dip"
+    android:minHeight="147dip"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/album_appwidget"
+    >
+</appwidget-provider>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--	VERSION	-->
+    <string name="preference_key_version">Version</string>
+    
+	<!--	DOWNLOAD STATE    -->
+    <string name="preference_key_downloading_art_state">DownloadingArt</string>
+    
+	<!--	PLAYLIST STATE    -->
+<!--    <string name="preference_key_playlist_id">mPlaylistId</string>-->
+        
+	<!--	HEADSET BUTTONS    -->
+    <string name="preference_key_use_headset_buttons">UseHeadset</string>
+    <string name="preference_title_use_headset_buttons">Use headset</string>
+    <string name="preference_summary_use_headset_buttons">Intercepts the button press from your headset to play, pause, or skip songs.</string>
+
+	<!--	FULL SCREEN    -->
+    <string name="preference_key_full_screen">mFullScreen</string>
+    <string name="preference_title_full_screen">Full screen</string>
+    <string name="preference_summary_full_screen">Run the player in full screen.</string>
+
+	<!--	PREFERENCE CATEGORIES    -->
+    <string name="preference_category_general">General</string>
+</resources>

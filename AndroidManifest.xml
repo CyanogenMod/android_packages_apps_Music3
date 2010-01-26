@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.abrantix.rockon.rockonnggl"
+      android:versionCode="19" 
+      android:versionName="1.0.18">
+    <application 
+    		android:icon="@drawable/icon" 
+    		android:label="@string/app_name">
+    		
+		<!-- 	MAIN ACTIVITY	-->
+        <activity 
+        	android:name=".RockOnNextGenGL"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+<!--				<action android:name="@string/main_activity_intent"/>-->
+				<action android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenGL"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+        </activity>
+		<!--	PREFERENCE ACTIVITY	-->
+		<activity
+			android:name="RockOnNextGenPreferences"
+			android:label="@string/app_name"/>	
+        <!--	MANUAL ART CHOOSER ACTIVITY	-->
+		<activity
+			android:name="ManualAlbumArtActivity"
+			android:label="@string/app_name"	
+            android:launchMode="singleTask"/>
+        
+		<!--	SERVICE	-->
+        <service 
+        		android:name="RockOnNextGenService" 
+        		android:exported="true"/>
+        
+		<!-- 	MEDIA BUTTON RECEIVER	-->
+    	<receiver android:name="MediaButtonIntentReceiver">
+			<intent-filter
+				android:priority="32000" >
+				<action	android:name="android.intent.action.MEDIA_BUTTON"/>
+				<action	android:name="android.media.AUDIO_BECOMING_NOISY"/>
+			</intent-filter>
+		</receiver>
+		
+		<!--	WIDGET	-->
+		<receiver 
+			android:name="RockOnNextGenAppWidgetProvider"
+			android:label="³ Small">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info"/>
+		</receiver>
+		
+		<!--	WIDGET	3x3 -->
+		<receiver 
+			android:name="RockOnNextGenAppWidgetProvider3x3"
+			android:label="³ Medium">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_3x3"/>
+		</receiver>
+		
+		<!--	WIDGET	4x4 -->
+		<receiver 
+			android:name="RockOnNextGenAppWidgetProvider4x4"
+			android:label="³ Large">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_4x4"/>
+		</receiver>
+
+    </application>
+    
+<supports-screens 
+		android:smallScreens="true" 
+		android:normalScreens="true" 
+		android:largeScreens="true" 
+		android:anyDensity="true" />
+              
+<uses-feature android:glEsVersion="0x00010000"/>
+<!--              android:name="string" />-->
+              
+<uses-sdk android:minSdkVersion="3" />
+
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+<uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+
+<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
+</manifest> 

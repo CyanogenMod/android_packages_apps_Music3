@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="button_default_width">64dp</dimen>
+    <dimen name="button_default_height">64dp</dimen>
+    <dimen name="button_small_padding">28dp</dimen>
+    <dimen name="button_medium_padding">24dp</dimen>
+    <dimen name="button_large_padding">20dp</dimen>
+    
+	<!--	ALBUM ART CHOOSER GRID    -->
+    <dimen name="album_art_dimension">150dp</dimen>
+    
+	<!--	WIDGET    -->
+	<dimen name="widget_cover_margin_top">0dp</dimen>
+	<dimen name="widget_cover_margin_bottom">0dp</dimen>
+	<dimen name="widget_cover_margin_left">0dp</dimen>
+	<dimen name="widget_cover_margin_right">0dp</dimen>
+	<dimen name="widget_small_button_padding">12dp</dimen>
+</resources>

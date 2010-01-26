@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/the_mother_of_all_views_navigator"
+    android:background="#ff000000"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	>
+
+<!-- the main layout is only needed for adding the search layout in runtime -->
+
+	<LinearLayout 
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+	<!--        android:background="#ff542437"-->
+	    <LinearLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"
+	    	android:layout_weight="4"
+	    	android:orientation="vertical"
+	    	android:layout_marginTop="12dp"
+	   		>
+			
+	    	<android.opengl.GLSurfaceView
+				android:id="@+id/cube_surface_view"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_margin="0dp"
+				/>
+		</LinearLayout>
+	    
+	    <LinearLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"
+	    	android:layout_weight="5"
+	    	android:layout_marginRight="12dp"
+	    	android:orientation="vertical"
+	    	>
+		    
+		    <LinearLayout
+		    	android:id="@+id/player_controls_layout"
+			    android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="@dimen/button_default_height"
+			    android:layout_weight="1"
+			    android:layout_alignParentTop="true"
+		    >
+		    	<ImageView
+		    		android:id="@+id/player_controls_previous"
+		    		android:layout_width="@dimen/button_default_width"
+		    		android:layout_height="fill_parent"
+		    		android:paddingTop="@dimen/button_small_padding"
+    				android:paddingBottom="@dimen/button_small_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+    				android:src="@drawable/previous_selector"
+		    		android:background="#00000000"/>
+	
+		    	<ImageView
+		    		android:id="@+id/player_controls_play"
+		    		android:layout_width="wrap_content"
+		    		android:layout_height="fill_parent"
+		       		android:paddingTop="@dimen/button_large_padding"
+    				android:paddingBottom="@dimen/button_large_padding"
+		    		android:dither="true"
+    				android:scaleType="fitCenter"
+		    		android:layout_weight="1"
+		    		android:background="#00000000"/>
+		<!--    		    		android:src="@drawable/play_selector"-->
+		    		
+	
+		    	<ImageView
+		    		android:id="@+id/player_controls_next"
+		    		android:layout_width="@dimen/button_default_width"
+		    		android:layout_height="fill_parent"
+		    		android:paddingTop="@dimen/button_small_padding"
+    				android:paddingBottom="@dimen/button_small_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+    				android:src="@drawable/next_selector"
+		    		android:background="#00000000"/>
+		    	
+		    </LinearLayout>
+		
+			<LinearLayout
+			    android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="@dimen/button_default_height"
+			    android:layout_weight="1"
+		    >
+		   		<ImageView
+		    		android:id="@+id/player_controls_repeat"
+		    		android:layout_width="fill_parent"
+		    		android:layout_height="fill_parent"
+		    		android:layout_weight="3"
+					android:paddingTop="@dimen/button_medium_padding"
+    				android:paddingBottom="@dimen/button_medium_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+   		    		android:background="#00000000"/>
+		<!--    		    		android:src="@drawable/repeat_none_selector"-->
+		    		
+		   		<ImageView
+		    		android:id="@+id/player_controls_shuffle"
+		    		android:layout_width="fill_parent"
+		    		android:layout_height="fill_parent"
+		    		android:layout_weight="3"
+		    		android:paddingTop="@dimen/button_medium_padding"
+    				android:paddingBottom="@dimen/button_medium_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+   		    		android:background="#00000000"/>
+		<!--    		    		android:src="@drawable/shuffle_selector"-->
+		    		
+		    </LinearLayout>
+		    
+		    <LinearLayout 
+			    android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="@dimen/button_default_height"
+			    android:layout_weight="1"
+			    android:layout_alignParentBottom="true"
+		    >
+		    	<ImageView
+		    		android:id="@+id/search_button"
+		    		android:layout_width="@dimen/button_default_width"
+		    		android:layout_height="fill_parent"
+		    		android:layout_weight="3"
+		    		android:src="@drawable/search_selector"
+		    		android:paddingTop="@dimen/button_medium_padding"
+    				android:paddingBottom="@dimen/button_medium_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+   		    		android:background="#00000000"/>
+		    	<ImageView
+		    		android:id="@+id/play_queue_button"
+		    		android:layout_width="@dimen/button_default_width"
+		    		android:layout_height="fill_parent"
+		    		android:layout_weight="3"
+		    		android:src="@drawable/play_queue_selector"
+		    		android:paddingTop="@dimen/button_medium_padding"
+    				android:paddingBottom="@dimen/button_medium_padding"
+    				android:dither="true"
+    				android:scaleType="fitCenter"
+   		    		android:background="#00000000"/>
+		    </LinearLayout>
+		    
+			<LinearLayout 
+				android:id="@+id/player_current_playing_layout"
+			    android:orientation="horizontal"
+			    android:layout_width="fill_parent"
+			    android:layout_height="@dimen/button_default_height"
+			    android:layout_weight="1"
+			    android:layout_alignParentBottom="true"
+		    >
+	
+		    	<include
+		    		layout="@layout/song_label_and_progress"
+		    		android:layout_width="fill_parent"
+		    		android:layout_height="fill_parent"
+		    		android:layout_weight="3"
+		    		android:layout_gravity="center"/>
+		    		
+		<!--    	<ImageView-->
+		<!--    		android:layout_width="wrap_content"-->
+		<!--    		android:layout_height="fill_parent"-->
+		<!--    		android:layout_weight="3"-->
+		<!--    		android:background="#00000000"/>-->
+	
+		    	
+		    </LinearLayout> 
+		</LinearLayout>
+	
+	</LinearLayout>
+</RelativeLayout>
