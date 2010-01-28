@@ -49,6 +49,7 @@ public abstract class RockOnRenderer{
     
     abstract public int getAlbumCount();
     
+    abstract public int getItemDimension();
 //    {
 //    	return mAlbumCursor;
 //    }

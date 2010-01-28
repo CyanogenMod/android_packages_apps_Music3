@@ -198,6 +198,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glHint(GL10.GL_FOG_HINT, GL10.GL_NICEST);
     }
 
+    public int getItemDimension(){
+    	return (int)(mHeight * .8f);
+    }
     
     /* optmization */
     float	distanceToRotationLimits = 0.f;
@@ -375,6 +378,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         gl.glViewport(0, 0, w, h);
 
+        mHeight = h;
+        mWidth = w;
+        
         /*
         * Set our projection matrix. This doesn't have to be done
         * each time we draw, but usually a new projection needs to
@@ -1064,6 +1070,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private int 				mBitmapHeight;
     private byte[]				mColorComponentBuffer;
     private	boolean				mForceTextureUpdate = false;
+    private int					mHeight = 0;
+    private int					mWidth = 0;
 
 //    public	float		mPositionX = 0.f;
 //    public	float		mTargetPositionX = 0.f;

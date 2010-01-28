@@ -64,7 +64,9 @@ public class NavGLTouchListener implements OnTouchListener{
 				lastY = mDownY;
 				mScrollingSpeed = 0.f;
 				
-				mItemDimension = (int) (Math.min(v.getWidth(), v.getHeight()) * 0.8f);
+				mItemDimension = mRenderer.getItemDimension(); 
+					
+//					(int) (Math.min(v.getWidth(), v.getHeight()) * 0.8f);
 				
 				// this might be not necessary
 				if(mRenderer.mTargetPositionY > mRenderer.mPositionY)

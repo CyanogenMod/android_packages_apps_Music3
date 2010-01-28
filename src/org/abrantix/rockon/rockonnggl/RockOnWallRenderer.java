@@ -62,9 +62,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     					getInt(
     							Constants.prefkey_mPlaylistId,
     							Constants.PLAYLIST_ALL));
-    		Log.i(TAG, "CREATED ABUM CURSOR");
-    		if(mAlbumCursor == null)
-    			Log.i(TAG, "ALBUM CURSOR IS NULL");
     	}
     	
     	/** init dimensions */
@@ -89,15 +86,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     	mColorComponentBuffer = new byte[4*mBitmapWidth*mBitmapHeight];
     	
-    	/** init alphabet bitmap cache */
-    	for(int i = 0; i < mCacheSize; i++){
-    		mAlphabetNavItem[i] = new AlphabetNavItem();
-    		mAlphabetNavItem[i].letter = -1;
-    		mAlphabetNavItem[i].letterBitmap = Bitmap.createBitmap(
-    				mBitmapWidth, 
-    				mBitmapHeight, 
-    				Bitmap.Config.ARGB_8888);
-    	}
     }
 
     public	Cursor getAlbumCursor(){
@@ -160,7 +148,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         // album labels
         gl.glGenTextures(mTextureLabelId.length, mTextureLabelId, 0);
         // album labels
-        gl.glGenTextures(mTextureAlphabetId.length, mTextureAlphabetId, 0);
+//        gl.glGenTextures(mTextureAlphabetId.length, mTextureAlphabetId, 0);
         
         mRockOnCover = new RockOnCover();
 //        mRockOnCover = new RockOnCover(mTextureId, mTextureAlphabetId);
@@ -199,6 +187,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glHint(GL10.GL_FOG_HINT, GL10.GL_NICEST);
     }
 
+    public int getItemDimension(){
+    	return (int) (mHeight * .4f);
+    }
     
     /* optmization */
     float	distanceToRotationLimits = 0.f;
@@ -209,9 +200,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(!updatePosition(false)){
     		
     	} 
-  
-//    	mRockOnCube.setHorizontalIndex((int) mPositionX, mPositionX);
-//    	mRockOnCube.setVerticalIndex((int) mPositionY, mPositionY);
     	
         /*
          * Usually, the first thing one might want to do is to clear
@@ -282,7 +270,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	            			
         		// adjust our 'eye'
 	            mEyeZ = 
-	            	-5.f 
+	            	mEyeNormal[2] 
 	            	- 
 	            	distanceToRotationLimits;
 	            // adjust the fog
@@ -343,26 +331,39 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         
         gl.glDisable(GL10.GL_FOG);
 
-        /* draw cube */
+        int deltaToCenter;
+        /* draw each cover */
         for(int i = 0; i<mCacheSize; i++)
         {
         	gl.glLoadIdentity();
         	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
         	
+        	// poor variable name -- dont mind it
+        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY * 2;
+        	// make it all positive
+        	deltaToCenter += mCacheSize/2 - 1; // (-4) negative numbers go bad with integer divisions
+        	
+        	// optimizations, optimizations
+//        	if(deltaToCenter < 0 || deltaToCenter > 11)
+//        		continue;
+        	
         	/* place the covers */
         	gl.glTranslatef(
-        			-1.f + i%2 * 2.f, 
-        			1.f - i/2 * 2.f, 
+        			-1.f + i%2 * 2.f,  // we just dont need to use delta center here because the navigator always moves by 2 positions (1 row)
+        			-4.f + deltaToCenter/2 * 2.f, 
         			0);
-        	gl.glRotatef(rotationAngleX, 0.f, 1.f, 0.f);
-        	gl.glRotatef(-rotationAngleY, 1.f, 0.f, 0.f);
+        	gl.glTranslatef(
+        			0, 
+        			-(mPositionY-flooredPositionY) * 2.f, 
+        			0);
+////        	gl.glRotatef(rotationAngleX, 0.f, 1.f, 0.f);
+////        	gl.glRotatef(-rotationAngleY, 1.f, 0.f, 0.f);
 
         	mRockOnCover.setTextureId(mTextureId[i]);
         	mRockOnCover.draw(gl);
-
-
+            
+//        	Log.i(TAG, "deltaToCenter: "+deltaToCenter);
         }
-    	
 
 //    	/* draw label */
 //    	if(Math.abs(mPositionY - mTargetPositionY) < .5f &&
@@ -395,6 +396,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         gl.glViewport(0, 0, w, h);
+        
+        mWidth = w;
+        mHeight = h;
 
         /*
         * Set our projection matrix. This doesn't have to be done
@@ -412,9 +416,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     void showClickAnimation(){
     	this.mClickAnimation = true;
     	// this should be in the constants -- too lazy
-    	this.mEyeTargetX = .75f;
-    	this.mEyeTargetY = -2.f;
-    	this.mEyeTargetZ = -5.75f;
+    	this.mEyeTargetX = mEyeClicked[0];
+    	this.mEyeTargetY = mEyeClicked[1];
+    	this.mEyeTargetZ = mEyeClicked[2];
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
     }
@@ -422,9 +426,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     void reverseClickAnimation(){
     	this.mClickAnimation = true;
     	// this should be in the constants -- too lazy
-    	this.mEyeTargetX = .75f;
-    	this.mEyeTargetY = -2.f;
-    	this.mEyeTargetZ = -5.f;
+    	this.mEyeTargetX = mEyeNormal[0];
+    	this.mEyeTargetY = mEyeNormal[1];
+    	this.mEyeTargetZ = mEyeNormal[2];
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
     }
@@ -435,91 +439,44 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     int		albumIndexTmp;
-    int		alphabetIndexTmp;
+//    int		alphabetIndexTmp;
     int		lastInitial = -1;
     int		charTmp;
     boolean changed;
     private boolean updateTextures(GL10 gl){
     	changed = false;
-    	if(mAlbumCursor != null){
+		if(mAlbumCursor != null){
+//			Log.i(TAG, " ++ updating textures");
 	    	/* Album Cover textures in vertical scrolling */
     		for(int i = 0; i < mCacheSize; i++){
-	    		albumIndexTmp = (int) (Math.floor((float) flooredPositionY / (float) mCacheSize) * mCacheSize + i);
-	    		if(albumIndexTmp - flooredPositionY > 2){
-	    			albumIndexTmp -= mCacheSize;
-	    		} else if (albumIndexTmp - flooredPositionY < -1){
-	    			albumIndexTmp += mCacheSize;
-	    		}
+    			// we try to minimize cache reshuffling to the max
+    			albumIndexTmp = 
+    				(int)Math.floor((flooredPositionY * 2) / mCacheSize) * mCacheSize
+    				+ i;
+    			if(albumIndexTmp < 
+    					flooredPositionY * 2  
+        					- 4)
+    			{
+    				albumIndexTmp += mCacheSize;
+    			} 
+    			// should never happen
+    			else if(albumIndexTmp >=
+    					flooredPositionY * 2  
+    						- 4 
+    						+ mCacheSize)
+    			{
+    				albumIndexTmp -= mCacheSize;
+    			}
+    				
 	    		
-	//    		Log.i(TAG, 
+//    			Log.i(TAG, 
 //	    			"albumIndexTmp: "+albumIndexTmp+
-//	    			" flooredPosition: "+flooredPosition+
-//	    			" mPosition: "+mPosition);
+//	    			" flooredPositionY: "+flooredPositionY+
+//	    			" mPositionY: "+mPositionY);
 	    		
 	    		if(setupAlbumTextures(gl, i, albumIndexTmp, mForceTextureUpdate))
 	    			changed = true;
 	    	}
-	    	
-    		/* Alphabetical textures in horizontal scrolling of the cube */
-    		if(mPositionX != 0){
-    			for(int i=0; i<mTextureAlphabetId.length; i++){    	    		
-    				if(lastInitial == -1){
-    					/** 
-    					 * FIXME: quick fix for bug, untested, unchecked
-    					 */
-    					if(flooredPositionY > mAlbumCursor.getCount() - 1)
-						{
-    						mAlbumCursor.moveToLast();
-    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
-						} else {
-							mAlbumCursor.moveToPosition(flooredPositionY);
-						}
-    					lastInitial = 
-    						mAlbumCursor.
-    							getString(
-    									mAlbumCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
-    							toLowerCase().
-    								charAt(0);
-    					if(lastInitial < 'a')
-    						lastInitial = 'a' - 1;
-    				}
-    				
-//    				Log.i(TAG, "flooredX: "+flooredPositionX);
-//    				Log.i(TAG, "lastInitial: "+(char)lastInitial);
-//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" (int)/mCacheSize: "+(int)((flooredPositionX)/mCacheSize));
-//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" %mCacheSize: "+(flooredPositionX)%mCacheSize);
-    				
-    				charTmp = 
-    					lastInitial + 
-    					(int)((flooredPositionX)/mCacheSize)*mCacheSize + 
-    					i;
-	    				
-	    			/**
-	    			 * Transition special cases
-	    			 */
-	    			/* cache turn point when going forward in the alphabet */
-    				if(flooredPositionX%mCacheSize == mCacheSize - 1 &&
-	    				i == 0)
-	    			{
-	    				charTmp += mCacheSize;
-	    			}
-	    			
-	    			/* negative scrolling (going back in the alphabet) */
-	    			if(flooredPositionX%mCacheSize < 0 &&
-	    				i != 0)
-	    			{
-	    				charTmp -= mCacheSize;
-	    			}
-
-
-    	    		if(setupAlphabetTextures(gl, i, charTmp, mForceTextureUpdate))
-    	    			changed = true;
-    	    		
-    	    		/* DEBUG CODE */
-//    				undefined.eraseColor(Color.CYAN);
-//    	    		bindTexture(gl, undefined, mTextureAlphabetId[i]);
-    			}
-    		}
 	    	
 	    	if(mForceTextureUpdate)
 	    		mForceTextureUpdate = false;
@@ -532,69 +489,95 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			Constants.REASONABLE_ALBUM_ART_SIZE, 
 			Bitmap.Config.RGB_565);
     
+    /* optimization */
+    int 			cacheIdxTmp;
+    AlbumNavItem 	albumNavItemTmp;
+    boolean			reusedCached = false;
+    /**
+     * fills the albumNavItem structure with the cover bitmap, labels, etc
+     * @param gl
+     * @param cacheIndex
+     * @param albumIndex
+     * @param force
+     * @return
+     */
     private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int albumIndex, boolean force){
     	/** texture needs update? */
     	if(mAlbumNavItem[cacheIndex].index != albumIndex || force){
-	    	
-//    		Log.i(TAG, "albumIndexTmp: "+albumIndexTmp+" flooredPosition: "+flooredPosition+" mPosition: "+mPosition);
-
-    		/** Update cache item */
-    		mAlbumNavItem[cacheIndex].index = albumIndex;
-    		if(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount())
-    		{
-    			mAlbumNavItem[cacheIndex].albumName = "";
-    			mAlbumNavItem[cacheIndex].artistName = "";
-    			mAlbumNavItem[cacheIndex].cover = undefined;
-    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
-    			// we cannot change the bitmap reference of the item
-    			// we need to write to the existing reference
-    			mAlbumNavItemUtils.fillAlbumLabel(
-    					mAlbumNavItem[cacheIndex],
-    					mBitmapWidth, 
-    					mBitmapHeight/4);
-    		} 
-    		else 
-    		{
-	    		if(!mAlbumNavItemUtils.fillAlbumInfo(
-	    				mAlbumCursor, 
-	    				mAlbumNavItem[cacheIndex], 
-	    				albumIndex))
+//    		Log.i(TAG, "albumIndex: "+albumIndex+"/"+mAlbumCursor.getCount()+" flooredPositionY: "+flooredPositionY+" mPositionY: "+mPositionY);
+    		
+//    		reusedCached = false;
+//    		/** Check if we can reuse an element already in cache */
+//    		for (cacheIdxTmp = 0; cacheIdxTmp < mCacheSize; cacheIdxTmp++)
+//    		{
+//    			if(mAlbumNavItem[cacheIdxTmp].index == albumIndex)
+//    			{
+//    				// swap the elements in the cache
+//    				albumNavItemTmp = mAlbumNavItem[cacheIndex];
+//    				mAlbumNavItem[cacheIndex] = mAlbumNavItem[cacheIdxTmp];
+//    				mAlbumNavItem[cacheIdxTmp] = albumNavItemTmp;
+//    				// signal that we dont want to run the code ahead
+//    				reusedCached = true;
+//    			}
+//    		}
+//    		
+//    		if(!reusedCached)
+//    		{
+	    		/** Update cache item */
+	    		mAlbumNavItem[cacheIndex].index = albumIndex;
+	    		if(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount())
 	    		{
-	    			mAlbumNavItem[cacheIndex].albumName = null;
-	    			mAlbumNavItem[cacheIndex].artistName = null;
-	    			mAlbumNavItem[cacheIndex].albumKey = null;
-	    		}
-	    		if(!mAlbumNavItemUtils.fillAlbumBitmap(
-	    				mAlbumNavItem[cacheIndex], 
-	    				mBitmapWidth, 
-	    				mBitmapHeight, 
-	    				mColorComponentBuffer))
-	    		{
-	//    			mAlbumNavItem[cacheIndex].cover = null;
-	//    			mAlbumNavItem[cacheIndex].cover = 
-	//    				Bitmap.createBitmap(
-	//    						mBitmapWidth, 
-	//    						mBitmapHeight, 
-	//    						Bitmap.Config.RGB_565);
+	//    			Log.i(TAG, "BM failed, index oob");
+	    			mAlbumNavItem[cacheIndex].albumName = "";
+	    			mAlbumNavItem[cacheIndex].artistName = "";
 	    			mAlbumNavItem[cacheIndex].cover = undefined;
-	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
-	
-	    		}
-	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-	    				mPositionY < 3){ // avoid unnecessary processing
-		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-		    				mAlbumNavItem[cacheIndex],
-		    				mBitmapWidth,
-		    				mBitmapHeight/4))
+	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
+	    			// we cannot change the bitmap reference of the item
+	    			// we need to write to the existing reference
+	    			mAlbumNavItemUtils.fillAlbumLabel(
+	    					mAlbumNavItem[cacheIndex],
+	    					mBitmapWidth, 
+	    					mBitmapHeight/4);
+	    		} 
+	    		else 
+	    		{
+		    		if(!mAlbumNavItemUtils.fillAlbumInfo(
+		    				mAlbumCursor, 
+		    				mAlbumNavItem[cacheIndex], 
+		    				albumIndex))
 		    		{
-	//	    			mAlbumNavItem[cacheIndex].label = undefined;
-	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+	//	    			Log.i(TAG, "Info Failed");
+		    			mAlbumNavItem[cacheIndex].albumName = null;
+		    			mAlbumNavItem[cacheIndex].artistName = null;
+		    			mAlbumNavItem[cacheIndex].albumKey = null;
+		    		}
+		    		if(!mAlbumNavItemUtils.fillAlbumBitmap(
+		    				mAlbumNavItem[cacheIndex], 
+		    				mBitmapWidth, 
+		    				mBitmapHeight, 
+		    				mColorComponentBuffer))
+		    		{
+	//	    			Log.i(TAG, "BM failed, error loading bm");
+		    			mAlbumNavItem[cacheIndex].cover = undefined;
+		    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
+		
+		    		}
+		    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
+		    				mPositionY < 3)
+		    		{ // avoid unnecessary processing
+	//	    			Log.i(TAG, "Updating Album Label TOO");
+		    			if(!mAlbumNavItemUtils.fillAlbumLabel(
+			    				mAlbumNavItem[cacheIndex],
+			    				mBitmapWidth,
+			    				mBitmapHeight/4))
+			    		{
+		//	    			mAlbumNavItem[cacheIndex].label = undefined;
+		//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    		}
 		    		}
 	    		}
-    		}
-    		
-//    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");
-    		
+//    		}
+    		    		
 	    	/** bind new texture */
     		bindTexture(gl, mAlbumNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
     		bindTexture(gl, mAlbumNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
@@ -606,58 +589,58 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	
     }
     
-    private boolean setupAlphabetTextures(GL10 gl, int cacheIndex, int letter, boolean force){
-//		Log.i(TAG, "letter: "+(char)letter);
-
-    	/** precheck albumNavItem */
-    	if(mAlphabetNavItem[cacheIndex].letter != letter || force){
-	    	
-//    		Log.i(TAG, " + letter: "+(char)letter);
-
-    		/** Update cache item */
-    		mAlphabetNavItem[cacheIndex].letter = letter;
-    		if(letter < 'a'-1 || letter > 'z') // 24?????
-    		{
-        		Log.i(TAG, " + letter failed: "+(char)letter);
-    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
-    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
-    		} 
-    		else 
-    		{
-	    		if(!mAlbumNavItemUtils.fillAlphabetBitmap(
-	    				mAlphabetNavItem[cacheIndex], 
-	    				mBitmapWidth, 
-	    				mBitmapHeight))
-	    		{
-	        		Log.i(TAG, " + letter failed to create bitmap: "+(char)letter);
-	    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
-	    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
-	
-	    		}
-//	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-//	    				mPositionY < 3){ // avoid unnecessary processing
-//		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-//		    				mAlbumNavItem[cacheIndex],
-//		    				mBitmapWidth,
-//		    				mBitmapHeight/4))
-//		    		{
-//	//	    			mAlbumNavItem[cacheIndex].label = undefined;
-//	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-//		    		}
+//    private boolean setupAlphabetTextures(GL10 gl, int cacheIndex, int letter, boolean force){
+////		Log.i(TAG, "letter: "+(char)letter);
+//
+//    	/** precheck albumNavItem */
+//    	if(mAlphabetNavItem[cacheIndex].letter != letter || force){
+//	    	
+////    		Log.i(TAG, " + letter: "+(char)letter);
+//
+//    		/** Update cache item */
+//    		mAlphabetNavItem[cacheIndex].letter = letter;
+//    		if(letter < 'a'-1 || letter > 'z') // 24?????
+//    		{
+//        		Log.i(TAG, " + letter failed: "+(char)letter);
+//    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
+//    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
+//    		} 
+//    		else 
+//    		{
+//	    		if(!mAlbumNavItemUtils.fillAlphabetBitmap(
+//	    				mAlphabetNavItem[cacheIndex], 
+//	    				mBitmapWidth, 
+//	    				mBitmapHeight))
+//	    		{
+//	        		Log.i(TAG, " + letter failed to create bitmap: "+(char)letter);
+//	    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
+//	    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
+//	
 //	    		}
-    		}
-    		
-//    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");
-    		
-	    	/** bind new texture */
-    		bindTexture(gl, mAlphabetNavItem[cacheIndex].letterBitmap, mTextureAlphabetId[cacheIndex]);
-    		
-    		return true;
-    	} else  {
-    		return false;
-    	}
-    	
-    }
+////	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
+////	    				mPositionY < 3){ // avoid unnecessary processing
+////		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
+////		    				mAlbumNavItem[cacheIndex],
+////		    				mBitmapWidth,
+////		    				mBitmapHeight/4))
+////		    		{
+////	//	    			mAlbumNavItem[cacheIndex].label = undefined;
+////	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+////		    		}
+////	    		}
+//    		}
+//    		
+////    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");
+//    		
+//	    	/** bind new texture */
+//    		bindTexture(gl, mAlphabetNavItem[cacheIndex].letterBitmap, mTextureAlphabetId[cacheIndex]);
+//    		
+//    		return true;
+//    	} else  {
+//    		return false;
+//    	}
+//    	
+//    }
     
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
     	/** bind new texture */
@@ -1067,35 +1050,51 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
-    private	int					mCacheSize = 4;
+    private	int					mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
     private Context 			mContext;
     private Handler				mRequestRenderHandler;
     private RockOnCover			mRockOnCover;
 //    private AlbumLabelGlText	mAlbumLabelGlText;
     private int[] 				mTextureId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private int[] 				mTextureLabelId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
-    private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
+//    private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int					mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean				mClickAnimation = false;
     private	Cursor				mAlbumCursor = null;
-    private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
+//    private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
     private AlbumNavItem[]		mAlbumNavItem = new AlbumNavItem[mCacheSize];
     private AlbumNavItemUtils	mAlbumNavItemUtils;
     private	int					mBitmapWidth;
     private int 				mBitmapHeight;
     private byte[]				mColorComponentBuffer;
     private	boolean				mForceTextureUpdate = false;
+    private int					mWidth = 0;
+    private int					mHeight = 0;
 
 //    public	float		mPositionX = 0.f;
 //    public	float		mTargetPositionX = 0.f;
 //    public	float		mPositionY = 0.f;
 //    public	float		mTargetPositionY = -1.f;
-    private float		mEyeX = 0.75f;
-    private float		mEyeY = -2.f;
-    private float		mEyeZ = -5.f;
-    private float		mEyeTargetX = 0.75f;
-    private float		mEyeTargetY = 0.f;
-    private float		mEyeTargetZ = -5.f;
+    private float[]		mEyeNormal = 
+    {
+    		0.f,
+    		-2.f,
+    		-7.5f
+    };
+    private float[]		mEyeClicked = 
+    {
+    		0.f, // was .75f
+    		-2.f,
+    		-8.25f
+    };
+    private float		mEyeX = mEyeNormal[0];
+    private float		mEyeY = mEyeNormal[1];
+    private float		mEyeZ = mEyeNormal[2];
+    private float		mEyeTargetX = mEyeNormal[0];
+    private float		mEyeTargetY = mEyeNormal[1];
+    private float		mEyeTargetZ = mEyeNormal[2];
+    
+    
     
     
     /** 
