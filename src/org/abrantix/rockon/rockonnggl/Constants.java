@@ -174,7 +174,7 @@ public class Constants{
 	static final float	MAX_SCROLL = 0.13f; // as the fraction of the cover size
 	static final float	SCROLL_SPEED_BOOST = 40.f;
 	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
-	static final float	MIN_SCROLL_TOUCH_MOVE = 0.1f;
+	static final float	MIN_SCROLL_TOUCH_MOVE = 0.085f;
 	static final double	MAX_CLICK_DOWNTIME = 1000;
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;
 	static final int	MAX_POSITION_OVERSHOOT = 1;

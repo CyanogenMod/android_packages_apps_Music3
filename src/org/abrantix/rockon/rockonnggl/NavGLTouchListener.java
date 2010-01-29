@@ -90,9 +90,10 @@ public class NavGLTouchListener implements OnTouchListener{
 						{
 							mClickHandler.removeCallbacksAndMessages(null);
 							mClickHandler.sendEmptyMessageDelayed(
-									Constants.LONG_CLICK, 
-									Constants.CLICK_ACTION_DELAY);
-							mRenderer.showClickAnimation();
+									Constants.LONG_CLICK,
+									mRenderer.getClickActionDelay());
+//									Constants.CLICK_ACTION_DELAY);
+							mRenderer.showClickAnimation(event.getX(), event.getY());
 							mLongClick = true;
 						}
 						return true;
@@ -166,8 +167,9 @@ public class NavGLTouchListener implements OnTouchListener{
 							mClickHandler.removeCallbacksAndMessages(null);
 							mClickHandler.sendEmptyMessageDelayed(
 									Constants.SINGLE_CLICK, 
-									Constants.CLICK_ACTION_DELAY);
-							mRenderer.showClickAnimation();
+									mRenderer.getClickActionDelay());
+//									Constants.CLICK_ACTION_DELAY);
+							mRenderer.showClickAnimation(event.getX(), event.getY());
 						}
 						return false;
 					} 

@@ -302,9 +302,11 @@ public abstract class RockOnRenderer{
 //
 //    }
 
-    abstract void showClickAnimation();
+    abstract void showClickAnimation(float x, float y);
     
     abstract void reverseClickAnimation();
+    
+    abstract int  getClickActionDelay();
     
     abstract void forceTextureUpdateOnNextDraw();
     

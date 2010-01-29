@@ -394,7 +394,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
     }
 
-    void showClickAnimation(){
+    void showClickAnimation(float x, float y){
     	this.mClickAnimation = true;
     	// this should be in the constants -- too lazy
     	this.mEyeTargetX = .75f;
@@ -412,6 +412,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.mEyeTargetZ = -5.f;
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
+    }
+    
+    int getClickActionDelay(){
+    	return Constants.CLICK_ACTION_DELAY;
     }
     
     void forceTextureUpdateOnNextDraw(){

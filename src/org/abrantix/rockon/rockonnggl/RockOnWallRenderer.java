@@ -244,52 +244,78 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         				Math.min(
         						Math.abs(mEyeTargetZ - mEyeZ),
         						Constants.MIN_SCROLL);
+        	/* camera center update */
+        	mCenterX += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetX-mCenterX);
+        	mCenterY += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetY-mCenterY);
+        	mCenterZ += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetZ-mCenterZ);
+        	/* minimum movements */
+        	if(Math.abs(mCenterTargetX - mCenterX) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        		mCenterX +=  
+        			Math.signum(mCenterTargetX - mCenterX) * 
+        				Math.min(
+        					Math.abs(mCenterTargetX - mCenterX),
+        					Constants.MIN_SCROLL);
+        	if(Math.abs(mCenterTargetY - mCenterY) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        		mCenterY += 
+        			Math.signum(mCenterTargetY - mCenterY) * 
+        				Math.min(
+        						Math.abs(mCenterTargetY - mCenterY),
+        						Constants.MIN_SCROLL);
+        	if(Math.abs(mCenterTargetZ - mCenterZ) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        		mCenterZ += 
+        			Math.signum(mCenterTargetZ - mCenterZ) * 
+        				Math.min(
+        						Math.abs(mCenterTargetZ - mCenterZ),
+        						Constants.MIN_SCROLL);
         	/* end of animation */
 //        	Log.i(TAG, "X: "+mEyeX+" - "+mEyeTargetX);
 //        	Log.i(TAG, "Y: "+mEyeY+" - "+mEyeTargetY);
 //        	Log.i(TAG, "Z: "+mEyeZ+" - "+mEyeTargetZ);
-        	if(mEyeX == mEyeTargetX && mEyeY == mEyeTargetY && mEyeZ == mEyeTargetZ)
+        	if(mEyeX == mEyeTargetX && mEyeY == mEyeTargetY && mEyeZ == mEyeTargetZ &&
+        		mCenterX == mCenterTargetX && mCenterY == mCenterTargetY && mCenterZ == mCenterTargetZ)
+        	{
         		mClickAnimation = false;
+        	}
         }
         else
         {
-            /* move camera when scrolling cube in Y axis */
-        	if(mPositionY != mTargetPositionY)
-        	{
-        		distanceToRotationLimits = 
-        			Math.max(
-        				Math.min(
-	            			.5f 
-	            			* 
-	            			(Math.min(
-	            					Math.abs(mPositionY - mTargetPositionY),
-	            					Math.abs(mPositionY - mRotationInitialPositionY))
-	            					-1),
-	            			1.5f),
-	            		0.f);
-	            			
-        		// adjust our 'eye'
-	            mEyeZ = 
-	            	mEyeNormal[2] 
-	            	- 
-	            	distanceToRotationLimits;
-	            // adjust the fog
-	            gl.glFogf(
-	            		GL10.GL_FOG_START, 
-	            		3.5f + .5f * distanceToRotationLimits);
-	            gl.glFogf(
-	            		GL10.GL_FOG_END, 
-	            		4.5f + distanceToRotationLimits);
-        	}
+//            /* move camera when scrolling cube in Y axis */
+//        	if(mPositionY != mTargetPositionY)
+//        	{
+//        		distanceToRotationLimits = 
+//        			Math.max(
+//        				Math.min(
+//	            			.5f 
+//	            			* 
+//	            			(Math.min(
+//	            					Math.abs(mPositionY - mTargetPositionY),
+//	            					Math.abs(mPositionY - mRotationInitialPositionY))
+//	            					-1),
+//	            			1.5f),
+//	            		0.f);
+//	            			
+//        		// adjust our 'eye'
+//	            mEyeZ = 
+//	            	mEyeNormal[2] 
+//	            	- 
+//	            	distanceToRotationLimits;
+//	            // adjust the fog
+//	            gl.glFogf(
+//	            		GL10.GL_FOG_START, 
+//	            		3.5f + .5f * distanceToRotationLimits);
+//	            gl.glFogf(
+//	            		GL10.GL_FOG_END, 
+//	            		4.5f + distanceToRotationLimits);
+//        	}
         }
                
-        GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
+//        GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         
         /* Center (or at least compensate) in the X axis */
-        gl.glTranslatef(.1f, 0.f, 0.f);
+//        gl.glTranslatef(.1f, 0.f, 0.f);
         
         /* Calculate rotations */
         if(mPositionX != 0)
@@ -336,7 +362,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         for(int i = 0; i<mCacheSize; i++)
         {
         	gl.glLoadIdentity();
-        	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
+        	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
         	
         	// poor variable name -- dont mind it
         	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY * 2;
@@ -413,12 +439,62 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
     }
 
-    void showClickAnimation(){
+    /* optimization */
+    int rowFromY;
+    int columnFromX;
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    int	getPositionFromScreenCoordinates(float x, float y)
+    {
+    	rowFromY = (int) (y / (mHeight*.25f));
+    	if(rowFromY == 2) rowFromY--;
+    	else if(rowFromY == 3) rowFromY--;
+    	
+    	columnFromX = (int) (x / (mWidth*.5f));
+    	
+    	return 
+    		flooredPositionY*2 - 2
+    		+
+    		2 * rowFromY
+    		+
+    		columnFromX;
+    }
+    
+    /* optimization */
+    int[] rowAndColumn = new int[2];
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    int[]	getRowAndColumnFromScreenCoordinates(float x, float y)
+    {
+    	rowFromY = (int) (y / (mHeight*.25f));
+    	if(rowFromY == 2) rowFromY--;
+    	else if(rowFromY == 3) rowFromY--;
+    	
+    	columnFromX = (int) (x / (mWidth*.5f));
+    	
+    	rowAndColumn[0] = columnFromX;
+    	rowAndColumn[1] = rowFromY;
+    	return rowAndColumn;
+    }
+    
+    void showClickAnimation(float x, float y){
     	this.mClickAnimation = true;
     	// this should be in the constants -- too lazy
     	this.mEyeTargetX = mEyeClicked[0];
     	this.mEyeTargetY = mEyeClicked[1];
     	this.mEyeTargetZ = mEyeClicked[2];
+    	
+    	this.mCenterTargetX = -1 + 2*getRowAndColumnFromScreenCoordinates(x, y)[0];
+    	this.mCenterTargetY = -2 + 2*getRowAndColumnFromScreenCoordinates(x, y)[1]; // duplicated effort -- FIXME
+    	this.mCenterTargetZ = 0;
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
     }
@@ -429,8 +505,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.mEyeTargetX = mEyeNormal[0];
     	this.mEyeTargetY = mEyeNormal[1];
     	this.mEyeTargetZ = mEyeNormal[2];
+    	this.mCenterTargetX = 0;
+    	this.mCenterTargetY = 0;
+    	this.mCenterTargetZ = 0;
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
+    }
+    
+    int getClickActionDelay(){
+    	return 5 * Constants.CLICK_ACTION_DELAY;
     }
     
     void forceTextureUpdateOnNextDraw(){
@@ -1078,14 +1161,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private float[]		mEyeNormal = 
     {
     		0.f,
-    		-2.f,
-    		-7.5f
+    		0.f,
+    		-6.25f
     };
     private float[]		mEyeClicked = 
     {
-    		0.f, // was .75f
-    		-2.f,
-    		-8.25f
+    		0.f, // XX dont care
+    		0.f, // XX dont care
+    		-3.25f
     };
     private float		mEyeX = mEyeNormal[0];
     private float		mEyeY = mEyeNormal[1];
@@ -1093,6 +1176,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mEyeTargetX = mEyeNormal[0];
     private float		mEyeTargetY = mEyeNormal[1];
     private float		mEyeTargetZ = mEyeNormal[2];
+    
+    private float		mCenterX = 0;
+    private float		mCenterY = 0;
+    private float		mCenterZ = 0;
+    private float		mCenterTargetX = 0;
+    private float		mCenterTargetY = 0;
+    private float		mCenterTargetZ = 0;
     
     
     
@@ -1117,7 +1207,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 class RockOnCover {
 	
-	private final String TAG = "RockOnWall";
+	private final String TAG = "RockOnCover";
 	
     public RockOnCover() {
 //  public RockOnCover(int[] textureId, int[] textureAlphabetId) {
