@@ -792,6 +792,61 @@ public class RockOnNextGenService extends Service {
         	mAppWidgetProvider4x4.notifyChange(this, what);
         
     }
+    
+    private void sendScrobbleBroadcast(int state) {
+    	// check that state is a valid state
+    	if (state != Constants.SCROBBLE_PLAYSTATE_START &&
+    		state != Constants.SCROBBLE_PLAYSTATE_RESUME &&
+    		state != Constants.SCROBBLE_PLAYSTATE_PAUSE &&
+    		state != Constants.SCROBBLE_PLAYSTATE_COMPLETE) {
+    		Log.e(TAG, "Trying to send scrobble with invalid state: " + state);
+    		return;
+    	}
+    	
+    	String who = PreferenceManager.getDefaultSharedPreferences(this).getString(
+    			getString(R.string.preference_scrobble_list_key), 
+    			getString(R.string.preference_scrobble_value_dont));
+    	
+    	// check if scrobbling is enabled, and to whom we should send the broadcast
+    	if (who.equals(getString(R.string.preference_scrobble_value_sls))) {
+    		sendScrobbleBroadcastSLS(state);
+    	} else if (who.equals(getString(R.string.preference_scrobble_value_sd))) {
+    		sendScrobbleBroadcastSD(state);
+    	}
+    }
+    
+    private void sendScrobbleBroadcastSLS(int state) {
+    	Log.d(TAG, "Sending scrobble broadcast to SLS");
+    	Intent i = new Intent(Constants.SCROBBLE_SLS_API);
+    	
+    	i.putExtra("app-name", "RockOn NextGen"); // TODO: what is the name of this app?
+    	i.putExtra("app-package", "org.abrantix.rockon.rockonnggl");
+    	
+    	i.putExtra("state", state);
+    	
+    	i.putExtra("artist", getArtistName());
+        i.putExtra("album",getAlbumName());
+        i.putExtra("track", getTrackName());
+        i.putExtra("duration", (int)(duration()/1000));
+        
+        sendBroadcast(i);
+    }
+    
+    private void sendScrobbleBroadcastSD(int state) {
+    	Log.d(TAG, "Sending scrobble broadcast to SD");
+    	Intent i = new Intent(Constants.SCROBBLE_SD_API);
+    	
+    	boolean playing = false;
+    	if (state == Constants.SCROBBLE_PLAYSTATE_START ||
+    		state == Constants.SCROBBLE_PLAYSTATE_RESUME) {
+    		playing = true;
+    	}
+    	i.putExtra("playing", playing);
+    	
+    	i.putExtra("id", (int)getAudioId());
+    	
+    	sendBroadcast(i);
+    }
 
     private void ensurePlayListCapacity(int size) {
         if (mPlayList == null || size > mPlayList.length) {
@@ -1217,6 +1272,8 @@ public class RockOnNextGenService extends Service {
             if (!mIsSupposedToBePlaying) {
                 mIsSupposedToBePlaying = true;
                 notifyChange(Constants.PLAYSTATE_CHANGED);
+                // it's difficult to say if we
+                sendScrobbleBroadcast(Constants.SCROBBLE_PLAYSTATE_RESUME);
             }
 
         } 
@@ -1245,6 +1302,8 @@ public class RockOnNextGenService extends Service {
         if (remove_status_icon) {
             mIsSupposedToBePlaying = false;
         }
+        
+        sendScrobbleBroadcast(Constants.SCROBBLE_PLAYSTATE_COMPLETE);
     }
 
     /**
@@ -1264,6 +1323,7 @@ public class RockOnNextGenService extends Service {
                 gotoIdleState();
                 mIsSupposedToBePlaying = false;
                 notifyChange(Constants.PLAYSTATE_CHANGED);
+                sendScrobbleBroadcast(Constants.SCROBBLE_PLAYSTATE_PAUSE);
                 saveBookmarkIfNeeded();
             }
         }
@@ -1350,6 +1410,9 @@ public class RockOnNextGenService extends Service {
             saveBookmarkIfNeeded();
             stop(false);
             openCurrent();
+            // the START scrobble broadcast need to be sent before play() is called
+            // as play() sends a RESUME state.
+            sendScrobbleBroadcast(Constants.SCROBBLE_PLAYSTATE_START);
             play();
             notifyChange(Constants.META_CHANGED);
         }
@@ -1528,6 +1591,9 @@ public class RockOnNextGenService extends Service {
             saveBookmarkIfNeeded();
             stop(false);
             openCurrent();
+            // the START scrobble broadcast need to be sent before play() is called
+            // as play() sends a RESUME state.
+            sendScrobbleBroadcast(Constants.SCROBBLE_PLAYSTATE_START);
             play();
             notifyChange(Constants.META_CHANGED);
         }

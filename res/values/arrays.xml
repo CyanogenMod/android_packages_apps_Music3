@@ -5,6 +5,7 @@
 		<item>@string/menu_option_title_playlist_id</item>
 		<item>@string/menu_option_title_concerts</item>
 		<item>@string/menu_option_title_preferences</item>
+		<item>@string/menu_option_title_view_mode</item>
 	</string-array>
 	
 	<integer-array name="menu_options_index_array">
@@ -12,5 +13,24 @@
 		<item>1</item>
 		<item>2</item>
 		<item>3</item>
+		<item>4</item>
 	</integer-array>
-</resources>	
+	
+	<!--	VIEW MODES	-->
+	<string-array name="view_modes">
+		<item>@string/view_mode_cube</item>
+		<item>@string/view_mode_wall</item>
+	</string-array>
+	
+    <string-array name="preference_scrobble_list_names">
+        <item>@string/preference_scrobble_name_dont</item>
+        <item>@string/preference_scrobble_name_sls</item>
+        <item>@string/preference_scrobble_name_sd</item>
+    </string-array>
+    
+    <string-array name="preference_scrobble_list_values">
+        <item>@string/preference_scrobble_value_dont</item>
+        <item>@string/preference_scrobble_value_sls</item>
+        <item>@string/preference_scrobble_value_sd</item>
+    </string-array>
+</resources>

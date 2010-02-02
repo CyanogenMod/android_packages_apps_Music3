@@ -964,12 +964,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current position */
-    int	getShownPosition(){
+    int	getShownPosition(float x, float y){
     	return (int) mPositionY;
     }
     
     /** get the current Album Id */
-    int getShownAlbumId(){
+    int getShownAlbumId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mAlbumCursor == null ||
 			/**
@@ -992,7 +992,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current Album Name */
-    String getShownAlbumName(){
+    String getShownAlbumName(float x, float y){
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
@@ -1007,7 +1007,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current Album Name */
-    String getShownAlbumArtistName(){
+    String getShownAlbumArtistName(float x, float y){
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{

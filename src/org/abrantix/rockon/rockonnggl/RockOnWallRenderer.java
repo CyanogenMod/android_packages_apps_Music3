@@ -180,8 +180,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glEnable(GL10.GL_FOG);
         gl.glFogx(GL10.GL_FOG_MODE, GL10.GL_LINEAR);
 //        gl.glFogx(GL10.GL_FOG_MODE, GL10.GL_EXP); // GL_EXP2 doesnt show anything
-        gl.glFogf(GL10.GL_FOG_START, 3.5f);
-        gl.glFogf(GL10.GL_FOG_END, 4.5f);
+        gl.glFogf(GL10.GL_FOG_START, 0.f);
+        gl.glFogf(GL10.GL_FOG_END, 5.f);
 //        float[] fogColor = {.5f,.5f,.5f, 1.f};
 //        gl.glFogfv(GL10.GL_FOG_COLOR, FloatBuffer.wrap(fogColor));
         gl.glHint(GL10.GL_FOG_HINT, GL10.GL_NICEST);
@@ -193,6 +193,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /* optmization */
     float	distanceToRotationLimits = 0.f;
+    float	logisticFuncResult = 0.f;
     public void onDrawFrame(GL10 gl) {
     	  
     	
@@ -221,60 +222,77 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
          * 	- it changes the eye spot of the camera
          */
         if(mClickAnimation){
+        	logisticFuncResult = 
+        		(float) 
+        		(2*
+				(1/(1+Math.pow(Math.E, -(float)this.mClickAnimationStep/(float)this.MAX_CLICK_ANIMATION_STEPS * 6)))
+				-
+				1);
         	/* camera eye update */
-        	mEyeX += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mEyeTargetX-mEyeX);
-        	mEyeY += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mEyeTargetY-mEyeY);
-        	mEyeZ += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mEyeTargetZ-mEyeZ);
-        	/* minimum movements */
-        	if(Math.abs(mEyeTargetX - mEyeX) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mEyeX +=  
-        			Math.signum(mEyeTargetX - mEyeX) * 
-        				Math.min(
-        					Math.abs(mEyeTargetX - mEyeX),
-        					Constants.MIN_SCROLL);
-        	if(Math.abs(mEyeTargetY - mEyeY) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mEyeY += 
-        			Math.signum(mEyeTargetY - mEyeY) * 
-        				Math.min(
-        						Math.abs(mEyeTargetY - mEyeY),
-        						Constants.MIN_SCROLL);
-        	if(Math.abs(mEyeTargetZ - mEyeZ) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mEyeZ += 
-        			Math.signum(mEyeTargetZ - mEyeZ) * 
-        				Math.min(
-        						Math.abs(mEyeTargetZ - mEyeZ),
-        						Constants.MIN_SCROLL);
+        	mEyeX = 
+        		(float) 
+        		(mEyeInitialX 
+        		+ 
+        		(mEyeTargetX - mEyeInitialX) 
+        		* 
+        		logisticFuncResult);
+        	mEyeY = 
+        		(float) 
+        		(mEyeInitialY 
+        		+ 
+        		(mEyeTargetY - mEyeInitialY) 
+        		* 
+        		logisticFuncResult);
+        	mEyeZ = 
+        		(float) 
+        		(mEyeInitialZ 
+        		+ 
+        		(mEyeTargetZ - mEyeInitialZ) 
+        		* 
+        		logisticFuncResult);
+
         	/* camera center update */
-        	mCenterX += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetX-mCenterX);
-        	mCenterY += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetY-mCenterY);
-        	mCenterZ += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mCenterTargetZ-mCenterZ);
-        	/* minimum movements */
-        	if(Math.abs(mCenterTargetX - mCenterX) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mCenterX +=  
-        			Math.signum(mCenterTargetX - mCenterX) * 
-        				Math.min(
-        					Math.abs(mCenterTargetX - mCenterX),
-        					Constants.MIN_SCROLL);
-        	if(Math.abs(mCenterTargetY - mCenterY) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mCenterY += 
-        			Math.signum(mCenterTargetY - mCenterY) * 
-        				Math.min(
-        						Math.abs(mCenterTargetY - mCenterY),
-        						Constants.MIN_SCROLL);
-        	if(Math.abs(mCenterTargetZ - mCenterZ) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
-        		mCenterZ += 
-        			Math.signum(mCenterTargetZ - mCenterZ) * 
-        				Math.min(
-        						Math.abs(mCenterTargetZ - mCenterZ),
-        						Constants.MIN_SCROLL);
-        	/* end of animation */
+        	mCenterX = 
+        		(float) 
+        		(mCenterInitialX 
+        		+ 
+        		(mCenterTargetX - mCenterInitialX) 
+        		* 
+        		logisticFuncResult);
+        	mCenterY = 
+        		(float) 
+        		(mCenterInitialY 
+        		+ 
+        		(mCenterTargetY - mCenterInitialY) 
+        		* 
+        		logisticFuncResult);
+        	mCenterZ = 
+        		(float) 
+        		(mCenterInitialZ 
+        		+ 
+        		(mCenterTargetZ - mCenterInitialZ) 
+        		* 
+        		logisticFuncResult);
+
+//        	Log.i(TAG, "growth: "+ logisticFuncResult);
+        	
 //        	Log.i(TAG, "X: "+mEyeX+" - "+mEyeTargetX);
 //        	Log.i(TAG, "Y: "+mEyeY+" - "+mEyeTargetY);
 //        	Log.i(TAG, "Z: "+mEyeZ+" - "+mEyeTargetZ);
-        	if(mEyeX == mEyeTargetX && mEyeY == mEyeTargetY && mEyeZ == mEyeTargetZ &&
-        		mCenterX == mCenterTargetX && mCenterY == mCenterTargetY && mCenterZ == mCenterTargetZ)
+        	
+        	if(this.mClickAnimationStep == this.MAX_CLICK_ANIMATION_STEPS)
         	{
+        		mEyeX = mEyeTargetX;
+        		mEyeY = mEyeTargetY;
+        		mEyeZ = mEyeTargetZ;
+        		
+        		mCenterX = mCenterTargetX;
+        		mCenterY = mCenterTargetY;
+        		mCenterZ = mCenterTargetZ;
+        		
         		mClickAnimation = false;
+        	} else {
+        		mClickAnimationStep ++;
         	}
         }
         else
@@ -318,27 +336,27 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //        gl.glTranslatef(.1f, 0.f, 0.f);
         
         /* Calculate rotations */
-        if(mPositionX != 0)
-	        rotationAngleX = 
-	        	((flooredPositionX % mCacheSize) + positionOffsetX)
-	        	/
-	        	4.f
-	        	*
-	        	360.f;
-        else
-        	rotationAngleX = 0;
-        
-        rotationAngleY = 
-        	((flooredPositionY % mCacheSize) + positionOffsetY)
-        	/
-        	(float) mCacheSize
-        	*
-        	360.f;
-                
-        if(mScrollMode == Constants.SCROLL_MODE_VERTICAL){
-        	gl.glRotatef(rotationAngleX, 0.f, 1.f, 0.f);
-        	gl.glRotatef(-rotationAngleY, 1.f, 0.f, 0.f);
-        }
+//        if(mPositionX != 0)
+//	        rotationAngleX = 
+//	        	((flooredPositionX % mCacheSize) + positionOffsetX)
+//	        	/
+//	        	4.f
+//	        	*
+//	        	360.f;
+//        else
+//        	rotationAngleX = 0;
+//        
+//        rotationAngleY = 
+//        	((flooredPositionY % mCacheSize) + positionOffsetY)
+//        	/
+//        	(float) mCacheSize
+//        	*
+//        	360.f;
+//                
+//        if(mScrollMode == Constants.SCROLL_MODE_VERTICAL){
+//        	gl.glRotatef(rotationAngleX, 0.f, 1.f, 0.f);
+//        	gl.glRotatef(-rotationAngleY, 1.f, 0.f, 0.f);
+//        }
         
         /* update textures if needed -- whenever we cross one album */
         texturesUpdated = updateTextures(gl);
@@ -485,35 +503,62 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	return rowAndColumn;
     }
     
+    /**
+     * start animating a click
+     */
     void showClickAnimation(float x, float y){
     	this.mClickAnimation = true;
-    	// this should be in the constants -- too lazy
+    	mClickAnimationStep = 0;
+
     	this.mEyeTargetX = mEyeClicked[0];
     	this.mEyeTargetY = mEyeClicked[1];
     	this.mEyeTargetZ = mEyeClicked[2];
     	
+    	this.mEyeInitialX = this.mEyeX;
+    	this.mEyeInitialY = this.mEyeY;
+    	this.mEyeInitialZ = this.mEyeZ;
+    	
     	this.mCenterTargetX = -1 + 2*getRowAndColumnFromScreenCoordinates(x, y)[0];
     	this.mCenterTargetY = -2 + 2*getRowAndColumnFromScreenCoordinates(x, y)[1]; // duplicated effort -- FIXME
     	this.mCenterTargetZ = 0;
+    	
+    	this.mCenterInitialX = this.mCenterX;
+    	this.mCenterInitialY = this.mCenterY;
+    	this.mCenterInitialZ = this.mCenterZ;
+    	
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
     }
     
+    /**
+     * reverse a click animation
+     */
     void reverseClickAnimation(){
     	this.mClickAnimation = true;
-    	// this should be in the constants -- too lazy
+    	mClickAnimationStep = 0;
+
     	this.mEyeTargetX = mEyeNormal[0];
     	this.mEyeTargetY = mEyeNormal[1];
     	this.mEyeTargetZ = mEyeNormal[2];
+    	
+    	this.mEyeInitialX = this.mEyeX;
+    	this.mEyeInitialY = this.mEyeY;
+    	this.mEyeInitialZ = this.mEyeZ;
+    	
     	this.mCenterTargetX = 0;
     	this.mCenterTargetY = 0;
     	this.mCenterTargetZ = 0;
+    	
+    	this.mCenterInitialX = this.mCenterX;
+    	this.mCenterInitialY = this.mCenterY;
+    	this.mCenterInitialZ = this.mCenterZ;
+    	    	
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
     }
     
     int getClickActionDelay(){
-    	return 5 * Constants.CLICK_ACTION_DELAY;
+    	return 2 * Constants.CLICK_ACTION_DELAY;
     }
     
     void forceTextureUpdateOnNextDraw(){
@@ -614,7 +659,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	    			mAlbumNavItem[cacheIndex].albumName = "";
 	    			mAlbumNavItem[cacheIndex].artistName = "";
 	    			mAlbumNavItem[cacheIndex].cover = undefined;
-	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
+	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
 	    			// we cannot change the bitmap reference of the item
 	    			// we need to write to the existing reference
 	    			mAlbumNavItemUtils.fillAlbumLabel(
@@ -811,54 +856,54 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 //    	Log.i(TAG, "framesPerSec: "+ 1000/(System.currentTimeMillis() - pTimestamp));
     	
-    	/** 
-    	 * New X pivot 
-    	 */
-    	if(mTargetPositionX > mPositionX)
-			mPositionX +=
-				Math.min(
-					Math.min(
-						Math.max(
-								updateFraction * 
-									Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
-								updateFraction * 
-									Constants.MIN_SCROLL)
-						, mTargetPositionX-mPositionX)
-					, Constants.MAX_SCROLL);
-		else if(mTargetPositionX < mPositionX)
-			mPositionX	 += 
-				Math.max(
-					Math.max(
-						Math.min(
-							updateFraction * 
-								Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
-							updateFraction * 
-								-Constants.MIN_SCROLL)
-						, mTargetPositionX-mPositionX)
-					, -Constants.MAX_SCROLL);
-		/**
-		 * Finished scrolling X
-		 */
-		else if(mPositionX != 0 && mTargetPositionX % 1 == 0){
-//			Log.i(TAG, "cleaning up after X rotation");
-			
-			mPositionY = findAlbumPositionAfterAlphabeticalScroll();
-			mTargetPositionY = mPositionY;
-			
-			mPositionX = 0;
-			mTargetPositionX = 0;
-			
-			lastInitial = -1;
-			// need some more cleanup
-		}
-    	/**
-    	 * Hmmm, double rotation -- strange -- FIXME
-    	 */
-    	if(mTargetPositionY != mPositionY &&
-    		mTargetPositionX != 0)
-    	{
-    		lastInitial = -1;
-    	}
+//    	/** 
+//    	 * New X pivot 
+//    	 */
+//    	if(mTargetPositionX > mPositionX)
+//			mPositionX +=
+//				Math.min(
+//					Math.min(
+//						Math.max(
+//								updateFraction * 
+//									Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
+//								updateFraction * 
+//									Constants.MIN_SCROLL)
+//						, mTargetPositionX-mPositionX)
+//					, Constants.MAX_SCROLL);
+//		else if(mTargetPositionX < mPositionX)
+//			mPositionX	 += 
+//				Math.max(
+//					Math.max(
+//						Math.min(
+//							updateFraction * 
+//								Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
+//							updateFraction * 
+//								-Constants.MIN_SCROLL)
+//						, mTargetPositionX-mPositionX)
+//					, -Constants.MAX_SCROLL);
+//		/**
+//		 * Finished scrolling X
+//		 */
+//		else if(mPositionX != 0 && mTargetPositionX % 1 == 0){
+////			Log.i(TAG, "cleaning up after X rotation");
+//			
+//			mPositionY = findAlbumPositionAfterAlphabeticalScroll();
+//			mTargetPositionY = mPositionY;
+//			
+//			mPositionX = 0;
+//			mTargetPositionX = 0;
+//			
+//			lastInitial = -1;
+//			// need some more cleanup
+//		}
+//    	/**
+//    	 * Hmmm, double rotation -- strange -- FIXME
+//    	 */
+//    	if(mTargetPositionY != mPositionY &&
+//    		mTargetPositionX != 0)
+//    	{
+//    		lastInitial = -1;
+//    	}
 		
 //    	Log.i(TAG, "mTargetPosition: "+(mTargetPositionX % 1));
     	
@@ -867,10 +912,10 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		pTimestamp = System.currentTimeMillis();
 	
     	/** optimization calculation*/
-		flooredPositionX = (int) Math.floor(mPositionX);
+//		flooredPositionX = (int) Math.floor(mPositionX);
 		flooredPositionY = (int) Math.floor(mPositionY);
 		
-		positionOffsetX = mPositionX - flooredPositionX;
+//		positionOffsetX = mPositionX - flooredPositionX;
 		positionOffsetY = mPositionY - flooredPositionY;
 		
 
@@ -894,7 +939,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction 
 									* Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, Constants.MAX_SCROLL);
+					, Constants.MAX_SCROLL * 4.f); // *4.f is a HACK XXX FIXME: add render specific constants?
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
@@ -905,26 +950,26 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction 
 								* -Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, -Constants.MAX_SCROLL);
+					, -Constants.MAX_SCROLL * 4.f); // *4.f is a HACK XXX FIXME: add constants?
 
 		/** are we outside the limits of the album list?*/
     	if(mAlbumCursor != null){
-    		/** X checks */
-    		if(lastInitial != -1 &&
-    			lastInitial + mPositionX <= 'a' - 1 - Constants.MAX_POSITION_OVERSHOOT)
-    		{
-//    			Log.i(TAG, "lastInitial: "+(char)lastInitial+" mPositionX: "+mPositionX+" current: "+(char)(lastInitial + mPositionX));
-	    		mTargetPositionX = 'a' - 1 - lastInitial;
-    		}
-	    	else if(lastInitial + mPositionX >= 'z' + Constants.MAX_POSITION_OVERSHOOT)
-	    		mTargetPositionX = 'z' - lastInitial;
-    		// TODO: are we done?
+//    		/** X checks */
+//    		if(lastInitial != -1 &&
+//    			lastInitial + mPositionX <= 'a' - 1 - Constants.MAX_POSITION_OVERSHOOT)
+//    		{
+////    			Log.i(TAG, "lastInitial: "+(char)lastInitial+" mPositionX: "+mPositionX+" current: "+(char)(lastInitial + mPositionX));
+//	    		mTargetPositionX = 'a' - 1 - lastInitial;
+//    		}
+//	    	else if(lastInitial + mPositionX >= 'z' + Constants.MAX_POSITION_OVERSHOOT)
+//	    		mTargetPositionX = 'z' - lastInitial;
+//    		// TODO: are we done?
     		
     		/** Y checks */
     		if(mPositionY <= -Constants.MAX_POSITION_OVERSHOOT)
 	    		mTargetPositionY = 0;
-	    	else if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
-	    		mTargetPositionY = mAlbumCursor.getCount() - 1;
+	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1)/2 + Constants.MAX_POSITION_OVERSHOOT)
+	    		mTargetPositionY = (mAlbumCursor.getCount() - 1)/2;
 	    	
 	    	/** are we done? */
 	    	if(mTargetPositionY == (float)mPositionY){
@@ -951,46 +996,46 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
      * returns the index of the album cursor after alphabetical scroll
      * @return
      */
-    private int findAlbumPositionAfterAlphabeticalScroll(){
-    	if((int)mPositionY >= 0 && (int)mPositionY < mAlbumCursor.getCount())
-    	{
-	    	mAlbumCursor.moveToPosition((int)mPositionY);
-	    	lastLetter = 
-	    		mAlbumCursor.getString(
-	    				mAlbumCursor.getColumnIndexOrThrow(
-	    						MediaStore.Audio.Albums.ARTIST)).
-	    				toLowerCase().charAt(0);
-	    	newLetter = (char) (lastLetter + mPositionX);
-	    	if(mPositionX > 0){
-	    		for(letterIdx = (int)mPositionY; letterIdx<mAlbumCursor.getCount(); letterIdx++){
-	    			mAlbumCursor.moveToPosition(letterIdx);
-	    			if(mAlbumCursor.getString(
-	    					mAlbumCursor.getColumnIndexOrThrow(
-	    							MediaStore.Audio.Albums.ARTIST)).
-	    					toLowerCase().charAt(0)
-	    					>= newLetter)
-	    			{
-	    				break;
-	    			}
-	    		}
-	    	} else {
-	    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
-	    			mAlbumCursor.moveToPosition(letterIdx);
-	    			if(mAlbumCursor.getString(
-	    					mAlbumCursor.getColumnIndexOrThrow(
-	    							MediaStore.Audio.Albums.ARTIST)).
-	    					toLowerCase().charAt(0)
-	    					<= newLetter)
-	    			{
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	return letterIdx;
-    	} else {
-    		return 'a';
-    	}
-    }
+//    private int findAlbumPositionAfterAlphabeticalScroll(){
+//    	if((int)mPositionY >= 0 && (int)mPositionY < mAlbumCursor.getCount())
+//    	{
+//	    	mAlbumCursor.moveToPosition((int)mPositionY);
+//	    	lastLetter = 
+//	    		mAlbumCursor.getString(
+//	    				mAlbumCursor.getColumnIndexOrThrow(
+//	    						MediaStore.Audio.Albums.ARTIST)).
+//	    				toLowerCase().charAt(0);
+//	    	newLetter = (char) (lastLetter + mPositionX);
+//	    	if(mPositionX > 0){
+//	    		for(letterIdx = (int)mPositionY; letterIdx<mAlbumCursor.getCount(); letterIdx++){
+//	    			mAlbumCursor.moveToPosition(letterIdx);
+//	    			if(mAlbumCursor.getString(
+//	    					mAlbumCursor.getColumnIndexOrThrow(
+//	    							MediaStore.Audio.Albums.ARTIST)).
+//	    					toLowerCase().charAt(0)
+//	    					>= newLetter)
+//	    			{
+//	    				break;
+//	    			}
+//	    		}
+//	    	} else {
+//	    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
+//	    			mAlbumCursor.moveToPosition(letterIdx);
+//	    			if(mAlbumCursor.getString(
+//	    					mAlbumCursor.getColumnIndexOrThrow(
+//	    							MediaStore.Audio.Albums.ARTIST)).
+//	    					toLowerCase().charAt(0)
+//	    					<= newLetter)
+//	    			{
+//	    				break;
+//	    			}
+//	    		}
+//	    	}
+//	    	return letterIdx;
+//    	} else {
+//    		return 'a';
+//    	}
+//    }
     
     /** is the cube spinning */
     boolean isSpinning(){
@@ -1041,25 +1086,28 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current position */
-    int	getShownPosition(){
-    	return (int) mPositionY;
+    int	getShownPosition(float x, float y){
+    	return getPositionFromScreenCoordinates(x, y);
+//    	return (int) mPositionY;
     }
     
     /** get the current Album Id */
-    int getShownAlbumId(){
+    int getShownAlbumId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mAlbumCursor == null ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		(int) mPositionY > mAlbumCursor.getCount() - 1)
+    		getPositionFromScreenCoordinates(x, y) > mAlbumCursor.getCount() - 1)
+//    		(int) mPositionY > mAlbumCursor.getCount() - 1)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
     		return -1;
     	}
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
+//    		mAlbumCursor.moveToPosition((int) mPositionY);
+    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
     		int albumId = mAlbumCursor.getInt(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums._ID));
@@ -1069,12 +1117,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current Album Name */
-    String getShownAlbumName(){
+    String getShownAlbumName(float x, float y){
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
+//    		mAlbumCursor.moveToPosition((int) mPositionY);
+    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
     		String albumName = mAlbumCursor.getString(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ALBUM));
@@ -1084,12 +1133,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current Album Name */
-    String getShownAlbumArtistName(){
+    String getShownAlbumArtistName(float x, float y){
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
+//    		mAlbumCursor.moveToPosition((int) mPositionY);
+    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
     		String artistName = mAlbumCursor.getString(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ARTIST));
@@ -1107,7 +1157,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    	for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
 		    		mAlbumCursor.moveToPosition(i);
 		    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
-		    			mTargetPositionY = i;
+		    			mTargetPositionY = i/2;
 		    			mPositionY = 
 		    				i - 
 		    				Math.signum(mTargetPositionY - mPositionY)
@@ -1168,7 +1218,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     {
     		0.f, // XX dont care
     		0.f, // XX dont care
-    		-3.25f
+    		-4.0f
     };
     private float		mEyeX = mEyeNormal[0];
     private float		mEyeY = mEyeNormal[1];
@@ -1176,13 +1226,20 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mEyeTargetX = mEyeNormal[0];
     private float		mEyeTargetY = mEyeNormal[1];
     private float		mEyeTargetZ = mEyeNormal[2];
-    
+    private float		mEyeInitialX = mEyeX;
+    private float		mEyeInitialY = mEyeY;
+    private float		mEyeInitialZ = mEyeZ;
     private float		mCenterX = 0;
     private float		mCenterY = 0;
     private float		mCenterZ = 0;
     private float		mCenterTargetX = 0;
     private float		mCenterTargetY = 0;
     private float		mCenterTargetZ = 0;
+    private float		mCenterInitialX = 0;
+    private float		mCenterInitialY = 0;
+    private float		mCenterInitialZ = 0;
+    private float		MAX_CLICK_ANIMATION_STEPS = 25;
+    private float		mClickAnimationStep = 0;
     
     
     

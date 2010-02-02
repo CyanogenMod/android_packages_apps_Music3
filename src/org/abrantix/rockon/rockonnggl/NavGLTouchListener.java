@@ -3,6 +3,7 @@ package org.abrantix.rockon.rockonnggl;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.sax.StartElementListener;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class NavGLTouchListener implements OnTouchListener{
 	Handler				mTimeoutHandler = null;
 	
 	Handler	mClickHandler = null;
+	Message	mMsg;
 
 	public void setRenderer(RockOnRenderer renderer){
 		this.mRenderer = (RockOnRenderer) renderer;
@@ -89,10 +91,17 @@ public class NavGLTouchListener implements OnTouchListener{
 								!mClickHandler.hasMessages(Constants.LONG_CLICK))
 						{
 							mClickHandler.removeCallbacksAndMessages(null);
-							mClickHandler.sendEmptyMessageDelayed(
-									Constants.LONG_CLICK,
+							mMsg = new Message();
+							mMsg.what = Constants.LONG_CLICK;
+							mMsg.arg1 = (int)event.getX();
+							mMsg.arg2 = (int)event.getY();
+							mClickHandler.sendMessageDelayed(
+									mMsg,
 									mRenderer.getClickActionDelay());
-//									Constants.CLICK_ACTION_DELAY);
+//							mClickHandler.sendEmptyMessageDelayed(
+//									Constants.LONG_CLICK,
+//									mRenderer.getClickActionDelay());
+////									Constants.CLICK_ACTION_DELAY);
 							mRenderer.showClickAnimation(event.getX(), event.getY());
 							mLongClick = true;
 						}
@@ -165,9 +174,16 @@ public class NavGLTouchListener implements OnTouchListener{
 							!mClickHandler.hasMessages(Constants.LONG_CLICK))
 						{
 							mClickHandler.removeCallbacksAndMessages(null);
-							mClickHandler.sendEmptyMessageDelayed(
-									Constants.SINGLE_CLICK, 
+							mMsg = new Message();
+							mMsg.what = Constants.SINGLE_CLICK;
+							mMsg.arg1 = (int) event.getX();
+							mMsg.arg2 = (int) event.getY();
+							mClickHandler.sendMessageDelayed(
+									mMsg, 
 									mRenderer.getClickActionDelay());
+//							mClickHandler.sendEmptyMessageDelayed(
+//									Constants.SINGLE_CLICK, 
+//									mRenderer.getClickActionDelay());
 //									Constants.CLICK_ACTION_DELAY);
 							mRenderer.showClickAnimation(event.getX(), event.getY());
 						}

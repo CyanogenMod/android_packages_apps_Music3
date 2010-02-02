@@ -12,5 +12,8 @@
 	<string name="menu_option_title_concerts">
 		Concerts
 	</string>
+	<string name="menu_option_title_view_mode">
+		View Mode
+	</string>
 </resources>
 

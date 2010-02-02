@@ -13,7 +13,7 @@
 		RockOn can fetch missing art for your albums from the Internet. Do you want to do it now? (It will take ~1 min for each 10 albums and it is recommended to be performed over a Wifi connection).
 	</string>
 	<string name="get_art_dialog_yes">Yes!</string>
-	<string name="get_art_dialog_no">I'll do it later.</string>
+	<string name="get_art_dialog_no">I\'ll do it later.</string>
 	
 	<!--	ART DOWNLOAD MESSAGES-->
 	<string name="art_download_no_inet">Internet connection unavailable!</string>
@@ -63,6 +63,10 @@
 	<string name="playlist_all_title">Play all</string>
 	<string name="playlist_most_recent_title">Recent</string>
 	<string name="playlist_most_played_title">Most played</string>
+	
+	<!-- 	VIEW MODES DIALOG -->
+	<string name="view_mode_cube">³</string>
+	<string name="view_mode_wall">Wall</string>
 	
 	<!--	ACTIVITY INTENTS (some of them)-->
 	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>

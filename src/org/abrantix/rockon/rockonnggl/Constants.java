@@ -159,8 +159,6 @@ public class Constants{
 		R.id.queue_list_songduration
 	};
 	
-
-	
 //	/** UI Dimension proportions */
 //	static final float navItemMinFraction = 0.6f; // minimum fraction of the smallest screen dimension
 	
@@ -179,8 +177,7 @@ public class Constants{
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;
 	static final int	MAX_POSITION_OVERSHOOT = 1;
 	static final int	SCROLLING_RESET_TIMEOUT = 7500;
-
-	
+		
 	/** CLICK MODES */
 	static final int	SINGLE_CLICK = 0;
 	static final int	LONG_CLICK = 1;
@@ -223,6 +220,16 @@ public class Constants{
     static final String QUEUE_CHANGED = "org.abrantix.rockon.rockonnggl.queuechanged";
     static final String PLAYBACK_COMPLETE = "org.abrantix.rockon.rockonnggl.playbackcomplete";
     static final String ASYNC_OPEN_COMPLETE = "org.abrantix.rockon.rockonnggl.asyncopencomplete";
+    
+    // The two scrobblers available on the Android Market
+    static final String SCROBBLE_SLS_API = "com.adam.aslfms.notify.playstatechanged";
+    static final String SCROBBLE_SD_API  = "net.jjc1138.android.scrobbler.action.MUSIC_STATUS";
+    
+    static final int	SCROBBLE_PLAYSTATE_START = 0;
+    static final int 	SCROBBLE_PLAYSTATE_RESUME = 1;
+    static final int 	SCROBBLE_PLAYSTATE_PAUSE = 2;
+    static final int 	SCROBBLE_PLAYSTATE_COMPLETE = 3;
+    
 
     // mediabutton - service command ids
     static final String SERVICECMD = "org.abrantix.rockon.rockonnggl.musicservicecommand";

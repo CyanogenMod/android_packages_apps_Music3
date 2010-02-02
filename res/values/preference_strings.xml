@@ -21,4 +21,17 @@
 
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">General</string>
+    <string name="preference_category_other">Other</string>
+    
+    <!--    SCROBBLING -->
+    <string name="preference_scrobble_list_key">scrobbling</string>
+    <string name="preference_scrobble_list_title">Last.fm Scrobbling</string>
+    <string name="preference_scrobble_list_summary">Select scrobbler to use</string>
+    
+    <string name="preference_scrobble_name_dont">Don\'t scrobble</string>
+    <string name="preference_scrobble_name_sls">Simple Last.fm Scrobbler</string>
+    <string name="preference_scrobble_name_sd">Scrobble Droid</string>
+    <string name="preference_scrobble_value_dont">no</string>
+    <string name="preference_scrobble_value_sls">sls</string>
+    <string name="preference_scrobble_value_sd">sd</string>
 </resources>

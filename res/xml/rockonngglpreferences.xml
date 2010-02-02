@@ -19,5 +19,18 @@
                 android:persistent="true" />
 
     </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/preference_category_other"
+            android:key="other">
+            <ListPreference
+                android:key="@string/preference_scrobble_list_key"
+                android:title="@string/preference_scrobble_list_title"
+                android:summary="@string/preference_scrobble_list_summary"
+                android:persistent="true"
+                android:entries="@array/preference_scrobble_list_names"
+                android:entryValues="@array/preference_scrobble_list_values"
+                android:defaultValue="@string/preference_scrobble_value_dont" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -14,7 +14,7 @@
 	    android:layout_height="fill_parent"
 	    >
 	<!--        android:background="#ff542437"-->
-	    <LinearLayout
+	    <RelativeLayout
 	    	android:layout_width="fill_parent"
 	    	android:layout_height="fill_parent"
 	    	android:layout_weight="4"
@@ -28,7 +28,29 @@
 				android:layout_height="fill_parent"
 				android:layout_margin="0dp"
 				/>
-		</LinearLayout>
+			
+			<ImageView
+				android:id="@+id/shading_top"
+				android:layout_width="fill_parent"
+				android:layout_height="@dimen/navigator_shading_height"
+				android:layout_alignParentTop="true"
+				android:src="@drawable/black_to_transparent_grad_minus_90"/>
+		
+			<ImageView
+				android:id="@+id/shading_bottom"
+				android:layout_width="fill_parent"
+				android:layout_height="@dimen/navigator_shading_height"
+				android:layout_alignParentBottom="true"
+				android:src="@drawable/black_to_transparent_grad_90"/>
+				
+			<ImageView
+				android:id="@+id/shading_right"
+				android:layout_width="@dimen/navigator_shading_width"
+				android:layout_height="fill_parent"
+				android:layout_alignParentRight="true"
+				android:src="@drawable/black_to_transparent_grad_180"/>
+				
+		</RelativeLayout>
 	    
 	    <LinearLayout
 	    	android:layout_width="fill_parent"

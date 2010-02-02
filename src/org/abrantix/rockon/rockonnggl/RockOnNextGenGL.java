@@ -57,6 +57,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
 import android.widget.FilterQueryProvider;
@@ -82,6 +83,7 @@ public class RockOnNextGenGL extends Activity {
 
     /** Dialogs */
     private	AlertDialog.Builder					mPlaylistDialog;
+    private	AlertDialog.Builder					mViewModeDialog;
 	private AlertDialog.Builder					mInstallConcertAppDialog;
     
 	/** Initialized vars */
@@ -279,7 +281,9 @@ public class RockOnNextGenGL extends Activity {
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_get_art)))
     			menu.getItem(i).setIcon(R.drawable.ic_menu_music_library);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_concerts)))
-        			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
+    			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
+    		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_view_mode)))
+    			menu.getItem(i).setIcon(android.R.drawable.ic_menu_gallery);
     	}
     	
     	return true;
@@ -339,6 +343,23 @@ public class RockOnNextGenGL extends Activity {
     		} catch(NameNotFoundException e) {
     			showConcertsRequiresAppInstallDialog();
     		}
+    	}
+    	/**
+    	 *  View Mode 
+    	 */
+    	else if(item.getTitle().
+    		equals(getString(R.string.menu_option_title_view_mode)))
+    	{
+    		mViewModeDialog = new AlertDialog.Builder(this);
+    		mViewModeDialog.setTitle(getString(R.string.menu_option_title_view_mode));
+    		mViewModeDialog.setAdapter(
+    				new ArrayAdapter<String>(
+    						this,
+    						android.R.layout.select_dialog_item,
+    						android.R.id.text1,
+    						getResources().getStringArray(R.array.view_modes)),
+    				mRendererChoiceDialogClick);
+    		mViewModeDialog.show();
     	}
     	/**
     	 *  Playlists 
@@ -456,6 +477,35 @@ public class RockOnNextGenGL extends Activity {
 			}
 		};
     
+	private DialogInterface.OnClickListener mRendererChoiceDialogClick = 
+		new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String[] rendererArray = getResources().getStringArray(R.array.view_modes);
+				if(rendererArray[which].equals(getString(R.string.view_mode_cube)))
+				{
+					// save in preferences
+					Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_CUBE);
+					edit.commit();
+					// reload views
+					showNavigator();
+					attachListeners();
+				}
+				else if(rendererArray[which].equals(getString(R.string.view_mode_wall)))
+				{
+					// save in preferences
+					Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_WALL);
+					edit.commit();
+					// reload views
+					showNavigator();
+					attachListeners();
+				}
+			}
+		};
+		
     private Handler mPlaylistSelectedHandler = new Handler(){
     	public void handleMessage(Message msg){
     		int playlistId = msg.what;
@@ -753,31 +803,31 @@ public class RockOnNextGenGL extends Activity {
         switch(mRendererMode)
         {
         case Constants.RENDERER_CUBE:
-//        	mRockOnCubeRenderer = new RockOnCubeRenderer(
-//	   		RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
-	   		RockOnWallRenderer rockOnCubeRenderer = new RockOnWallRenderer(
+	   		RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
 	        		getApplicationContext(),
 	        		mRequestRenderHandler);
-//	   		mGlSurfaceView.setRenderer(mRockOnCubeRenderer);
 	   		mGlSurfaceView.setRenderer(rockOnCubeRenderer);
-	   		mRockOnRenderer = (RockOnRenderer) rockOnCubeRenderer;
-	
-//        	mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-	        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-//        	startManagingCursor(mRockOnCubeRenderer.getAlbumCursor());
-	        /** check if we were able to find any music */
-	        if(rockOnCubeRenderer.getAlbumCount() <= 0)
-	        {
-	        	mIsSdCardPresentAndHasMusic = false;
-	   			showNoMusicAlert();
-	   			return;
-	        } else {
-	        	if(mRockOnRenderer.getAlbumCursor() != null)
-	        		startManagingCursor(mRockOnRenderer.getAlbumCursor());
-	        }
+	   		mRockOnRenderer = (RockOnRenderer) rockOnCubeRenderer;	
 	        break;
         case Constants.RENDERER_WALL:
-        	break;
+        	RockOnWallRenderer rockOnWallRenderer = new RockOnWallRenderer(
+	        		getApplicationContext(),
+	        		mRequestRenderHandler);
+	   		mGlSurfaceView.setRenderer(rockOnWallRenderer);
+	   		mRockOnRenderer = (RockOnRenderer) rockOnWallRenderer;	
+	        break;
+        }
+        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        
+        /** check if we were able to find any music */
+        if(mRockOnRenderer.getAlbumCount() <= 0)
+        {
+        	mIsSdCardPresentAndHasMusic = false;
+   			showNoMusicAlert();
+   			return;
+        } else {
+        	if(mRockOnRenderer.getAlbumCursor() != null)
+        		startManagingCursor(mRockOnRenderer.getAlbumCursor());
         }
     }
     
@@ -1089,7 +1139,9 @@ public class RockOnNextGenGL extends Activity {
 							// Queue a song of the currently displayed album
 							else{
 //								int albumId = mRockOnCubeRenderer.getShownAlbumId();
-								int albumId = mRockOnRenderer.getShownAlbumId();
+								int albumId = mRockOnRenderer.getShownAlbumId(
+										findViewById(R.id.cube_surface_view).getWidth()/2,
+										findViewById(R.id.cube_surface_view).getHeight()/2);
 								Log.i(TAG, "current album: "+albumId);
 
 								if(albumId == -1)
@@ -1329,12 +1381,16 @@ public class RockOnNextGenGL extends Activity {
 	 * AlbumClick Handler
 	 */
 	Handler mAlbumClickHandler = new Handler(){
+		int	x;
+		int	y;
 		@Override
 		public void handleMessage(Message msg){
+			x = msg.arg1;
+			y = msg.arg2;
 			if(msg.what == Constants.SINGLE_CLICK){
 				/* song list cursor */
 //				int albumId = mRockOnCubeRenderer.getShownAlbumId();
-				int albumId = mRockOnRenderer.getShownAlbumId();
+				int albumId = mRockOnRenderer.getShownAlbumId(x, y);
 				if(albumId < 0){
 					this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 					return;
@@ -1351,8 +1407,8 @@ public class RockOnNextGenGL extends Activity {
 					AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RockOnNextGenGL.this);
 					/* dialog title - album and artist name */
 					dialogBuilder.setTitle(
-							mRockOnRenderer.getShownAlbumArtistName()+"\n"+
-							mRockOnRenderer.getShownAlbumName());
+							mRockOnRenderer.getShownAlbumArtistName(x, y)+"\n"+
+							mRockOnRenderer.getShownAlbumName(x, y));
 //							mRockOnCubeRenderer.getShownAlbumArtistName()+"\n"+
 //							mRockOnCubeRenderer.getShownAlbumName());
 					/* show the album song list  in a dialog */
@@ -1385,8 +1441,8 @@ public class RockOnNextGenGL extends Activity {
 			} else if(msg.what == Constants.LONG_CLICK){
 				// start album chooser activity
 				Intent intent = new Intent(RockOnNextGenGL.this, ManualAlbumArtActivity.class);
-				Log.i(TAG, "sedning intent extra: "+mRockOnRenderer.getShownAlbumId());
-				intent.putExtra("albumId", (long)mRockOnRenderer.getShownAlbumId());
+				Log.i(TAG, "sedning intent extra: "+mRockOnRenderer.getShownAlbumId(x, y));
+				intent.putExtra("albumId", (long)mRockOnRenderer.getShownAlbumId(x, y));
 				startActivityForResult(intent, Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE);
 			}
 			
