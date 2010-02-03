@@ -69,7 +69,10 @@ public class AlbumArtDownloadOkClickListener implements OnClickListener{
 				if(msg.getData()
 						.getString(Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_DONE_IPC_MSG)
 						!= null)
+				{
 					mProgressDialog.dismiss();
+					stopArtDownload();
+				}
 				// Still going
 				else
 					mProgressDialog.setMessage(

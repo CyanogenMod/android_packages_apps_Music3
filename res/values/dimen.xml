@@ -8,7 +8,7 @@
     <dimen name="button_large_padding">20dp</dimen>
     
 	<!--	SHADE DIMENSIONS    -->
-	<dimen name="navigator_shading_height">16dp</dimen>
+	<dimen name="navigator_shading_height">8dp</dimen>
     <dimen name="navigator_shading_width">8dp</dimen>
     
 	<!--	ALBUM ART CHOOSER GRID    -->
