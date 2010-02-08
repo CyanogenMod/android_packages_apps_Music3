@@ -243,5 +243,15 @@ public class RockOnNextGenAppWidgetProvider3x3 extends AppWidgetProvider {
                 intent, 
                 0 /* no flags */);
         views.setOnClickPendingIntent(R.id.control_next, pendingIntent);
+        
+        /* PREVIOUS */
+        intent = new Intent(Constants.PREVIOUS_ACTION);
+        intent.setComponent(serviceName);
+        pendingIntent = PendingIntent.getService(
+        		context,
+                0 /* no requestCode */, 
+                intent, 
+                0 /* no flags */);
+        views.setOnClickPendingIntent(R.id.control_previous, pendingIntent);
     }
 }

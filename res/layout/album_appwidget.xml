@@ -4,28 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center">
- 
- 
-     <LinearLayout
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:paddingTop="6dp"
-    	android:layout_alignParentBottom="true"
-    	android:background="#88000000"
-    	android:orientation="horizontal">
-    	
-	    <ImageButton
-	        android:id="@+id/control_play_bogus"
-	        android:layout_width="wrap_content"
-	        android:layout_weight="1"
-	        android:layout_height="fill_parent"
-	        android:padding="@dimen/widget_small_button_padding"
-	        android:src="@drawable/play_selector"
-	        android:scaleType="fitCenter"
-	        android:visibility="invisible"
-	        />
-	</LinearLayout>
-	
+
 <!--     <ImageView-->
 <!--        android:layout_width="fill_parent"-->
 <!--        android:layout_weight="1"-->
@@ -44,32 +23,47 @@
         android:layout_marginRight="@dimen/widget_cover_margin_top"
         android:scaleType="fitCenter"
         />
-          
+	
+	<LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="@dimen/button_default_height"
+    	android:layout_alignParentBottom="true"
+    	android:paddingLeft="12dip"
+    	android:paddingRight="12dip"
+    	android:paddingTop="12dip"
+    	android:paddingBottom="12dip"
+    	android:orientation="horizontal">
+    	<ImageView
+    		android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:src="@drawable/widget_controls_background"
+    		/>
+	</LinearLayout>
+	      
     <LinearLayout
     	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
+    	android:layout_height="@dimen/button_default_height"
     	android:layout_alignParentBottom="true"
+    	android:paddingLeft="12dip"
+    	android:paddingRight="12dip"
     	android:orientation="horizontal"> 
 	    <ImageButton
 	        android:id="@+id/control_play"
 	        android:layout_width="wrap_content"
 	        android:layout_weight="1"
 	        android:layout_height="fill_parent"
-	        android:padding="@dimen/widget_small_button_padding"
 	        android:src="@drawable/play_selector"
 	        android:background="#00000000"
-	        android:scaleType="fitCenter"
+	        android:scaleType="center"
 	        />
-	        
 	    <ImageButton
 	        android:id="@+id/control_next"
 	        android:layout_width="wrap_content"
 	        android:layout_weight="1"
 	        android:layout_height="fill_parent"
-	        android:padding="@dimen/widget_small_button_padding"
 	        android:src="@drawable/next_selector"
 	        android:background="#00000000"
-	        android:scaleType="fitCenter"
+	        android:scaleType="center"
 	        />
 	</LinearLayout>
 </RelativeLayout>

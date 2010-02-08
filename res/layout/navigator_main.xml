@@ -19,60 +19,62 @@
     		android:layout_width="@dimen/button_default_width"
     		android:layout_height="fill_parent"
     		android:layout_weight="0"
-    		android:paddingTop="@dimen/button_small_padding"
-    		android:paddingBottom="@dimen/button_small_padding"
     		android:src="@drawable/previous_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_small_padding"-->
+<!--    		android:paddingBottom="@dimen/button_small_padding"-->
+    		
     	<ImageView
     		android:id="@+id/player_controls_repeat"
     		android:layout_width="wrap_content"
     		android:layout_height="fill_parent"
     		android:layout_weight="1"
-    		android:paddingTop="@dimen/button_medium_padding"
-    		android:paddingBottom="@dimen/button_medium_padding"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
 <!--    		    		android:src="@drawable/repeat_none_selector"-->
+<!--    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    		android:paddingBottom="@dimen/button_medium_padding"-->
     		
     	<ImageView
     		android:id="@+id/player_controls_play"
     		android:layout_width="wrap_content"
     		android:layout_height="fill_parent"
     		android:layout_weight="1"
-    		android:paddingTop="@dimen/button_large_padding"
-    		android:paddingBottom="@dimen/button_large_padding"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
 <!--    		    		android:src="@drawable/play_selector"-->
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
     		
     	<ImageView
     		android:id="@+id/player_controls_shuffle"
     		android:layout_width="wrap_content"
     		android:layout_height="fill_parent"
     		android:layout_weight="1"
-    		android:paddingTop="@dimen/button_medium_padding"
-    		android:paddingBottom="@dimen/button_medium_padding"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
 <!--    		    		android:src="@drawable/shuffle_selector"-->
+<!--    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    		android:paddingBottom="@dimen/button_medium_padding"-->
     		
     	<ImageView
     		android:id="@+id/player_controls_next"
     		android:layout_width="@dimen/button_default_width"
     		android:layout_height="fill_parent"
     		android:layout_weight="0"
-    		android:paddingTop="@dimen/button_small_padding"
-    		android:paddingBottom="@dimen/button_small_padding"
     		android:src="@drawable/next_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
-    	
+<!--    		android:paddingTop="@dimen/button_small_padding"-->
+<!--    		android:paddingBottom="@dimen/button_small_padding"-->
+    		
     </LinearLayout>
 
 	<LinearLayout 
@@ -87,12 +89,13 @@
     		android:layout_width="@dimen/button_default_width"
     		android:layout_height="fill_parent"
     		android:layout_weight="0"
-    		android:paddingTop="@dimen/button_large_padding"
-    		android:paddingBottom="@dimen/button_large_padding"
     		android:src="@drawable/search_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
     	<include
     		layout="@layout/song_label_and_progress"
     		android:layout_width="wrap_content"
@@ -110,13 +113,13 @@
     		android:layout_width="@dimen/button_default_width"
     		android:layout_height="fill_parent"
     		android:layout_weight="0"
-    		android:paddingTop="@dimen/button_large_padding"
-    		android:paddingBottom="@dimen/button_large_padding"
     		android:src="@drawable/play_queue_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
     		android:background="#00000000"/>
-    	
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
     </LinearLayout> 
 
     <!--    	android:layout_below="@id/player_controls_layout"-->

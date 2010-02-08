@@ -27,7 +27,10 @@ import android.widget.RemoteViews;
 public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
     static final String TAG = "RockOnNextGenAppWidgetProvider4x4";
     
-    public static final String CMDAPPWIDGETUPDATE = "appwidgetupdate";
+    private boolean 			mPlaying = false;
+    private int					mShuffleMode = Constants.SHUFFLE_NONE;
+    private int					mRepeatMode = Constants.REPEAT_NONE;
+    public static final String 	CMDAPPWIDGETUPDATE = "appwidgetupdate";
     
     static final ComponentName THIS_APPWIDGET =
         new ComponentName(
@@ -87,7 +90,9 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
         linkButtons(
         		context, 
         		views, 
-        		false /* not playing */);
+        		false /* not playing */,
+        		Constants.SHUFFLE_NONE,
+        		Constants.REPEAT_NONE);
         pushUpdate(
         		context, 
         		appWidgetIds, 
@@ -120,7 +125,9 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
         if (hasInstances(service)) {
             if (Constants.PLAYBACK_COMPLETE.equals(what) ||
                     Constants.META_CHANGED.equals(what) ||
-                    Constants.PLAYSTATE_CHANGED.equals(what)) {
+                    Constants.PLAYSTATE_CHANGED.equals(what) ||
+                    Constants.PLAYMODE_CHANGED.equals(what)) 
+            {
                 performUpdate(service, null);
             }
         }
@@ -175,15 +182,31 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
 //        }
         
         // Set correct drawable for pause state
-        final boolean playing = service.isPlaying();
-        if (playing) {
+        mPlaying = service.isPlaying();
+        if (mPlaying) {
             views.setImageViewResource(R.id.control_play, R.drawable.pause_selector);
         } else {
             views.setImageViewResource(R.id.control_play, R.drawable.play_selector);
         }
+        
+        // Set correct drawable for shuffle state
+        mShuffleMode = service.getShuffleMode();
+        if (mShuffleMode == Constants.SHUFFLE_NONE) {
+            views.setImageViewResource(R.id.control_shuffle, R.drawable.shuffle_none_selector);
+        } else {
+            views.setImageViewResource(R.id.control_shuffle, R.drawable.shuffle_selector);
+        }
+        
+        // Set correct drawable for repeat state
+        mRepeatMode = service.getRepeatMode();
+        if (mRepeatMode == Constants.REPEAT_NONE) {
+            views.setImageViewResource(R.id.control_repeat, R.drawable.repeat_none_selector);
+        } else {
+            views.setImageViewResource(R.id.control_repeat, R.drawable.repeat_current_selector);
+        }
 
         // Link actions buttons to intents
-        linkButtons(service, views, playing);
+        linkButtons(service, views, mPlaying, mShuffleMode, mRepeatMode);
         
         pushUpdate(service, appWidgetIds, views);
     }
@@ -195,7 +218,13 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
      *            widget click will launch {@link MediaPlaybackActivity},
      *            otherwise we launch {@link MusicBrowserActivity}.
      */
-    private void linkButtons(Context context, RemoteViews views, boolean playerActive) {
+    private void linkButtons(
+    		Context context, 
+    		RemoteViews views, 
+    		boolean playerActive, 
+    		int shuffleMode, 
+    		int repeatMode) 
+    {
         // Connect up various buttons and touch events
         Intent intent;
         PendingIntent pendingIntent;
@@ -243,5 +272,41 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
                 intent, 
                 0 /* no flags */);
         views.setOnClickPendingIntent(R.id.control_next, pendingIntent);
+        
+        /* PREVIOUS */
+        intent = new Intent(Constants.PREVIOUS_ACTION);
+        intent.setComponent(serviceName);
+        pendingIntent = PendingIntent.getService(
+        		context,
+                0 /* no requestCode */, 
+                intent, 
+                0 /* no flags */);
+        views.setOnClickPendingIntent(R.id.control_previous, pendingIntent);
+        
+        /* TOGGLE SHUFFLE */
+        if(shuffleMode == Constants.SHUFFLE_NONE)
+        	intent = new Intent(Constants.SHUFFLE_NORMAL_ACTION);
+        else
+        	intent = new Intent(Constants.SHUFFLE_NONE_ACTION);
+        intent.setComponent(serviceName);
+        pendingIntent = PendingIntent.getService(
+        		context,
+                0 /* no requestCode */, 
+                intent, 
+                0 /* no flags */);
+        views.setOnClickPendingIntent(R.id.control_shuffle, pendingIntent);
+        
+        /* TOGGLE REPEAT */
+//        if(shuffleMode == Constants.REPEAT_NONE)
+//        	intent = new Intent(Constants.REPEAT_CURRENT_ACTION);
+//        else
+//        	intent = new Intent(Constants.REPEAT_NONE_ACTION);
+//        intent.setComponent(serviceName);
+//        pendingIntent = PendingIntent.getService(
+//        		context,
+//                0 /* no requestCode */, 
+//                intent, 
+//                0 /* no flags */);
+//        views.setOnClickPendingIntent(R.id.control_repeat, pendingIntent);
     }
 }

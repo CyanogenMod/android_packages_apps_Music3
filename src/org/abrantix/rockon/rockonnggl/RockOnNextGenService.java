@@ -261,6 +261,10 @@ public class RockOnNextGenService extends Service {
         commandFilter.addAction(Constants.PAUSE_ACTION);
         commandFilter.addAction(Constants.NEXT_ACTION);
         commandFilter.addAction(Constants.PREVIOUS_ACTION);
+//        commandFilter.addAction(Constants.SHUFFLE_AUTO_ACTION);
+//        commandFilter.addAction(Constants.SHUFFLE_NONE_ACTION);
+//        commandFilter.addAction(Constants.REPEAT_CURRENT_ACTION);
+//        commandFilter.addAction(Constants.REPEAT_NONE_ACTION);
         registerReceiver(mIntentReceiver, commandFilter);
         
         TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -647,6 +651,14 @@ public class RockOnNextGenService extends Service {
             } else if (Constants.CMDSTOP.equals(cmd)) {
                 pause();
                 seek(0);
+            } else if(Constants.SHUFFLE_NORMAL_ACTION.equals(action)){
+            	this.setShuffleMode(Constants.SHUFFLE_NORMAL);
+            } else if(Constants.SHUFFLE_NONE_ACTION.equals(action)){
+            	this.setShuffleMode(Constants.SHUFFLE_NONE);
+            } else if(Constants.REPEAT_CURRENT_ACTION.equals(action)){
+            	this.setRepeatMode(Constants.REPEAT_CURRENT);
+            } else if(Constants.REPEAT_NONE_ACTION.equals(action)){
+            	this.setRepeatMode(Constants.REPEAT_NONE);
             }
         }
         
@@ -1806,6 +1818,11 @@ public class RockOnNextGenService extends Service {
 //                    mShuffleMode = Constants.SHUFFLE_NONE;
 //                }
             }
+            // let our widgets refresh
+            if(mShuffleMode == Constants.SHUFFLE_NONE)
+            	notifyChange(Constants.PLAYMODE_CHANGED);
+            else
+            	notifyChange(Constants.PLAYMODE_CHANGED);
             // _IF_ switching back to shuffle none
             // - remove all items in the playlist that
             //	1. have already been played (are in the history)
@@ -1933,6 +1950,12 @@ public class RockOnNextGenService extends Service {
     public void setRepeatMode(int repeatmode) {
         synchronized(this) {
             mRepeatMode = repeatmode;
+            // let our widgets refresh
+            if(mRepeatMode == Constants.REPEAT_NONE)
+            	notifyChange(Constants.PLAYMODE_CHANGED);
+            else
+            	notifyChange(Constants.PLAYMODE_CHANGED);
+
             saveQueue(false);
         }
     }
@@ -1983,7 +2006,11 @@ public class RockOnNextGenService extends Service {
     public long getAudioId() {
         synchronized (this) {
             if (mPlayPos >= 0 && mPlayer.isInitialized()) {
-                return mPlayList[mPlayPos];
+            	// XXX Bug Report fix
+            	if(mPlayPos < mPlayList.length)
+            		return mPlayList[mPlayPos];
+            	else
+            		return mPlayList[mPlayList.length-1];
             }
         }
         return -1;

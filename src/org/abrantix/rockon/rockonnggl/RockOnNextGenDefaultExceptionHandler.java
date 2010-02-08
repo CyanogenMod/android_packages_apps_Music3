@@ -48,7 +48,7 @@ import android.util.Log;
 			
 			StringBuilder message = new StringBuilder(
 					context.getString(R.string.bug_report_intro_part_one)+
-					info.versionName+
+					info.versionName+" "+
 					context.getString(R.string.bug_report_intro_part_two)
 					);
 			message.append(String.format("-- Android Version: sdk=%s, release=%s, inc=%s\n",
@@ -84,7 +84,8 @@ import android.util.Log;
 			sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			sendIntent.setType("message/rfc822");
 			sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "filipe.abrantes@gmail.com" });
-			sendIntent.putExtra(Intent.EXTRA_SUBJECT, "3 BugReport: " + e.getClass().getSimpleName() + ": "
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, 
+					"3 BugReport ["+info.versionName+"]: " + e.getClass().getSimpleName() + ": "
 					+ e.getMessage());
 			sendIntent.putExtra(Intent.EXTRA_TEXT, messageBody);
 //			Log.e(TAG, "Exception handled. Email activity should be initiated now.");

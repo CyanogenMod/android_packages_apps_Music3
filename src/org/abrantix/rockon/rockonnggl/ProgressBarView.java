@@ -286,9 +286,6 @@ public class ProgressBarView extends View{
 		if(mWidth > 0 && mHeight > 0 &&
 			mBarOvalArea != null && mBarOverlayPaint != null)
 		{
-//			Log.i(TAG, "Drawing Progress Bar");
-			
-			
 			fractionPlayedInColumns = 
 				Math.round(
 						(float)
@@ -296,6 +293,9 @@ public class ProgressBarView extends View{
 						*
 						mWidth/(mDotPixelRadius*2+1)))
 				/2;
+			
+//			Log.i(TAG, fractionPlayedInColumns + "!=" + mFractionPlayedInColumns);
+//			Log.i(TAG, mProgress + "!=" + mDuration);
 			
 			if(fractionPlayedInColumns != mFractionPlayedInColumns)
 			{
@@ -326,7 +326,7 @@ public class ProgressBarView extends View{
 				canvas.restore();
 //				if(!mTouching)
 					invalidate();
-					Log.i(TAG, "drawing touch");
+//					Log.i(TAG, "drawing touch");
 			}			
 		}
 	}

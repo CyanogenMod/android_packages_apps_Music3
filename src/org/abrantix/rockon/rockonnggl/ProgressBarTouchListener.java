@@ -30,20 +30,26 @@ public class ProgressBarTouchListener implements OnTouchListener{
 			((ProgressBarView)view).setTouchCoords(
 					event.getX(), 
 					event.getY());
-			Log.i(TAG, "down: "+event.getX()+" _ "+event.getY());
+			// AVOID EVENT FLOODING
+			try {
+				Thread.sleep(16);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+//			Log.i(TAG, "down: "+event.getX()+" _ "+event.getY());
 			break;
 		case MotionEvent.ACTION_MOVE:
 			((ProgressBarView)view).setTouchCoords(
 					event.getX(), 
 					event.getY());
-			Log.i(TAG, "moving: "+event.getX()+" _ "+event.getY());
+//			Log.i(TAG, "moving: "+event.getX()+" _ "+event.getY());
 			break;
 		case MotionEvent.ACTION_UP:
 			((ProgressBarView)view).setTouching(false);
 			((ProgressBarView)view).setTouchCoords(
 					event.getX(), 
 					event.getY());
-			Log.i(TAG, "up: "+event.getX()+" _ "+event.getY());
+//			Log.i(TAG, "up: "+event.getX()+" _ "+event.getY());
 			if(mSeekHandler != null)
 				mSeekHandler.sendEmptyMessage(
 						((ProgressBarView)view).getCoordSeekPosition(

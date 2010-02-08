@@ -220,6 +220,7 @@ public class Constants{
     static final String QUEUE_CHANGED = "org.abrantix.rockon.rockonnggl.queuechanged";
     static final String PLAYBACK_COMPLETE = "org.abrantix.rockon.rockonnggl.playbackcomplete";
     static final String ASYNC_OPEN_COMPLETE = "org.abrantix.rockon.rockonnggl.asyncopencomplete";
+	static final String PLAYMODE_CHANGED = "org.abrantix.rockon.rockonnggl.playmodechanged";
     
     // The two scrobblers available on the Android Market
     static final String SCROBBLE_SLS_API = "com.adam.aslfms.notify.playstatechanged";
@@ -244,6 +245,10 @@ public class Constants{
     static final String PAUSE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.pause";
     static final String PREVIOUS_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.previous";
     static final String NEXT_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.next";
+    static final String SHUFFLE_NORMAL_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.shufflenormal";
+    static final String SHUFFLE_NONE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.shufflenone";
+    static final String REPEAT_CURRENT_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.repeatcurrent";
+    static final String REPEAT_NONE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.repeatnone";
 	
     static final int NOW = 1;
     static final int NEXT = 2;

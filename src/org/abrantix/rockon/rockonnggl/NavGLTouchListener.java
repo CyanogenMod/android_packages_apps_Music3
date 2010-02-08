@@ -55,6 +55,7 @@ public class NavGLTouchListener implements OnTouchListener{
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if(!mClickHandler.hasMessages(0)){
+//			Log.i(TAG, "onTouch "+event.getAction());
 			switch(event.getAction()){
 			case MotionEvent.ACTION_DOWN:
 				mTimeoutHandler.removeMessages(0);
@@ -78,6 +79,12 @@ public class NavGLTouchListener implements OnTouchListener{
 	//			lastTimestamp = System.currentTimeMillis();
 				mRenderer.saveRotationInitialPosition();
 				mRenderer.renderNow();
+				// AVOID EVENT FLOODING XXX
+				try {
+					Thread.sleep(32);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				return true;
 			case MotionEvent.ACTION_MOVE:
 				if(!mScrolling){
@@ -124,6 +131,7 @@ public class NavGLTouchListener implements OnTouchListener{
 							mScrollingX = true;
 						}
 						else {
+//							Log.i(TAG, "not moving yet mDownX: "+mDownX+" X: "+event.getX()+" mDownY: "+mDownY+" Y: "+event.getY());
 							return true;
 						}
 					}
@@ -268,9 +276,10 @@ public class NavGLTouchListener implements OnTouchListener{
 				/* render */
 				mRenderer.renderNow();
 				return true;
-			}
+			} 
 			return false;
 		} else {
+			Log.i(TAG, "handler has messages!");
 			return true;
 		}
 	}

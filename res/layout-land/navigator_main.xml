@@ -50,6 +50,13 @@
 				android:layout_alignParentRight="true"
 				android:src="@drawable/black_to_transparent_grad_180"/>
 				
+			<ImageView
+				android:id="@+id/shading_left"
+				android:layout_width="@dimen/navigator_shading_width"
+				android:layout_height="fill_parent"
+				android:layout_alignParentLeft="true"
+				android:src="@drawable/black_to_transparent_grad_0"/>
+				
 		</RelativeLayout>
 	    
 	    <LinearLayout
@@ -72,37 +79,37 @@
 		    		android:id="@+id/player_controls_previous"
 		    		android:layout_width="@dimen/button_default_width"
 		    		android:layout_height="fill_parent"
-		    		android:paddingTop="@dimen/button_small_padding"
-    				android:paddingBottom="@dimen/button_small_padding"
-    				android:dither="true"
+		    		android:dither="true"
     				android:scaleType="fitCenter"
     				android:src="@drawable/previous_selector"
 		    		android:background="#00000000"/>
-	
+<!--					android:paddingTop="@dimen/button_small_padding"-->
+<!--    				android:paddingBottom="@dimen/button_small_padding"-->
+    				
 		    	<ImageView
 		    		android:id="@+id/player_controls_play"
 		    		android:layout_width="wrap_content"
 		    		android:layout_height="fill_parent"
-		       		android:paddingTop="@dimen/button_large_padding"
-    				android:paddingBottom="@dimen/button_large_padding"
-		    		android:dither="true"
+		       		android:dither="true"
     				android:scaleType="fitCenter"
 		    		android:layout_weight="1"
 		    		android:background="#00000000"/>
 		<!--    		    		android:src="@drawable/play_selector"-->
+<!--		    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    				android:paddingBottom="@dimen/button_large_padding"-->
 		    		
 	
 		    	<ImageView
 		    		android:id="@+id/player_controls_next"
 		    		android:layout_width="@dimen/button_default_width"
 		    		android:layout_height="fill_parent"
-		    		android:paddingTop="@dimen/button_small_padding"
-    				android:paddingBottom="@dimen/button_small_padding"
-    				android:dither="true"
+		    		android:dither="true"
     				android:scaleType="fitCenter"
     				android:src="@drawable/next_selector"
 		    		android:background="#00000000"/>
-		    	
+<!--		    		android:paddingTop="@dimen/button_small_padding"-->
+<!--    				android:paddingBottom="@dimen/button_small_padding"-->
+    				
 		    </LinearLayout>
 		
 			<LinearLayout
@@ -116,25 +123,25 @@
 		    		android:layout_width="fill_parent"
 		    		android:layout_height="fill_parent"
 		    		android:layout_weight="3"
-					android:paddingTop="@dimen/button_medium_padding"
-    				android:paddingBottom="@dimen/button_medium_padding"
-    				android:dither="true"
+					android:dither="true"
     				android:scaleType="fitCenter"
    		    		android:background="#00000000"/>
 		<!--    		    		android:src="@drawable/repeat_none_selector"-->
-		    		
+<!--		    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    				android:paddingBottom="@dimen/button_medium_padding"-->
+    				
 		   		<ImageView
 		    		android:id="@+id/player_controls_shuffle"
 		    		android:layout_width="fill_parent"
 		    		android:layout_height="fill_parent"
 		    		android:layout_weight="3"
-		    		android:paddingTop="@dimen/button_medium_padding"
-    				android:paddingBottom="@dimen/button_medium_padding"
-    				android:dither="true"
+		    		android:dither="true"
     				android:scaleType="fitCenter"
    		    		android:background="#00000000"/>
 		<!--    		    		android:src="@drawable/shuffle_selector"-->
-		    		
+<!--		    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    				android:paddingBottom="@dimen/button_medium_padding"-->
+    				
 		    </LinearLayout>
 		    
 		    <LinearLayout 
@@ -150,22 +157,24 @@
 		    		android:layout_height="fill_parent"
 		    		android:layout_weight="3"
 		    		android:src="@drawable/search_selector"
-		    		android:paddingTop="@dimen/button_medium_padding"
-    				android:paddingBottom="@dimen/button_medium_padding"
-    				android:dither="true"
+		    		android:dither="true"
     				android:scaleType="fitCenter"
    		    		android:background="#00000000"/>
+<!--   		    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    				android:paddingBottom="@dimen/button_medium_padding"-->
+    				
 		    	<ImageView
 		    		android:id="@+id/play_queue_button"
 		    		android:layout_width="@dimen/button_default_width"
 		    		android:layout_height="fill_parent"
 		    		android:layout_weight="3"
 		    		android:src="@drawable/play_queue_selector"
-		    		android:paddingTop="@dimen/button_medium_padding"
-    				android:paddingBottom="@dimen/button_medium_padding"
-    				android:dither="true"
+		    		android:dither="true"
     				android:scaleType="fitCenter"
    		    		android:background="#00000000"/>
+<!--   		    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    				android:paddingBottom="@dimen/button_medium_padding"-->
+    				
 		    </LinearLayout>
 		    
 			<LinearLayout 

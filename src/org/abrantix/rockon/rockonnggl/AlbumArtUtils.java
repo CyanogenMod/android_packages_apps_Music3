@@ -159,12 +159,19 @@ public class AlbumArtUtils{
 			        
 			        /* correct aspect ratio */
 			        if((float)(netBitmap.getWidth())/(float)(netBitmap.getHeight()) > 1.1f){
-			        	return Bitmap.createBitmap(
-			        			netBitmap, 
-			        			netBitmap.getWidth() - netBitmap.getHeight(), 
-			        			0, 
-			        			netBitmap.getHeight(), 
-			        			netBitmap.getHeight());
+			        	try
+			        	{
+			        		return Bitmap.createBitmap(
+			        				netBitmap, 
+				        			netBitmap.getWidth() - netBitmap.getHeight(), 
+				        			0, 
+				        			netBitmap.getHeight(), 
+				        			netBitmap.getHeight());
+			        	} catch(OutOfMemoryError err) {
+			        		err.printStackTrace();
+			        		return null;
+			        	}
+			        		
 			        } else {
 			        	return netBitmap;
 			        }
@@ -215,17 +222,22 @@ public class AlbumArtUtils{
 					file.createNewFile();
 				FileOutputStream fileOutStream = new FileOutputStream(file);
 				// TODO: decimation algorithm
-				Bitmap	smallBitmap = Bitmap.createScaledBitmap(
-						bitmap, 
-						Constants.ALBUM_ART_TEXTURE_SIZE, 
-						Constants.ALBUM_ART_TEXTURE_SIZE, 
-						true);
-				Bitmap smallBitmapPostProc = smallCoverPostProc(smallBitmap);
-				ByteBuffer bitmapBuffer = ByteBuffer.allocate(
-						smallBitmapPostProc.getRowBytes() * smallBitmapPostProc.getHeight());
-			    smallBitmapPostProc.copyPixelsToBuffer(bitmapBuffer);
-			    fileOutStream.write(bitmapBuffer.array());
-				return true;
+				try{
+					Bitmap	smallBitmap = Bitmap.createScaledBitmap(
+							bitmap, 
+							Constants.ALBUM_ART_TEXTURE_SIZE, 
+							Constants.ALBUM_ART_TEXTURE_SIZE, 
+							true);
+					Bitmap smallBitmapPostProc = smallCoverPostProc(smallBitmap);
+					ByteBuffer bitmapBuffer = ByteBuffer.allocate(
+							smallBitmapPostProc.getRowBytes() * smallBitmapPostProc.getHeight());
+				    smallBitmapPostProc.copyPixelsToBuffer(bitmapBuffer);
+				    fileOutStream.write(bitmapBuffer.array());
+				    return true;
+				}catch(OutOfMemoryError err){
+					err.printStackTrace();
+					return false;
+				}
 			} else {
 				return false;
 			}

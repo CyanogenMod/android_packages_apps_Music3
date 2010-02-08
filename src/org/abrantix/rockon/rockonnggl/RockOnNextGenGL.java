@@ -492,6 +492,7 @@ public class RockOnNextGenGL extends Activity {
 					// reload views
 					showNavigator();
 					attachListeners();
+					resumeNavigatorState();
 				}
 				else if(rendererArray[which].equals(getString(R.string.view_mode_wall)))
 				{
@@ -502,6 +503,7 @@ public class RockOnNextGenGL extends Activity {
 					// reload views
 					showNavigator();
 					attachListeners();
+					resumeNavigatorState();
 				}
 			}
 		};
