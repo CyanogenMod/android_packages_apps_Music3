@@ -460,7 +460,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 						{
     						mAlbumCursor.moveToLast();
     						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
-						} else {
+						} 
+    					else if(flooredPositionY < 0)
+    					{
+    						mAlbumCursor.moveToFirst();
+    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
+    					}
+    					else
+						{
 							mAlbumCursor.moveToPosition(flooredPositionY);
 						}
     					lastInitial = 

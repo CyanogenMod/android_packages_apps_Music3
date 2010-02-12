@@ -339,7 +339,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
          
         /* set the fog distance */
         gl.glFogf(GL10.GL_FOG_START, -mEyeZ-1.f);
-        gl.glFogf(GL10.GL_FOG_END, -mEyeZ+3.f);
+        gl.glFogf(GL10.GL_FOG_END, -mEyeZ+11.f);
 //        gl.glDisable(GL10.GL_FOG);
 
         int deltaToCenter;
@@ -426,6 +426,16 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		2 * rowFromY
     		+
     		columnFromX;
+    }
+    
+    int getVerifiedPositionFromScreenCoordinates(float x, float y)
+    {
+    	return
+    		Math.min(
+	    		Math.max(
+	    			getPositionFromScreenCoordinates(x,y),
+	    			0),
+	    		mAlbumCursor.getCount()-1);
     }
     
     /* optimization */
@@ -897,6 +907,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	return getPositionFromScreenCoordinates(x, y);
     }
     
+    /* optimization */
+    int cursorIdxValidation;
     /** get the current Album Id */
     int getShownAlbumId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
@@ -912,7 +924,17 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
+    		
+    		// validate idx -- bug report
+    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+//    		cursorIdxValidation = getPositionFromScreenCoordinates(x, y);
+//    		if(cursorIdxValidation < 0)
+//    			mAlbumCursor.moveToFirst();
+//    		else if(cursorIdxValidation >= mAlbumCursor.getCount())
+//    			mAlbumCursor.moveToLast();
+//    		else
+//    			mAlbumCursor.moveToPosition(cursorIdxValidation);
+
     		int albumId = mAlbumCursor.getInt(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums._ID));
@@ -927,7 +949,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		return null;
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
+    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
     		String albumName = mAlbumCursor.getString(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ALBUM));
@@ -942,7 +964,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		return null;
     	else{
     		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition(getPositionFromScreenCoordinates(x, y));
+    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
     		String artistName = mAlbumCursor.getString(
     				mAlbumCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ARTIST));

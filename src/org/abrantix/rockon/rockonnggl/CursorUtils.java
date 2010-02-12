@@ -105,49 +105,55 @@ public class CursorUtils{
 					null,
 					null,
 					Constants.playlistMembersAlbumSorting);
+			
 			/* get the albums in this playlist */
-			LinkedList<Long>	albumList = new LinkedList<Long>();
-			Long				albumId;
-			for(int i=0; i<playlistSongsCursor.getCount(); i++){
-				playlistSongsCursor.moveToPosition(i);
-				albumId = 
-					playlistSongsCursor.getLong(
-							playlistSongsCursor.getColumnIndexOrThrow(
-									MediaStore.Audio.Playlists.Members.ALBUM_ID));
-				// small optimization -- check if albumId is different from the last 
-				if(!albumList.contains(albumId))
-					albumList.add(albumId);
-			}
-			playlistSongsCursor.close();
-			/* this playlist has no songs? */
-			if(albumList.size() <= 0)
-				return null;
-			/* create the selection string for querying the album contentprovider */
-			String	selection = null;
-			for(int i=0; i<albumList.size(); i++){
-				if(i==0){
-					selection = 
-						MediaStore.Audio.Albums._ID +
-						" = "+
-						albumList.get(i).toString();
-				} else {
-					selection += 
-						" OR "+
-						MediaStore.Audio.Albums._ID+
-						" = "+
-						albumList.get(i).toString();
+			if(playlistSongsCursor != null)
+			{
+				LinkedList<Long>	albumList = new LinkedList<Long>();
+				Long				albumId;
+				for(int i=0; i<playlistSongsCursor.getCount(); i++){
+					playlistSongsCursor.moveToPosition(i);
+					albumId = 
+						playlistSongsCursor.getLong(
+								playlistSongsCursor.getColumnIndexOrThrow(
+										MediaStore.Audio.Playlists.Members.ALBUM_ID));
+					// small optimization -- check if albumId is different from the last 
+					if(!albumList.contains(albumId))
+						albumList.add(albumId);
 				}
+				playlistSongsCursor.close();
+				/* this playlist has no songs? */
+				if(albumList.size() <= 0)
+					return null;
+				/* create the selection string for querying the album contentprovider */
+				String	selection = null;
+				for(int i=0; i<albumList.size(); i++){
+					if(i==0){
+						selection = 
+							MediaStore.Audio.Albums._ID +
+							" = "+
+							albumList.get(i).toString();
+					} else {
+						selection += 
+							" OR "+
+							MediaStore.Audio.Albums._ID+
+							" = "+
+							albumList.get(i).toString();
+					}
+				}
+				/* query the album contentprovider */
+				Cursor albumCursor =
+					resolver.query(
+						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+						Constants.albumProjection, 
+						selection, 
+						null, 
+						Constants.albumAlphabeticalSortOrder);
+				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
+				return albumCursor;
+			} else {
+				return null;
 			}
-			/* query the album contentprovider */
-			Cursor albumCursor =
-				resolver.query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					Constants.albumProjection, 
-					selection, 
-					null, 
-					Constants.albumAlphabeticalSortOrder);
-			Log.i(TAG, " + "+(System.currentTimeMillis()-start));
-			return albumCursor;
 		}
 		/** GENRE PLAYLISTS*/
 		else if(playlistId <= Constants.PLAYLIST_GENRE_OFFSET &&

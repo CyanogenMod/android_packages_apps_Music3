@@ -1110,7 +1110,8 @@ public class RockOnNextGenGL extends Activity {
 					e.printStackTrace();
 				}
 					
-				mPlayPauseClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mPlayPauseClickHandler.sendEmptyMessage(0);
+//				mPlayPauseClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
 		}
 	};
@@ -1123,7 +1124,7 @@ public class RockOnNextGenGL extends Activity {
 					/* check if service playing something */
 					if(mService.isPlaying()){
 						mService.pause();
-						Log.i(TAG, "was playing... now pausing...");
+//						Log.i(TAG, "was playing... now pausing...");
 						// TODO: stop progress update
 						// TODO: change button image
 					} else {
@@ -1131,7 +1132,7 @@ public class RockOnNextGenGL extends Activity {
 						if(mService.getQueuePosition() >= mService.getQueue().length ||
 								mService.getAudioId() >= 0){
 							mService.play(); // or is it resume...
-							Log.i(TAG, "queue has songs... lets play or resume them...");
+//							Log.i(TAG, "queue has songs... lets play or resume them...");
 						} 
 						/* The play queue has been fully played */
 						else {
@@ -1169,9 +1170,6 @@ public class RockOnNextGenGL extends Activity {
 								}
 									
 							}
-							// TODO: start tracking progress
-							// TODO: change play button
-							
 						}
 					}
 				} catch (Exception e){
@@ -1188,7 +1186,8 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mNextClickHandler.hasMessages(0))
-				mNextClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mNextClickHandler.sendEmptyMessage(0);
+//				mNextClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
 	};
 	
@@ -1208,7 +1207,8 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPreviousClickHandler.hasMessages(0))
-				mPreviousClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mPreviousClickHandler.sendEmptyMessage(0);
+//				mPreviousClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
 	};
 	
@@ -1228,7 +1228,8 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mRepeatClickHandler.hasMessages(0))
-				mRepeatClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mRepeatClickHandler.sendEmptyMessage(0);
+//				mRepeatClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
 	};
 	
@@ -1246,7 +1247,8 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mShuffleClickHandler.hasMessages(0))
-				mShuffleClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mShuffleClickHandler.sendEmptyMessage(0);
+//				mShuffleClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
 	};
 	
@@ -1279,7 +1281,8 @@ public class RockOnNextGenGL extends Activity {
 					showSearch();
 				else
 					hideSearch();
-				mSearchClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+				mSearchClickHandler.sendEmptyMessage(0);
+//				mSearchClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
 		}
 	};
@@ -1297,9 +1300,10 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPlayQueueClickHandler.hasMessages(0)){
-				mPlayQueueClickHandler.sendEmptyMessageDelayed(
-						0, 
-						Constants.CLICK_ACTION_DELAY);
+				mPlayQueueClickHandler.sendEmptyMessage(0);
+//				mPlayQueueClickHandler.sendEmptyMessageDelayed(
+//						0, 
+//						Constants.CLICK_ACTION_DELAY);
 			}
 		}
 	};
