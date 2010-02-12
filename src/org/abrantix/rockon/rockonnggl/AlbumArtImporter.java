@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -122,13 +123,32 @@ public class AlbumArtImporter{
     				artistName + "\n"+
     				albumName);
     		
+    		/** do we want the embedded even if it is low res? */
+    		boolean	useAlwaysEmbedded = 
+    			PreferenceManager.getDefaultSharedPreferences(mContext).
+        			getBoolean(
+        					mContext.getString(
+        							R.string.preference_key_embedded_album_art), 
+        					true);
+    		
+    		int		artSize = 
+    			AlbumArtUtils.getImageSize(
+        				AlbumArtUtils.getAlbumArtPath(
+        	    				embeddedArtPath, 
+        	    				RockOnFileUtils.validateFileName(albumId.toString())));
+    		
     		/** check if image (embedded or downloaded) exists and is big enough */
-    		if(AlbumArtUtils.getImageSize(
-    				AlbumArtUtils.getAlbumArtPath(
-    	    				embeddedArtPath, 
-    	    				RockOnFileUtils.validateFileName(albumId.toString())))
-//    	    				FileUtils.validateFileName(URLEncoder.encode(albumKey))))
-    	    	< Constants.REASONABLE_ALBUM_ART_SIZE)
+    		if(
+    				(
+    						!useAlwaysEmbedded &&
+    						artSize < Constants.REASONABLE_ALBUM_ART_SIZE
+    				)
+    				||
+    				(
+    						useAlwaysEmbedded &&
+    						artSize <= 0
+    				)
+    			)
     		{
     			if(!artistName.equals("<unknown>")){
 	        		/** try to fetch it from freecovers.net */

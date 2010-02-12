@@ -21,8 +21,14 @@
 
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">General</string>
+    <string name="preference_category_album_art">Album Art</string>
     <string name="preference_category_other">Other</string>
     
+	<!--	EMBEDDED ALBUM ART ONLY    -->
+	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
+    <string name="preference_title_embedded_album_art">Use always ID3 Art</string>
+    <string name="preference_summary_embedded_album_art">Even if low resolution, the embedded art will be used.</string>
+
     <!--    SCROBBLING -->
     <string name="preference_scrobble_list_key">scrobbling</string>
     <string name="preference_scrobble_list_title">Last.fm Scrobbling</string>

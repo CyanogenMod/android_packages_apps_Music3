@@ -48,12 +48,21 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 					getBoolean(getString(R.string.preference_key_use_headset_buttons), true));
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_use_headset_buttons))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+		
 		/* Full screen */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_full_screen))).
 			setChecked(
 				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
 					getBoolean(getString(R.string.preference_key_full_screen), false));
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_full_screen))).
+			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+		
+		/* Always Embedded Album Art */
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_embedded_album_art))).
+			setChecked(
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+					getBoolean(getString(R.string.preference_key_embedded_album_art), true));
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_embedded_album_art))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
 	}
 	

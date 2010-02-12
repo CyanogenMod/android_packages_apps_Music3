@@ -21,6 +21,16 @@
     </PreferenceCategory>
     
     <PreferenceCategory
+        android:title="@string/preference_category_album_art"
+        android:key="album_art">
+        <CheckBoxPreference
+            android:key="@string/preference_key_embedded_album_art"
+            android:title="@string/preference_title_embedded_album_art"
+            android:summary="@string/preference_summary_embedded_album_art"
+            android:persistent="true"/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory
             android:title="@string/preference_category_other"
             android:key="other">
             <ListPreference
