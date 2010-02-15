@@ -142,14 +142,18 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
          * Some one-time OpenGL initialization can be made here
          * probably based on features of this particular context
          */
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-                GL10.GL_FASTEST);
+        gl.glHint(
+        		GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+                GL10.GL_NICEST);
 
         gl.glClearColor(0.f, 0.f, 0.f, 0);
 //        gl.glClearColor(.5f, .5f, .5f, 1);
         gl.glShadeModel(GL10.GL_SMOOTH);
         gl.glEnable(GL10.GL_DEPTH_TEST);
         gl.glEnable(GL10.GL_TEXTURE_2D);
+        
+        gl.glEnable(GL10.GL_CULL_FACE);
+        gl.glDepthFunc(GL10.GL_LEQUAL);
 
         /*
          * Create our textures. This has to be done each time the
@@ -171,8 +175,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
          * but reduce performance. One might want to tweak that
          * especially on software renderer.
          */
-        gl.glDisable(GL10.GL_DITHER);
-        gl.glEnable(GL10.GL_DEPTH_TEST);
+//        gl.glDisable(GL10.GL_DITHER);
+//        gl.glEnable(GL10.GL_DEPTH_TEST);
 //        gl.glEnable(GL10.GL_LINE_SMOOTH);
 //        gl.glEnable(GL10.GL_LINE_SMOOTH_HINT);
 //        gl.glEnable(GL10.GL_BLEND);
@@ -204,8 +208,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /* optmization */
     float	distanceToRotationLimits = 0.f;
+    double	frameStartTime ;
+    double	lastSecond = 0;
+    double	fps = 0;
     public void onDrawFrame(GL10 gl) {
     	  
+    	frameStartTime = System.currentTimeMillis();
     	
     	/** Calculate new position */
     	if(!updatePosition(false)){
@@ -240,24 +248,27 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         	mEyeY += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mEyeTargetY-mEyeY);
         	mEyeZ += updateFraction * Constants.SCROLL_SPEED_SMOOTHNESS * (mEyeTargetZ-mEyeZ);
         	/* minimum movements */
-        	if(Math.abs(mEyeTargetX - mEyeX) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        	if(Math.abs(mEyeTargetX - mEyeX) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction 
+        			< updateFraction * Constants.MIN_SCROLL)
         		mEyeX +=  
         			Math.signum(mEyeTargetX - mEyeX) * 
         				Math.min(
         					Math.abs(mEyeTargetX - mEyeX),
-        					Constants.MIN_SCROLL);
-        	if(Math.abs(mEyeTargetY - mEyeY) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        					updateFraction * Constants.MIN_SCROLL);
+        	if(Math.abs(mEyeTargetY - mEyeY) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction 
+        			< updateFraction * Constants.MIN_SCROLL)
         		mEyeY += 
         			Math.signum(mEyeTargetY - mEyeY) * 
         				Math.min(
         						Math.abs(mEyeTargetY - mEyeY),
-        						Constants.MIN_SCROLL);
-        	if(Math.abs(mEyeTargetZ - mEyeZ) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction < Constants.MIN_SCROLL)
+        						updateFraction * Constants.MIN_SCROLL);
+        	if(Math.abs(mEyeTargetZ - mEyeZ) * Constants.SCROLL_SPEED_SMOOTHNESS * updateFraction 
+        			< updateFraction * Constants.MIN_SCROLL)
         		mEyeZ += 
         			Math.signum(mEyeTargetZ - mEyeZ) * 
         				Math.min(
         						Math.abs(mEyeTargetZ - mEyeZ),
-        						Constants.MIN_SCROLL);
+        						updateFraction * Constants.MIN_SCROLL);
         	/* end of animation */
 //        	Log.i(TAG, "X: "+mEyeX+" - "+mEyeTargetX);
 //        	Log.i(TAG, "Y: "+mEyeY+" - "+mEyeTargetY);
@@ -296,7 +307,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	            		5.5f + distanceToRotationLimits);
         	}
         }
-               
+        
+//        gl.glDisable(GL10.GL_FOG);
+        
         GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -373,13 +386,31 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         	mClickAnimation ||
         	texturesUpdated)
         	renderNow();
+
+//      Log.i(TAG, ""+(System.currentTimeMillis() - frameStartTime));
+        fps++;
+        if(System.currentTimeMillis()-lastSecond > 1000)
+        {
+        	Log.i(TAG, "XXXXXXXXXXXXXXXXXX");
+        	Log.i(TAG, "fps: "+fps);
+        	fps=0;
+        	lastSecond = System.currentTimeMillis();
+        }
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
-        gl.glViewport(0, 0, w, h);
-
         mHeight = h;
         mWidth = w;
+        
+        /* if the screen is big make the cube a little bit smaller */
+        if(mWidth > 320 && mHeight > mWidth)
+        	gl.glViewport(
+        			(int) (.20f * (mWidth-320)/2), 						// x
+        			(int) (.20f * (mWidth-320)/2 * h/w),				// y 
+        			(int) (mWidth - .20f * (mWidth - 320)), 			// width
+        			(int) ((mWidth - .20f * (mWidth - 320)) * h/w));	// height
+        else
+        	gl.glViewport(0, 0, w, h);
         
         /*
         * Set our projection matrix. This doesn't have to be done
@@ -727,20 +758,25 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.renderNow();
     }
     
+    /* optimization */
+    double itvlFromLastRender;
     private boolean updatePosition(boolean force){
-    	
-//    	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-    	
-//    	updateFraction = 
-//    		Math.min(
-//    			(System.currentTimeMillis() - pTimestamp)/Constants.FRAME_DURATION_STD,
-//    			Constants.FRAME_JUMP_MAX);
-    	updateFraction = .5;
-    	
-//        Log.i(TAG, " + "+ (System.currentTimeMillis() - pTimestamp));
-
-//    	Log.i(TAG, "framesPerSec: "+ 1000/(System.currentTimeMillis() - pTimestamp));
-    	
+    	    	
+    	/** time independence */
+    	itvlFromLastRender = 
+    		Math.min(
+    				System.currentTimeMillis() - pTimestamp,
+    				100) // 100 ms is the biggest 'jump' we allow
+    		*
+    		.001;
+    	if(updateFraction > 0 && updateFraction < .05f)
+	    	updateFraction = 
+	    		Constants.CPU_SMOOTHNESS * itvlFromLastRender
+		    		+
+		    		(1-Constants.CPU_SMOOTHNESS) * updateFraction;
+    	else
+    		updateFraction = itvlFromLastRender;
+    	    	
     	/** 
     	 * New X pivot 
     	 */
@@ -754,7 +790,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction * 
 									Constants.MIN_SCROLL)
 						, mTargetPositionX-mPositionX)
-					, Constants.MAX_SCROLL);
+					, updateFraction * Constants.MAX_SCROLL);
 		else if(mTargetPositionX < mPositionX)
 			mPositionX	 += 
 				Math.max(
@@ -765,7 +801,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction * 
 								-Constants.MIN_SCROLL)
 						, mTargetPositionX-mPositionX)
-					, -Constants.MAX_SCROLL);
+					, updateFraction * -Constants.MAX_SCROLL);
 		/**
 		 * Finished scrolling X
 		 */
@@ -809,10 +845,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
    		 * New Y pivot
    		 */
     	// check if we are not outside our cursor
-//    	if(mTargetPositionY >= mAlbumCursor.getCount() - 1)
-//    		mTargetPositionY = mAlbumCursor.getCount() - 1;
-//    	if(mPositionY >= mAlbumCursor.getCount() - 1)
-//    		mPositionY = mAlbumCursor.getCount() - 1;
+    	if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
+    		mPositionY = mAlbumCursor.getCount() - 1;
+
     	//		position += speedFactor * speed;
     	if(mTargetPositionY > mPositionY)
 			mPositionY +=
@@ -824,7 +859,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction 
 									* Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, Constants.MAX_SCROLL);
+					, updateFraction * Constants.MAX_SCROLL);
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
@@ -835,7 +870,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction 
 								* -Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, -Constants.MAX_SCROLL);
+					, updateFraction * -Constants.MAX_SCROLL);
 
 		/** are we outside the limits of the album list?*/
     	if(mAlbumCursor != null){

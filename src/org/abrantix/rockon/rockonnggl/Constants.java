@@ -163,16 +163,15 @@ public class Constants{
 //	static final float navItemMinFraction = 0.6f; // minimum fraction of the smallest screen dimension
 	
 	/** UI scrolling parameters */
-//	static final float	MIN_SCROLL_SPEED = 0.015f;
-//	static final float	SCROLL_SPEED_DECAY = 0.1f;
 	static final double	FRAME_DURATION_STD = 40;
 	static final double	FRAME_JUMP_MAX = 10;
-	static final float	SCROLL_SPEED_SMOOTHNESS = 0.11f;
-	static final float	MIN_SCROLL = 0.04f; // as the fraction of the cover size
-	static final float	MAX_SCROLL = 0.13f; // as the fraction of the cover size
-	static final float	SCROLL_SPEED_BOOST = 40.f;
+	static final float	SCROLL_SPEED_SMOOTHNESS = 2.5f; // as the fraction of the overall animation that should be obtained (per second)
+	static final float	CPU_SMOOTHNESS = 0.1f; // as the fraction of the overall animation that should be obtained (per second)
+	static final float	MIN_SCROLL = 1.75f; // as the fraction of the cover size (per second)
+	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
+	static final float	SCROLL_SPEED_BOOST = 35.f;
 	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
-	static final float	MIN_SCROLL_TOUCH_MOVE = 0.085f;
+	static final float	MIN_SCROLL_TOUCH_MOVE = 0.08f;
 	static final double	MAX_CLICK_DOWNTIME = 1000;
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;
 	static final int	MAX_POSITION_OVERSHOOT = 1;

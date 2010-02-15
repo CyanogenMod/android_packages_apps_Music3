@@ -85,6 +85,7 @@ public class ProgressBarView extends View{
 	 * @return
 	 */
 	public int getCoordSeekPosition(float x, float y){
+		Log.i(TAG, "new seek: "+(int) (x/mWidth * mDuration));
 		return (int) (x/mWidth * mDuration);
 	}
 	
@@ -93,6 +94,7 @@ public class ProgressBarView extends View{
 	 * @param duration
 	 */
 	public void setDuration(int duration, boolean refresh){
+		Log.i(TAG, "new duration: "+duration);
 		mDuration = duration;
 		if(refresh)
 			this.invalidate();

@@ -130,8 +130,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
          * Some one-time OpenGL initialization can be made here
          * probably based on features of this particular context
          */
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-                GL10.GL_FASTEST);
+        gl.glHint(
+        		GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+                GL10.GL_NICEST);
 
         gl.glClearColor(0.f, 0.f, 0.f, 0);
 //        gl.glClearColor(.5f, .5f, .5f, 1);
@@ -151,7 +152,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //        gl.glGenTextures(mTextureAlphabetId.length, mTextureAlphabetId, 0);
         
         mRockOnCover = new RockOnCover();
-//        mRockOnCover = new RockOnCover(mTextureId, mTextureAlphabetId);
 //        mAlbumLabelGlText = new AlbumLabelGlText(mTextureLabelId[0]);
         
         
@@ -169,7 +169,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //        		GL10.GL_ONE, 
 //        		GL10.GL_ONE_MINUS_SRC_ALPHA);
 //        		GL10.GL_ONE_MINUS_SRC_ALPHA);
-//        gl.glHint(GL10.GL_LINE_SMOOTH_HINT, GL10.GL_NICEST);
+        gl.glHint(GL10.GL_LINE_SMOOTH_HINT, GL10.GL_NICEST);
         
         gl.glTexEnvx(
         		GL10.GL_TEXTURE_ENV, 
@@ -798,10 +798,25 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.renderNow();
     }
     
+    /* optimization */
+    double itvlFromLastRender;
     private boolean updatePosition(boolean force){
     	
-    	updateFraction = .5;
-
+    	/** time independence */
+    	itvlFromLastRender = 
+    		Math.min(
+    				System.currentTimeMillis() - pTimestamp,
+    				100) // 100 ms is the biggest 'jump' we allow
+    		*
+    		.001;
+    	if(updateFraction > 0 && updateFraction < .05f)
+	    	updateFraction = 
+	    		Constants.CPU_SMOOTHNESS * itvlFromLastRender
+		    		+
+		    		(1-Constants.CPU_SMOOTHNESS) * updateFraction;
+    	else
+    		updateFraction = itvlFromLastRender;
+    	
 		/** save state **/
 		pTimestamp = System.currentTimeMillis();
 	
@@ -814,7 +829,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
    		/** 
    		 * New Y pivot
    		 */
-    	if(mTargetPositionY > mPositionY)
+	   	if(mTargetPositionY > mPositionY)
 			mPositionY +=
 				Math.min(
 					Math.min(
@@ -824,7 +839,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction 
 									* Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, Constants.MAX_SCROLL * 4.f); // *4.f is a HACK XXX FIXME: add render specific constants?
+					, updateFraction * Constants.MAX_SCROLL * 2.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
@@ -835,7 +850,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction 
 								* -Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, -Constants.MAX_SCROLL * 4.f); // *4.f is a HACK XXX FIXME: add constants?
+					, updateFraction * -Constants.MAX_SCROLL * 2.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
     	if(mAlbumCursor != null){

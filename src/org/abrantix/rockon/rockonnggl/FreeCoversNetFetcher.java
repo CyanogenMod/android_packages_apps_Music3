@@ -61,7 +61,7 @@ public class FreeCoversNetFetcher{
 			DefaultHttpClient httpClient = new DefaultHttpClient();		
 	        HttpGet httpGet = new HttpGet(freeCoversURL.toString());
 	        HttpResponse response; 
-			
+				        
 			/* fetch content */
 			response = httpClient.execute(httpGet);
             HttpEntity entity = response.getEntity();

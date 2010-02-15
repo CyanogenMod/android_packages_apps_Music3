@@ -766,7 +766,6 @@ public class RockOnNextGenGL extends Activity {
     private void showNavigator(){
     	setContentView(R.layout.navigator_main);
     	mGlSurfaceView = (GLSurfaceView) findViewById(R.id.cube_surface_view);
-//        mGlSurfaceView = new GLSurfaceView(this.getApplicationContext());
     	/*************************************************
          * 
          * OPENGL ES HACK FOR GALAXY AND OTHERS
@@ -794,6 +793,11 @@ public class RockOnNextGenGL extends Activity {
 					}
         	     }
         	);
+//    	mGlSurfaceView.setEGLConfigChooser(
+//    			5, 6, 5, // RGB 
+//    			0, 
+//    			16, 
+//    			0);
         /************************************************
          * HACK END
          ************************************************/
@@ -1650,7 +1654,7 @@ public class RockOnNextGenGL extends Activity {
 		public void handleMessage(Message msg){
 			try{
 //				if(!mRockOnCubeRenderer.isSpinning())
-				if(!mRockOnRenderer.isSpinning())
+				if(!mRockOnRenderer.isSpinning() || msg.what == Constants.HARD_REFRESH)
 				{
 					if(msg.what == Constants.HARD_REFRESH)
 						((ProgressBarView)findViewById(R.id.progress_bar)).
@@ -1660,7 +1664,7 @@ public class RockOnNextGenGL extends Activity {
 					((ProgressBarView)findViewById(R.id.progress_bar)).
 						refresh();
 				}
-				} catch(Exception e){
+			} catch(Exception e){
 				e.printStackTrace();
 			}
 			if(msg.what == Constants.KEEP_REFRESHING ||
