@@ -62,6 +62,15 @@ public abstract class RockOnRenderer{
     
     abstract void	saveRotationInitialPosition();
     
+    /** stop scrolling on touch down */
+    abstract void	stopScrollOnTouch();
+    
+    /** scroll on touch */
+    abstract void 	scrollOnTouchMove(float px, int direction);
+    
+    /** trigger inertial scroll on touch end */
+    abstract void	inertialScrollOnTouchEnd(float scrollSpeed, int direction);
+    
     /** is the cube spinning */
     abstract boolean isSpinning();
     

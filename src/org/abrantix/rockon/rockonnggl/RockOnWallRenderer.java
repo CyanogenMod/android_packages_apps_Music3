@@ -35,9 +35,10 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		mRequestRenderHandler.sendEmptyMessage(0);
 	}
 	
-    public RockOnWallRenderer(Context context, Handler requestRenderHandler) {
+    public RockOnWallRenderer(Context context, Handler requestRenderHandler, int theme) {
         mContext = context;
         mRequestRenderHandler = requestRenderHandler;
+        mTheme = theme;
         
     	initNonGlVars(context, false);
     }
@@ -618,10 +619,11 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
 	    			// we cannot change the bitmap reference of the item
 	    			// we need to write to the existing reference
-	    			mAlbumNavItemUtils.fillAlbumLabel(
-	    					mAlbumNavItem[cacheIndex],
-	    					mBitmapWidth, 
-	    					mBitmapHeight/4);
+//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+//	    			mAlbumNavItemUtils.fillAlbumLabel(
+//	    					mAlbumNavItem[cacheIndex],
+//	    					mBitmapWidth, 
+//	    					mBitmapHeight/4);
 	    		} 
 	    		else 
 	    		{
@@ -639,26 +641,27 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    				mAlbumNavItem[cacheIndex], 
 		    				mBitmapWidth, 
 		    				mBitmapHeight, 
-		    				mColorComponentBuffer))
+		    				mColorComponentBuffer,
+		    				mTheme))
 		    		{
 	//	    			Log.i(TAG, "BM failed, error loading bm");
 		    			mAlbumNavItem[cacheIndex].cover = undefined;
 		    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
 		
 		    		}
-		    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-		    				mPositionY < 3)
-		    		{ // avoid unnecessary processing
+//		    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
+//		    				mPositionY < 3)
+//		    		{ // avoid unnecessary processing
 	//	    			Log.i(TAG, "Updating Album Label TOO");
-		    			if(!mAlbumNavItemUtils.fillAlbumLabel(
-			    				mAlbumNavItem[cacheIndex],
-			    				mBitmapWidth,
-			    				mBitmapHeight/4))
-			    		{
-		//	    			mAlbumNavItem[cacheIndex].label = undefined;
-		//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-			    		}
-		    		}
+//		    			if(!mAlbumNavItemUtils.fillAlbumLabel(
+//			    				mAlbumNavItem[cacheIndex],
+//			    				mBitmapWidth,
+//			    				mBitmapHeight/4))
+//			    		{
+//		//	    			mAlbumNavItem[cacheIndex].label = undefined;
+////			    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+//			    		}
+//		    		}
 	    		}
 //    		}
     		    		
@@ -672,59 +675,6 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     	
     }
-    
-//    private boolean setupAlphabetTextures(GL10 gl, int cacheIndex, int letter, boolean force){
-////		Log.i(TAG, "letter: "+(char)letter);
-//
-//    	/** precheck albumNavItem */
-//    	if(mAlphabetNavItem[cacheIndex].letter != letter || force){
-//	    	
-////    		Log.i(TAG, " + letter: "+(char)letter);
-//
-//    		/** Update cache item */
-//    		mAlphabetNavItem[cacheIndex].letter = letter;
-//    		if(letter < 'a'-1 || letter > 'z') // 24?????
-//    		{
-//        		Log.i(TAG, " + letter failed: "+(char)letter);
-//    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
-//    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
-//    		} 
-//    		else 
-//    		{
-//	    		if(!mAlbumNavItemUtils.fillAlphabetBitmap(
-//	    				mAlphabetNavItem[cacheIndex], 
-//	    				mBitmapWidth, 
-//	    				mBitmapHeight))
-//	    		{
-//	        		Log.i(TAG, " + letter failed to create bitmap: "+(char)letter);
-//	    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
-//	    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
-//	
-//	    		}
-////	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-////	    				mPositionY < 3){ // avoid unnecessary processing
-////		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-////		    				mAlbumNavItem[cacheIndex],
-////		    				mBitmapWidth,
-////		    				mBitmapHeight/4))
-////		    		{
-////	//	    			mAlbumNavItem[cacheIndex].label = undefined;
-////	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-////		    		}
-////	    		}
-//    		}
-//    		
-////    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");
-//    		
-//	    	/** bind new texture */
-//    		bindTexture(gl, mAlphabetNavItem[cacheIndex].letterBitmap, mTextureAlphabetId[cacheIndex]);
-//    		
-//    		return true;
-//    	} else  {
-//    		return false;
-//    	}
-//    	
-//    }
     
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
     	/** bind new texture */
@@ -860,23 +810,87 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1)/2)
 	    		mTargetPositionY = (mAlbumCursor.getCount() - 1)/2 - 1;
 	    	
-	    	/** are we done? */
-	    	if(mTargetPositionY == (float)mPositionY){
-	    		/* check limits */
-	    		if(mPositionY < 0)
-	    			mTargetPositionY = 0;
-	    		else if(mPositionY > mAlbumCursor.getCount() - 1)
-	    			mTargetPositionY = mAlbumCursor.getCount() - 1;
-	    		/* yes, we are done scrolling */
-	    		else if(!force)
-	    			return false;
-	    	}
+//	    	/** are we done? */
+//	    	if(mTargetPositionY == (float)mPositionY){
+//	    		/* check limits */
+//	    		if(mPositionY < 0)
+//	    			mTargetPositionY = 0;
+//	    		else if(mPositionY > mAlbumCursor.getCount() - 1)
+//	    			mTargetPositionY = mAlbumCursor.getCount() - 1;
+//	    		/* yes, we are done scrolling */
+//	    		else if(!force)
+//	    			return false;
+//	    	}
     	}
     	
 		
 		return true;
     }
- 
+
+    /** stop scroll on touch */
+    public void	stopScrollOnTouch()
+    {
+		if(mTargetPositionY > mPositionY)
+			mTargetPositionY = (float) Math.ceil(mPositionY);
+		else
+			mTargetPositionY = (float) Math.floor(mPositionY);
+	}
+
+    /** scroll on touch move */
+    public void scrollOnTouchMove(float px, int direction)
+    {
+    	switch(direction)
+    	{
+    	case Constants.SCROLL_MODE_VERTICAL:
+			mTargetPositionY = mPositionY - px/(mHeight*.5f);
+			/* make we dont exceed the cube limits */
+			if(mTargetPositionY <= -1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = -1 + Constants.MAX_POSITION_OVERSHOOT;
+			else if(mTargetPositionY >= (mAlbumCursor.getCount() - 1)/2 - 1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = (mAlbumCursor.getCount() - 1)/2 - 1 + Constants.MAX_POSITION_OVERSHOOT;
+			
+			mPositionY = mTargetPositionY;
+    		return;
+    	}
+    }
+    
+    /** inertial scroll on touch end */
+    public void	inertialScrollOnTouchEnd(float scrollSpeed, int direction)
+    {
+    	switch(direction)
+    	{
+    	case Constants.SCROLL_MODE_VERTICAL:
+    		/* make the movement harder for lower rotations */
+    		if(Math.abs(scrollSpeed/(mHeight*.5f)) < Constants.MAX_LOW_SPEED)
+    		{
+    			mTargetPositionY = 
+    				Math.round(
+    						mPositionY
+    						+
+    						0.5f * Math.signum(scrollSpeed/(mHeight*.5f)) // needs to be .5f because of the rounding...
+    				);
+    		} 
+    		/* full speed ahead */
+    		else
+    		{
+    			mTargetPositionY = 
+    				Math.round(
+    						mPositionY
+    						+
+    						Constants.SCROLL_SPEED_BOOST
+    						*
+    						scrollSpeed/(mHeight*.5f)
+    				);
+    		}
+    		/* small optimization to avoid weird moves on the edges */
+    		if(mTargetPositionY == 0)
+    			mTargetPositionY = -2;
+    		else if(mTargetPositionY == getAlbumCount())
+    			mTargetPositionY = getAlbumCount() + 1;		
+    		return;
+    	}
+    }
+    
     /** is the cube spinning */
     boolean isSpinning(){
     	// TODO: also check X scrolling
@@ -1023,6 +1037,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
+    private int 				mTheme;
     private	int					mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
     private Context 			mContext;
     private Handler				mRequestRenderHandler;

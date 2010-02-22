@@ -257,19 +257,14 @@ class WidgetCoverUtils{
 //			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			paint.setTextAlign(Align.CENTER);
 			paint.setTextSize(22.f);
-			canvas.drawText(trackName, wickedBitmap.getWidth()/2, 24, paint);
+			canvas.drawText(trackName, wickedBitmap.getWidth()/2-6, 24, paint);
 			
 			/* write artist name */
 			paint.setColor(Color.argb(255, 200, 200, 200));
 //			paint.setTypeface(Typeface.DEFAULT);
 			paint.setTextSize(18.f);
-			canvas.drawText(artistName, wickedBitmap.getWidth()/2, 48, paint);
-			
-		
+			canvas.drawText(artistName, wickedBitmap.getWidth()/2-6, 48, paint);
 		}
-		
-		
 		return wickedBitmap;
-		
 	}
 }

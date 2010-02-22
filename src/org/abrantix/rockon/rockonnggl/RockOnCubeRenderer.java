@@ -35,9 +35,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 		mRequestRenderHandler.sendEmptyMessage(0);
 	}
 	
-    public RockOnCubeRenderer(Context context, Handler requestRenderHandler) {
+    public RockOnCubeRenderer(Context context, Handler requestRenderHandler, int theme) {
         mContext = context;
         mRequestRenderHandler = requestRenderHandler;
+        mTheme = theme;
         
     	initNonGlVars(context, false);
     }
@@ -273,7 +274,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //        	Log.i(TAG, "X: "+mEyeX+" - "+mEyeTargetX);
 //        	Log.i(TAG, "Y: "+mEyeY+" - "+mEyeTargetY);
 //        	Log.i(TAG, "Z: "+mEyeZ+" - "+mEyeTargetZ);
-        	if(mEyeX == mEyeTargetX && mEyeY == mEyeTargetY && mEyeZ == mEyeTargetZ)
+        	if(mEyeX == mEyeTargetX && mEyeY == mEyeTargetY && mEyeZ == mEyeTargetZ &&
+        			!isSpinning())
         		mClickAnimation = false;
         }
         else
@@ -388,14 +390,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         	renderNow();
 
 //      Log.i(TAG, ""+(System.currentTimeMillis() - frameStartTime));
-        fps++;
-        if(System.currentTimeMillis()-lastSecond > 1000)
-        {
-        	Log.i(TAG, "XXXXXXXXXXXXXXXXXX");
-        	Log.i(TAG, "fps: "+fps);
-        	fps=0;
-        	lastSecond = System.currentTimeMillis();
-        }
+//        fps++;
+//        if(System.currentTimeMillis()-lastSecond > 1000)
+//        {
+//        	Log.i(TAG, "XXXXXXXXXXXXXXXXXX");
+//        	Log.i(TAG, "fps: "+fps);
+//        	fps=0;
+//        	lastSecond = System.currentTimeMillis();
+//        }
     }
 
     public void onSurfaceChanged(GL10 gl, int w, int h) {
@@ -571,14 +573,15 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		{
     			mAlbumNavItem[cacheIndex].albumName = "";
     			mAlbumNavItem[cacheIndex].artistName = "";
-    			mAlbumNavItem[cacheIndex].cover = undefined;
+//    			mAlbumNavItem[cacheIndex].cover = undefined;
     			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
     			// we cannot change the bitmap reference of the item
     			// we need to write to the existing reference
-    			mAlbumNavItemUtils.fillAlbumLabel(
-    					mAlbumNavItem[cacheIndex],
-    					mBitmapWidth, 
-    					mBitmapHeight/4);
+    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+//    			mAlbumNavItemUtils.fillAlbumLabel(
+//    					mAlbumNavItem[cacheIndex],
+//    					mBitmapWidth, 
+//    					mBitmapHeight/4);
     		} 
     		else 
     		{
@@ -595,7 +598,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    				mAlbumNavItem[cacheIndex], 
 	    				mBitmapWidth, 
 	    				mBitmapHeight, 
-	    				mColorComponentBuffer))
+	    				mColorComponentBuffer,
+	    				mTheme))
 	    		{
 	//    			mAlbumNavItem[cacheIndex].cover = null;
 	//    			mAlbumNavItem[cacheIndex].cover = 
@@ -603,20 +607,16 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	//    						mBitmapWidth, 
 	//    						mBitmapHeight, 
 	//    						Bitmap.Config.RGB_565);
-	    			mAlbumNavItem[cacheIndex].cover = undefined;
+//	    			mAlbumNavItem[cacheIndex].cover = undefined;
 	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
 	
 	    		}
-	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-	    				mPositionY < 3){ // avoid unnecessary processing
-		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-		    				mAlbumNavItem[cacheIndex],
-		    				mBitmapWidth,
-		    				mBitmapHeight/4))
-		    		{
-	//	    			mAlbumNavItem[cacheIndex].label = undefined;
-	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-		    		}
+	    		if(!mAlbumNavItemUtils.fillAlbumLabel(
+	    				mAlbumNavItem[cacheIndex],
+	    				mBitmapWidth,
+	    				mBitmapHeight/4))
+	    		{
+	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 	    		}
     		}
     		
@@ -769,6 +769,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				100) // 100 ms is the biggest 'jump' we allow
     		*
     		.001;
+    	/** are we starting a movement -- yes? forget about the past */
     	if(updateFraction > 0 && updateFraction < .05f)
 	    	updateFraction = 
 	    		Constants.CPU_SMOOTHNESS * itvlFromLastRender
@@ -844,7 +845,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
    		/** 
    		 * New Y pivot
    		 */
-    	// check if we are not outside our cursor
+    	// avoid rotations from a very far away point 
     	if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
     		mPositionY = mAlbumCursor.getCount() - 1;
 
@@ -890,18 +891,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    		mTargetPositionY = 0;
 	    	else if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
 	    		mTargetPositionY = mAlbumCursor.getCount() - 1;
-	    	
-	    	/** are we done? */
-	    	if(mTargetPositionY == (float)mPositionY){
-	    		/* check limits */
-	    		if(mPositionY < 0)
-	    			mTargetPositionY = 0;
-	    		else if(mPositionY > mAlbumCursor.getCount() - 1)
-	    			mTargetPositionY = mAlbumCursor.getCount() - 1;
-	    		/* yes, we are done scrolling */
-	    		else if(!force)
-	    			return false;
-	    	}
     	}
     	
 		
@@ -956,6 +945,86 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		return 'a';
     	}
     }
+    
+    /** stop scroll on touch */
+    public void	stopScrollOnTouch()
+    {
+		if(mTargetPositionY > mPositionY)
+			mTargetPositionY = (float) Math.ceil(mPositionY);
+		else
+			mTargetPositionY = (float) Math.floor(mPositionY);
+	}
+    
+    /** scroll on touch move */
+    public void scrollOnTouchMove(float px, int direction)
+    {
+    	switch(direction)
+    	{
+    	case Constants.SCROLL_MODE_VERTICAL:
+			mTargetPositionY = mPositionY - px/(mHeight*.75f);
+			/* make we dont exceed the cube limits */
+			if(mTargetPositionY <= -Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = -Constants.MAX_POSITION_OVERSHOOT;
+			else if(mTargetPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT;
+			/* update position */
+			mPositionY = mTargetPositionY;
+    		return;
+    	case Constants.SCROLL_MODE_HORIZONTAL:
+    		mTargetPositionX = mPositionX - px/(mWidth*.9f);
+			mPositionX = mTargetPositionX;
+    		return;
+    	}
+    }
+    
+    /** inertial scroll on touch end */
+    public void	inertialScrollOnTouchEnd(float scrollSpeed, int direction)
+    {
+    	switch(direction)
+    	{
+    	case Constants.SCROLL_MODE_VERTICAL:
+    		/* make the movement harder for lower rotations */
+    		if(Math.abs(scrollSpeed/(mHeight*.75f)) < Constants.MAX_LOW_SPEED)
+    		{
+    			mTargetPositionY = 
+    				Math.round(
+    						mPositionY
+    						+
+    						0.5f * Math.signum(scrollSpeed/(mHeight*.75f)) // needs to be .5f because of the rounding...
+    				);
+    		} 
+    		/* full speed ahead */
+    		else
+    		{
+    			mTargetPositionY = 
+    				Math.round(
+    						mPositionY
+    						+
+    						Constants.SCROLL_SPEED_BOOST
+    						*
+    						scrollSpeed/(mHeight*.75f)
+    				);
+    		}
+    		/* small optimization to avoid weird moves on the edges */
+    		if(mTargetPositionY == -1)
+    			mTargetPositionY = -2;
+    		else if(mTargetPositionY == getAlbumCount())
+    			mTargetPositionY = getAlbumCount() + 1;		
+    		return;
+    	case Constants.SCROLL_MODE_HORIZONTAL:
+			mTargetPositionX = Math.round(
+					mPositionX
+					-
+					(Constants.SCROLL_SPEED_BOOST * scrollSpeed/(mWidth*.9f)));
+			/* small optimization to avoid weird moves on the edges */
+		//	if(mRenderer.mTargetPositionX == -1)
+		//		mRenderer.mTargetPositionX = -2;
+		//	else if(mRenderer.mTargetPositionX == 24)
+		//		mRenderer.mTargetPositionX = 24 + 1;
+    		return;
+    	}
+    }
+    
     
     /** is the cube spinning */
     boolean isSpinning(){
@@ -1098,6 +1167,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
+    private int					mTheme;
     private	int					mCacheSize = 4;
     private Context 			mContext;
     private Handler				mRequestRenderHandler;

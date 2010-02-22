@@ -15,7 +15,7 @@ public class NavGLTouchListener implements OnTouchListener{
     
 	final	String	TAG = "NavGLTouchListener";
 	
-	int		mItemDimension;
+//	int		mItemDimension;
 
 	float	mDownX = 0.f;
 	float	mDownY = 0.f;
@@ -67,28 +67,25 @@ public class NavGLTouchListener implements OnTouchListener{
 				lastY = mDownY;
 				mScrollingSpeed = 0.f;
 				
-				mItemDimension = mRenderer.getItemDimension(); 
-					
-//					(int) (Math.min(v.getWidth(), v.getHeight()) * 0.8f);
-				
-				// this might be not necessary
-				if(mRenderer.mTargetPositionY > mRenderer.mPositionY)
-					mRenderer.mTargetPositionY = (float) Math.ceil(mRenderer.mPositionY);
-				else
-					mRenderer.mTargetPositionY = (float) Math.floor(mRenderer.mPositionY);
-	//			lastTimestamp = System.currentTimeMillis();
+//				mItemDimension = mRenderer.getItemDimension(); 
+				mRenderer.stopScrollOnTouch();
 				mRenderer.saveRotationInitialPosition();
 				mRenderer.renderNow();
+				
 				// AVOID EVENT FLOODING XXX
 				try {
 					Thread.sleep(32);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				//
+				
 				return true;
 			case MotionEvent.ACTION_MOVE:
 				if(!mScrolling){
-					/* check if this is a long press */
+					/**
+					 *  LONG PRESS 
+					 */
 					if(System.currentTimeMillis() - mDownTimestamp > 
 						Constants.MIN_LONG_CLICK_DURATION)
 					{
@@ -114,17 +111,20 @@ public class NavGLTouchListener implements OnTouchListener{
 						}
 						return true;
 					} 
-					/* if not, then check if we started moving for real */
-					else {
+					/**
+					 * DID WE START MOVING?
+					 */
+					else 
+					{
 						if(Math.abs(event.getY() - mDownY) > 
-							Constants.MIN_SCROLL_TOUCH_MOVE * mItemDimension &&
+							Constants.MIN_SCROLL_TOUCH_MOVE * v.getHeight() &&
 							!mRenderer.isSpinningX())
 						{
 							mScrolling = true;
 							mScrollingY = true;
 						} 
 						else if(Math.abs(event.getX() - mDownX) > 
-							Constants.MIN_SCROLL_TOUCH_MOVE * mItemDimension &&
+							Constants.MIN_SCROLL_TOUCH_MOVE * v.getWidth() &&
 							!mRenderer.isSpinningY())
 						{
 							mScrolling = true;
@@ -137,35 +137,49 @@ public class NavGLTouchListener implements OnTouchListener{
 					}
 				}
 				
-				if(mScrollingY){
-					mRenderer.mTargetPositionY = mRenderer.mPositionY - (event.getY() - lastY)/mItemDimension;
-					mRenderer.mPositionY = mRenderer.mTargetPositionY - 0.002f;
+				/**
+				 * VERTICAL MOVE
+				 */
+				if(mScrollingY)
+				{
+					mRenderer.scrollOnTouchMove(event.getY() - lastY, Constants.SCROLL_MODE_VERTICAL);
+					
 					mScrollingSpeed = 
 						(float) 
-						(-0.75 * (event.getY() - lastY)/mItemDimension
+						(-0.75 * (event.getY() - lastY) // /mItemDimension
 						+
 						(1-0.75) * mScrollingSpeed);
-				} else if(mScrollingX){
-					mRenderer.mTargetPositionX = mRenderer.mPositionX - (event.getX() - lastX)/mItemDimension;
-					mRenderer.mPositionX = mRenderer.mTargetPositionX - 0.002f;
+				}
+				/**
+				 * HORIZONTAL MOVE
+				 */
+				else if(mScrollingX)
+				{
+					mRenderer.scrollOnTouchMove(event.getX() - lastX, Constants.SCROLL_MODE_HORIZONTAL);
+
 					mScrollingSpeed = 
 						(float) 
-						(0.75 * (event.getX() - lastX)/mItemDimension
+						(0.75 * (event.getX() - lastX) // /mItemDimension
 						+
 						(1-0.75) * mScrollingSpeed);
 				}
 				
-
+				/**
+				 * SAVE STATE
+				 */
 				lastY = event.getY();
 				lastX = event.getX();
-	//			Log.i(TAG, " - scrolling speed is "+scrollingSpeed);
-	//			lastTimestamp = System.currentTimeMillis();
-//				Log.i(TAG, "trigger rendering");
+
+				/**
+				 * SHOW MOVEMENT
+				 */
 				mRenderer.renderNow();
 				return true;
 			case MotionEvent.ACTION_UP:
-
-				/* is this a click? */
+				
+				/**
+				 * WAS A CLICK
+				 */
 				if(!mScrolling &&
 					// could also verify the Y axis but i like it how it goes back while scrolling
 					!mRenderer.isSpinningX()) 
@@ -174,7 +188,7 @@ public class NavGLTouchListener implements OnTouchListener{
 					// reason: when yscrolling the mscrolling is not recorded
 					if(System.currentTimeMillis() - mDownTimestamp < Constants.MAX_CLICK_DOWNTIME &&
 						Math.abs(event.getY() - mDownY) <	// condition unnecessary? 
-							Constants.MIN_SCROLL_TOUCH_MOVE * mItemDimension )
+							Constants.MIN_SCROLL_TOUCH_MOVE * v.getHeight() )
 					{
 						if(mClickHandler != null && 
 							!mLongClick &&
@@ -197,83 +211,73 @@ public class NavGLTouchListener implements OnTouchListener{
 						}
 						return false;
 					} 
-//					else { // long click
-//						if(mClickHandler != null && 
-//								!mLongClick &&
-//								!mClickHandler.hasMessages(Constants.SINGLE_CLICK) &&
-//								!mClickHandler.hasMessages(Constants.LONG_CLICK))
-//						{
-//							mClickHandler.removeCallbacksAndMessages(null);
-//							mClickHandler.sendEmptyMessageDelayed(
-//									Constants.LONG_CLICK, 
-//									Constants.CLICK_ACTION_DELAY);
-//							mRenderer.showClickAnimation();
-//							mLongClick = true;
-//						}
-//						return false;
-//					}
 				}
 				
+				/**
+				 * RESET THE INACTIVITY TIMER
+				 */
 				mTimeoutHandler.sendEmptyMessageDelayed(0, Constants.SCROLLING_RESET_TIMEOUT);
 				
+				/**
+				 * INERTIAL VERTICAL MOVE
+				 */
 				if(mScrollingY){
-					/* make the movement harder for lower rotations */
-					if(Math.abs(mScrollingSpeed) < Constants.MAX_LOW_SPEED)
-					{
-						mRenderer.mTargetPositionY = 
-							Math.round(
-									mRenderer.mPositionY
-									+
-									0.5f * Math.signum(mScrollingSpeed) // needs to be .5f because of the rounding...
-							);
-					} 
-//					else if(Math.abs(mScrollingSpeed) < 0.16f)
+					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_VERTICAL);
+					
+//					/* make the movement harder for lower rotations */
+//					if(Math.abs(mScrollingSpeed) < Constants.MAX_LOW_SPEED)
 //					{
 //						mRenderer.mTargetPositionY = 
 //							Math.round(
 //									mRenderer.mPositionY
 //									+
-//									2.f * Math.signum(mScrollingSpeed)
+//									0.5f * Math.signum(mScrollingSpeed) // needs to be .5f because of the rounding...
 //							);
 //					} 
-					/* full speed ahead */
-					else
-					{
-						mRenderer.mTargetPositionY = 
-							Math.round(
-									mRenderer.mPositionY
-									+
-									Constants.SCROLL_SPEED_BOOST
-									*
-									mScrollingSpeed
-							);
-					}
-					/* small optimization to avoid weird moves on the edges */
-					if(mRenderer.mTargetPositionY == -1)
-						mRenderer.mTargetPositionY = -2;
-					else if(mRenderer.mTargetPositionY == mRenderer.getAlbumCount())
-						mRenderer.mTargetPositionY = mRenderer.getAlbumCount() + 1;
+//					
+//					/* full speed ahead */
+//					else
+//					{
+//						mRenderer.mTargetPositionY = 
+//							Math.round(
+//									mRenderer.mPositionY
+//									+
+//									Constants.SCROLL_SPEED_BOOST
+//									*
+//									mScrollingSpeed
+//							);
+//					}
+//					/* small optimization to avoid weird moves on the edges */
+//					if(mRenderer.mTargetPositionY == -1)
+//						mRenderer.mTargetPositionY = -2;
+//					else if(mRenderer.mTargetPositionY == mRenderer.getAlbumCount())
+//						mRenderer.mTargetPositionY = mRenderer.getAlbumCount() + 1;
 				} else if(mScrollingX){
-					mRenderer.mTargetPositionX = Math.round(
-							mRenderer.mPositionX
-							-
-							(Constants.SCROLL_SPEED_BOOST * mScrollingSpeed));
-					/* small optimization to avoid weird moves on the edges */
-//					if(mRenderer.mTargetPositionX == -1)
-//						mRenderer.mTargetPositionX = -2;
-//					else if(mRenderer.mTargetPositionX == 24)
-//						mRenderer.mTargetPositionX = 24 + 1;
+					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_HORIZONTAL);
+//					mRenderer.mTargetPositionX = Math.round(
+//							mRenderer.mPositionX
+//							-
+//							(Constants.SCROLL_SPEED_BOOST * mScrollingSpeed));
+//					/* small optimization to avoid weird moves on the edges */
+////					if(mRenderer.mTargetPositionX == -1)
+////						mRenderer.mTargetPositionX = -2;
+////					else if(mRenderer.mTargetPositionX == 24)
+////						mRenderer.mTargetPositionX = 24 + 1;
 				}
 				
 
 				
-				/* end touch movement */
+				/**
+				 * RESET STATE 
+				 */
 				mScrolling = false;
 				mScrollingX = false;
 				mScrollingY = false;
 				mLongClick = false;
 
-				/* render */
+				/**
+				 * SHOW MOVEMENT
+				 */
 				mRenderer.renderNow();
 				return true;
 			} 

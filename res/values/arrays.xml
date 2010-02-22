@@ -5,6 +5,7 @@
 		<item>@string/menu_option_title_playlist_id</item>
 		<item>@string/menu_option_title_concerts</item>
 		<item>@string/menu_option_title_view_mode</item>
+		<item>@string/menu_option_title_theme</item>
 		<item>@string/menu_option_title_preferences</item>
 	</string-array>
 	
@@ -14,12 +15,19 @@
 		<item>2</item>
 		<item>3</item>
 		<item>4</item>
+		<item>5</item>
 	</integer-array>
 	
 	<!--	VIEW MODES	-->
 	<string-array name="view_modes">
 		<item>@string/view_mode_cube</item>
 		<item>@string/view_mode_wall</item>
+	</string-array>
+	
+	<!--	THEMES	-->
+	<string-array name="themes">
+		<item>@string/theme_normal</item>
+		<item>@string/theme_halftone</item>
 	</string-array>
 	
     <string-array name="preference_scrobble_list_names">

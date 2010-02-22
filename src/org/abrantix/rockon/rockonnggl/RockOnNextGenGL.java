@@ -75,6 +75,7 @@ public class RockOnNextGenGL extends Activity {
 	/** Global Vars */
 //	Context											mContext;
 	int												mRendererMode;
+	int												mTheme;
 	GLSurfaceView 									mGlSurfaceView;
 //	RockOnCubeRenderer 								mRockOnCubeRenderer;
 	RockOnRenderer	 								mRockOnRenderer;
@@ -84,10 +85,13 @@ public class RockOnNextGenGL extends Activity {
     /** Dialogs */
     private	AlertDialog.Builder					mPlaylistDialog;
     private	AlertDialog.Builder					mViewModeDialog;
+    private	AlertDialog.Builder					mThemeDialog;
+    private	AlertDialog.Builder					mHalfToneThemeDialog;
 	private AlertDialog.Builder					mInstallConcertAppDialog;
     
 	/** Initialized vars */
 	AlbumArtDownloadOkClickListener		mAlbumArtDownloadOkClickListener = null;
+	ThemeChangeClickListener			mThemeChangeClickListener = null;
     private IRockOnNextGenService 		mService = null;
 	
 	/** State Variables */
@@ -138,6 +142,7 @@ public class RockOnNextGenGL extends Activity {
 //        }
         
         resumeAlbumArtDownload();
+        resumeAlbumArtProcessing();
         
         /* some stuff needs to be read from the preferences before we do anything else */
         initializeState();
@@ -233,14 +238,28 @@ public class RockOnNextGenGL extends Activity {
 	    	
 	    	/* check if downloading album art */
 	    	if(mAlbumArtDownloadOkClickListener != null &&
-	    			mAlbumArtDownloadOkClickListener.isDownloading()){
+	    			mAlbumArtDownloadOkClickListener.isDownloading())
+	    	{
 	    		mAlbumArtDownloadOkClickListener.stopArtDownload();
 	    		/* save state */
 	    		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 	    		editor.putBoolean(getString(R.string.preference_key_downloading_art_state), true);
 	    		editor.commit();
 	    	}
-	    	
+
+	    	/* check if processing album art */
+	    	if(mThemeChangeClickListener != null &&
+	    			mThemeChangeClickListener.isProcessing() &&
+	    			!mThemeChangeClickListener.isInTheBackground())
+	    	{
+	    		mThemeChangeClickListener.stopArtProcessing();
+	    		/* save state */
+	    		Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+	    		editor.putBoolean(Constants.prefkey_mThemeProcessing, true);
+	    		editor.putInt(Constants.prefkey_mThemeBeingProcessed, mThemeChangeClickListener.getTheme());
+	    		editor.commit();
+	    	}
+	    
 	    	/* Unbind service */
 	    	if(mService != null){
 	    		unbindService(mServiceConnection);
@@ -283,6 +302,8 @@ public class RockOnNextGenGL extends Activity {
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_concerts)))
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_view_mode)))
+    			menu.getItem(i).setIcon(android.R.drawable.ic_menu_view);
+    		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_theme)))
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_gallery);
     	}
     	
@@ -360,6 +381,23 @@ public class RockOnNextGenGL extends Activity {
     						getResources().getStringArray(R.array.view_modes)),
     				mRendererChoiceDialogClick);
     		mViewModeDialog.show();
+    	}
+    	/**
+    	 *  Theme 
+    	 */
+    	else if(item.getTitle().
+    		equals(getString(R.string.menu_option_title_theme)))
+    	{
+    		mThemeDialog = new AlertDialog.Builder(this);
+    		mThemeDialog.setTitle(getString(R.string.menu_option_title_theme));
+    		mThemeDialog.setAdapter(
+    				new ArrayAdapter<String>(
+    						this,
+    						android.R.layout.select_dialog_item,
+    						android.R.id.text1,
+    						getResources().getStringArray(R.array.themes)),
+    				mThemeChoiceDialogClick);
+    		mThemeDialog.show();
     	}
     	/**
     	 *  Playlists 
@@ -490,9 +528,7 @@ public class RockOnNextGenGL extends Activity {
 					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_CUBE);
 					edit.commit();
 					// reload views
-					showNavigator();
-					attachListeners();
-					resumeNavigatorState();
+					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_CUBE);
 				}
 				else if(rendererArray[which].equals(getString(R.string.view_mode_wall)))
 				{
@@ -501,13 +537,82 @@ public class RockOnNextGenGL extends Activity {
 					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_WALL);
 					edit.commit();
 					// reload views
-					showNavigator();
-					attachListeners();
-					resumeNavigatorState();
+					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_WALL);
 				}
 			}
 		};
+	
+		private DialogInterface.OnClickListener mThemeChoiceDialogClick = 
+			new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					String[] themeArray = getResources().getStringArray(R.array.themes);
+					if(themeArray[which].equals(getString(R.string.theme_normal)))
+					{
+						// save in preferences
+						Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+						edit.putInt(Constants.prefkey_mTheme, Constants.THEME_NORMAL);
+						edit.commit();
+						// reload views
+						mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.THEME_NORMAL);
+					}
+					else if(themeArray[which].equals(getString(R.string.theme_halftone)))
+					{
+						/**
+						 * Create our image processing manager
+						 */
+						if(mThemeChangeClickListener == null)
+							mThemeChangeClickListener = 
+								new ThemeChangeClickListener(
+										RockOnNextGenGL.this, 
+										Constants.THEME_HALFTONE,
+										mLoadNewViewModeOrTheme);
+						else
+							mThemeChangeClickListener.
+								changeTheme(Constants.THEME_HALFTONE, false);
+						
+						/**
+						 * Check preferences to see if art was already processed
+						 */
+						if(!PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+								getBoolean(Constants.prefkey_mThemeHalfToneDone, false))
+						{
+							mHalfToneThemeDialog = new AlertDialog.Builder(RockOnNextGenGL.this);
+							mHalfToneThemeDialog.setTitle(R.string.half_tone_dialog_title);
+							mHalfToneThemeDialog.setMessage(R.string.half_tone_dialog_message);
+							mHalfToneThemeDialog.setPositiveButton(
+									R.string.half_tone_dialog_yes, 
+									mThemeChangeClickListener);
+							mHalfToneThemeDialog.setNegativeButton(R.string.half_tone_dialog_no, null);
+							mHalfToneThemeDialog.show();
+						}
+						else
+						{
+							mThemeChangeClickListener.mArtProcessingTrigger.sendEmptyMessage(0);
+//							// save in preferences
+//							Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+//							edit.putInt(Constants.prefkey_mTheme, Constants.THEME_HALFTONE);
+//							edit.commit();
+//							// reload views
+//							mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.THEME_HALFTONE);
+						}
+					}
+				}
+			};
 		
+			
+	private Handler mLoadNewViewModeOrTheme = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			showNavigator();
+			attachListeners();
+			resumeNavigatorState();
+		}
+	};
+	
     private Handler mPlaylistSelectedHandler = new Handler(){
     	public void handleMessage(Message msg){
     		int playlistId = msg.what;
@@ -716,6 +821,36 @@ public class RockOnNextGenGL extends Activity {
     }
     
     /**
+     * resumeAlbumArtProcessing
+     */
+    private void resumeAlbumArtProcessing(){
+    	/* resume art processing if the application was shut down while downloading art */
+    	if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+    			.getBoolean(Constants.prefkey_mThemeProcessing, false))
+    	{
+			if(mThemeChangeClickListener == null)
+				mThemeChangeClickListener = 
+					new ThemeChangeClickListener(
+							RockOnNextGenGL.this, 
+							PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+    	    					.getInt(Constants.prefkey_mThemeBeingProcessed, Constants.THEME_NORMAL),
+							mLoadNewViewModeOrTheme);
+			else
+				mThemeChangeClickListener.
+					changeTheme(
+						PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+	    					.getInt(Constants.prefkey_mThemeBeingProcessed, Constants.THEME_NORMAL),
+						false);
+
+    		mThemeChangeClickListener.mArtProcessingTrigger.sendEmptyMessage(0);
+			Editor editor = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext()).edit();
+			editor.putBoolean(Constants.prefkey_mThemeProcessing, false);
+			editor.commit();    		
+    	}
+    }
+    
+    /**
      * save navigator state
      */
     private void saveNavigatorState(){
@@ -806,19 +941,26 @@ public class RockOnNextGenGL extends Activity {
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
         			getInt(Constants.prefkey_mRendererMode, Constants.RENDERER_CUBE);
+        mTheme = 
+        	PreferenceManager.
+        		getDefaultSharedPreferences(getApplicationContext()).
+        			getInt(Constants.prefkey_mTheme, Constants.THEME_NORMAL);
+        
         switch(mRendererMode)
         {
         case Constants.RENDERER_CUBE:
 	   		RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
 	        		getApplicationContext(),
-	        		mRequestRenderHandler);
+	        		mRequestRenderHandler,
+	        		mTheme);
 	   		mGlSurfaceView.setRenderer(rockOnCubeRenderer);
 	   		mRockOnRenderer = (RockOnRenderer) rockOnCubeRenderer;	
 	        break;
         case Constants.RENDERER_WALL:
         	RockOnWallRenderer rockOnWallRenderer = new RockOnWallRenderer(
 	        		getApplicationContext(),
-	        		mRequestRenderHandler);
+	        		mRequestRenderHandler,
+	        		mTheme);
 	   		mGlSurfaceView.setRenderer(rockOnWallRenderer);
 	   		mRockOnRenderer = (RockOnRenderer) rockOnWallRenderer;	
 	        break;
@@ -950,16 +1092,16 @@ public class RockOnNextGenGL extends Activity {
     	/* set the navigator in the right position */
     	if(mNavigatorPositionY == -1)
     		mNavigatorPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorPositionY, -1);
+    			getFloat(Constants.prefkey_mNavigatorPositionY, 0);
     	if(mNavigatorTargetPositionY == -1)
     		mNavigatorTargetPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorTargetPositionY, -1);
+    			getFloat(Constants.prefkey_mNavigatorTargetPositionY, 0);
     	if(mNavigatorPositionX == -1)
     		mNavigatorPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorPositionX, -1);
+    			getFloat(Constants.prefkey_mNavigatorPositionX, 0);
     	if(mNavigatorTargetPositionX == -1)
     		mNavigatorTargetPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorTargetPositionX, -1);
+    			getFloat(Constants.prefkey_mNavigatorTargetPositionX, 0);
     	setNavigatorPosition(
     			mNavigatorPositionX, mNavigatorTargetPositionX,
     			mNavigatorPositionY, mNavigatorTargetPositionY);    	

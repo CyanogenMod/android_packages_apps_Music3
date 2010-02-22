@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -280,6 +281,59 @@ public class AlbumArtUtils{
 		} catch(Exception e){
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	
+	static public Bitmap processAndSaveSmallAlbumCoverInSdCard(
+			Bitmap 			bitmap, 
+			byte[] 			buffer, 
+			String 			albumKey,
+			ImageProcessor 	imgProc)
+	{
+		Bitmap outputBitmap = null;
+		try{
+			if(bitmap != null && buffer != null)
+			{
+				/** Check if file has already been created */
+				File fileOut = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey+Constants.THEME_HALF_TONE_FILE_EXT);
+				if(fileOut.exists() && fileOut.length() > 0 &&
+						fileOut.length() == bitmap.getHeight() * bitmap.getWidth() * 2) // 2bytes - RGB565 format
+				{
+					return null;
+				}
+				/** Read small normal bitmap */
+				File fileIn = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey);
+				if(fileIn.exists() && fileIn.length() > 0)
+				{
+					FileInputStream albumCoverFileInputStream = new FileInputStream(fileIn);
+					albumCoverFileInputStream.read(buffer, 0, buffer.length);
+					bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(buffer));
+					
+					/** process bitmap */
+					outputBitmap = imgProc.process(bitmap);
+					
+					/** save small bitmap on SdCard */
+					fileOut.createNewFile();
+					FileOutputStream fileOutStream = new FileOutputStream(fileOut);
+					Bitmap smallBitmapPostProc = smallCoverPostProc(outputBitmap);
+					ByteBuffer bitmapBuffer = ByteBuffer.allocate(
+							smallBitmapPostProc.getRowBytes() * smallBitmapPostProc.getHeight());
+				    smallBitmapPostProc.copyPixelsToBuffer(bitmapBuffer);
+				    fileOutStream.write(bitmapBuffer.array());
+				}
+				return outputBitmap;
+			}
+			else
+			{
+				return outputBitmap;
+			}
+		} catch(OutOfMemoryError err) {
+			err.printStackTrace();
+			return outputBitmap;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return outputBitmap;
 		}
 	}
 }

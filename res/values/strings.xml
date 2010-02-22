@@ -8,9 +8,9 @@
     <string name="app_name">³</string>
     
 	<!--    ALBUM ART MESSAGES-->
-	<string name="get_art_dialog_title">RockOn Album Art</string>
+	<string name="get_art_dialog_title">³ Album Art</string>
 	<string name="get_art_dialog_message">
-		RockOn can fetch missing art for your albums from the Internet. Do you want to do it now? (It will take ~1 min for each 10 albums and it is recommended to be performed over a Wifi connection).
+		³ can fetch missing art for your albums from the Internet. Do you want to do it now? (It will take ~1 min for each 10 albums and it is recommended to be performed over a Wifi connection).
 	</string>
 	<string name="get_art_dialog_yes">Yes!</string>
 	<string name="get_art_dialog_no">I\'ll do it later.</string>
@@ -67,6 +67,25 @@
 	<!-- 	VIEW MODES DIALOG -->
 	<string name="view_mode_cube">³</string>
 	<string name="view_mode_wall">Wall</string>
+	
+	<!-- 	THEMES DIALOG -->
+	<string name="theme_normal">Normal</string>
+	<string name="theme_halftone">Half tone</string>
+	
+	<!--	THEME PROCESSING MESSAGES	-->
+	<string name="art_processing_progress_title">Processing Album Art</string>
+	<string name="art_processing_cancel">Cancel</string>
+	<string name="art_processing_go_background">Do it in the background</string>
+	<string name="art_processing_progress_initial_message">Searching album art...</string>
+	
+	<!--    HALF TONE DIALOG -->
+	<string name="half_tone_dialog_title">Half Tone Theme</string>
+	<string name="half_tone_dialog_message">
+		Half tone requires some processing of your current album art. It is a processor intensive task and it may take a while (~1 min for each 30 albums).
+	</string>
+	<string name="half_tone_dialog_yes">Do it!</string>
+	<string name="half_tone_dialog_no">It seems like trouble. Out!</string>
+	
 	
 	<!--	ACTIVITY INTENTS (some of them)-->
 	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>

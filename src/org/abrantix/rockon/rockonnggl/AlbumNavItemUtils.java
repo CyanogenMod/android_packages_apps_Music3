@@ -71,8 +71,9 @@ public class AlbumNavItemUtils{
 			AlbumNavItem albumNavItem, 
 			int width, 
 			int height, 
-			byte[] colorComponent){
-		
+			byte[] colorComponent,
+			int theme)
+	{
 		try{
 			/** Sanity check */
 	    	if(albumNavItem.cover.getWidth() != width || 
@@ -84,16 +85,23 @@ public class AlbumNavItemUtils{
 	    	albumCoverPath = null;
 				
 	    	/** Get the path to the album art */
-	//    	path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
-	//				FileUtils.validateFileName(albumNavItem.artistName)+
-	//				" - "+
-	//				FileUtils.validateFileName(albumNavItem.albumName)+
-	//				".bmp";
-	    	path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
-	    			RockOnFileUtils.validateFileName(
-	    					albumNavItem.albumId);
-//	    					URLEncoder.encode(albumNavItem.albumKey));
-			
+	    	switch(theme)
+	    	{
+	    	case Constants.THEME_NORMAL:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+    				RockOnFileUtils.validateFileName(albumNavItem.albumId);
+	    		break;
+	    	case Constants.THEME_HALFTONE:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+    				RockOnFileUtils.validateFileName(albumNavItem.albumId)+
+    				Constants.THEME_HALF_TONE_FILE_EXT;
+	    		break;
+	    	default:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+					RockOnFileUtils.validateFileName(albumNavItem.albumId);
+	    		break;
+	    	}
+	    
 			/** Access the file */
 			albumCoverFile = new File(path);
 			if(albumCoverFile.exists() && albumCoverFile.length() > 0){
@@ -195,7 +203,7 @@ public class AlbumNavItemUtils{
     		return false;
     	}
     	/** Create bitmap */
-    	albumNavItem.label.eraseColor(Color.parseColor("#00000000"));
+    	albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
     	canvas.setBitmap(albumNavItem.label);
     	canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
     	labelAlbumPaint.setTextSize(.28f * height);

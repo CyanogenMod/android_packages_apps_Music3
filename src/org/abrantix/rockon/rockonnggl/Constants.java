@@ -21,6 +21,15 @@ public class Constants{
 	static final int RENDERER_CUBE = 0;
 	static final int RENDERER_WALL = 1;
 	
+	/** Theme Types */
+	static final int THEME_NORMAL = 100; // these should not coincide with the Renderer modes
+	static final int THEME_HALFTONE = 101;
+	
+	/** Half Tone Theme */
+	static final int 	THEME_HALF_TONE_PROC_RESOLUTION = 640; 
+	static final int 	THEME_HALF_TONE_BLOCK_COUNT = 64; 
+	static final String THEME_HALF_TONE_FILE_EXT = ".halftone";
+
 	/** Playlist Ids **/
 	static final int PLAYLIST_UNKNOWN = -1; // uninitialized variable
 	static final int PLAYLIST_ALL = -2;
@@ -167,7 +176,7 @@ public class Constants{
 	static final double	FRAME_JUMP_MAX = 10;
 	static final float	SCROLL_SPEED_SMOOTHNESS = 2.5f; // as the fraction of the overall animation that should be obtained (per second)
 	static final float	CPU_SMOOTHNESS = 0.1f; // as the fraction of the overall animation that should be obtained (per second)
-	static final float	MIN_SCROLL = 1.75f; // as the fraction of the cover size (per second)
+	static final float	MIN_SCROLL = 1.5f; // as the fraction of the cover size (per second)
 	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
 	static final float	SCROLL_SPEED_BOOST = 35.f;
 	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
@@ -207,6 +216,9 @@ public class Constants{
 	// album fetching thread - ui
 	static final String	ALBUM_ART_DOWNLOAD_UI_UPDATE_IPC_MSG = "info";
 	static final String	ALBUM_ART_DOWNLOAD_UI_UPDATE_DONE_IPC_MSG = "info_done";
+	// art theme processing thread - ui
+	static final String	ALBUM_ART_PROCESSING_UI_UPDATE_IPC_MSG = "info";
+	static final String	ALBUM_ART_PROCESSING_UI_UPDATE_DONE_IPC_MSG = "info_done";
     
 	// Main app - ignore sdcard intent
 	// FIXME: restart activity not working
@@ -298,6 +310,10 @@ public class Constants{
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mRendererMode = "mRendererMode";
+	static final String	prefkey_mTheme = "mTheme";
+	static final String	prefkey_mThemeProcessing = "mThemeProcessing";
+	static final String	prefkey_mThemeBeingProcessed = "mThemeBeingProcessed";
+	static final String	prefkey_mThemeHalfToneDone = "mThemeHalfToneDone";
 	static final String	prefkey_mNavigatorPositionX = "mNavigatorPositionX";
 	static final String prefkey_mNavigatorTargetPositionX = "mNavigatorTargetPositionX";
 	static final String	prefkey_mNavigatorPositionY = "mNavigatorPositionY";

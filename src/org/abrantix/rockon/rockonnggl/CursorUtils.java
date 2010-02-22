@@ -38,45 +38,6 @@ public class CursorUtils{
 					Constants.albumAlphabeticalSortOrder);
 	}
 	
-//	/**
-//	 * Create Album Cursor
-//	 * @param playlistId
-//	 * @return
-//	 */
-//	Cursor getAlbumListFromPlaylistLegacy(int playlistId){
-//				
-//		/** ALL ALBUMS **/
-//		if(true || Constants.PLAYLIST_ALL == playlistId)
-//		{
-//			ContentResolver resolver = ctx.getContentResolver();
-//			return resolver.query(
-//					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-//					Constants.albumProjection, 
-//					null, 
-//					null, 
-//					Constants.albumAlphabeticalSortOrder);
-//		} 
-//		/** 'NORMAL' PLAYLISTS */
-//		else if(playlistId > 0)
-//		{
-//			ContentResolver resolver = ctx.getContentResolver();
-//			return resolver.query(
-//					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-//					new String[]{
-//							MediaStore.Audio.Playlists.Members._ID,
-//							MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
-//							MediaStore.Audio.Playlists.Members.ALBUM_ART,
-//							MediaStore.Audio.Playlists.Members.ALBUM_ID,
-//							MediaStore.Audio.Playlists.Members.ALBUM
-//					},
-//					null,
-//					null,
-//					null);
-//		}
-//		/** GENRE PLAYLISTS*/
-//		return null;
-//	}
-	
 	Cursor getAlbumListFromPlaylist(int playlistId){
 		
 		/** ALL ALBUMS **/
@@ -102,7 +63,7 @@ public class CursorUtils{
 							"external", 
 							playlistId),
 					Constants.playlistMembersProjection,
-					null,
+					MediaStore.Audio.Playlists.Members.IS_MUSIC+"=1", // Filter Ringtones and other funny stuff
 					null,
 					Constants.playlistMembersAlbumSorting);
 			
@@ -168,7 +129,7 @@ public class CursorUtils{
 							"external", 
 							Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
 					Constants.genreMemberProjection,
-					null,
+					MediaStore.Audio.Genres.Members.IS_MUSIC+"=1",
 					null,
 //					null);
 					Constants.genreMembersAlbumSorting);
@@ -266,7 +227,9 @@ public class CursorUtils{
 		return
 			getSongsFromPlaylistWithConstraint(
 				playlistId, 
-				MediaStore.Audio.Media.ALBUM_ID + " = " + albumId);
+				MediaStore.Audio.Media.ALBUM_ID + " = " + albumId+
+					" AND "+
+					MediaStore.Audio.Media.IS_MUSIC + "=1");
 //		ContentResolver resolver = ctx.getContentResolver();
 //		Cursor			songList = resolver.query(
 //				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -301,7 +264,9 @@ public class CursorUtils{
 			Cursor songList = ctx.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					Constants.songProjection,
-					constraint,
+					constraint+
+						" AND "+
+						MediaStore.Audio.Media.IS_MUSIC + "=1",
 					null,
 					Constants.songListAlbumAndNumericalSorting);
 			return songList;
@@ -314,7 +279,9 @@ public class CursorUtils{
 							"external", 
 							playlistId),
 					Constants.playlistMembersProjection,
-					constraint,
+					constraint+
+						" AND "+
+						MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1",
 					null,
 					Constants.songListAlbumAndNumericalSorting);
 			return songList;
@@ -328,7 +295,9 @@ public class CursorUtils{
 							"external", 
 							Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
 					Constants.genreMemberProjection,
-					constraint,
+					constraint+
+						" AND "+
+						MediaStore.Audio.Genres.Members.IS_MUSIC + "=1",
 					null,
 					Constants.songListAlbumAndNumericalSorting);
 			return songList;
