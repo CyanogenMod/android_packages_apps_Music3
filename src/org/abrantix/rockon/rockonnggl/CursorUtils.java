@@ -243,7 +243,7 @@ public class CursorUtils{
 	}
 	
 	Cursor	getAllSongsFromPlaylist(int playlistId){
-		return getSongsFromPlaylistWithConstraint(playlistId, null);
+		return getSongsFromPlaylistWithConstraint(playlistId, MediaStore.Audio.Media.IS_MUSIC + "=1");
 //		switch(playlistId){
 //		case Constants.PLAYLIST_ALL:
 //			Cursor songList = ctx.getContentResolver().query(
@@ -264,9 +264,7 @@ public class CursorUtils{
 			Cursor songList = ctx.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					Constants.songProjection,
-					constraint+
-						" AND "+
-						MediaStore.Audio.Media.IS_MUSIC + "=1",
+					constraint,
 					null,
 					Constants.songListAlbumAndNumericalSorting);
 			return songList;
