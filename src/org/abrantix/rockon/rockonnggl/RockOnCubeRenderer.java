@@ -846,7 +846,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
    		 * New Y pivot
    		 */
     	// avoid rotations from a very far away point 
-    	if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
+    	if(mAlbumCursor != null &&
+    		mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
     		mPositionY = mAlbumCursor.getCount() - 1;
 
     	//		position += speedFactor * speed;

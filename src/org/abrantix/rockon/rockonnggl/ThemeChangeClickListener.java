@@ -95,7 +95,14 @@ public class ThemeChangeClickListener implements OnClickListener{
 						.getString(Constants.ALBUM_ART_PROCESSING_UI_UPDATE_DONE_IPC_MSG)
 						!= null)
 				{
-					mProgressDialog.dismiss();
+					try
+					{
+						mProgressDialog.dismiss();
+					} 
+					catch (IllegalArgumentException e) // based on bug reports
+					{
+						e.printStackTrace();
+					}
 					stopArtProcessing();
 					// save in preferences
 					Log.i(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXXX");

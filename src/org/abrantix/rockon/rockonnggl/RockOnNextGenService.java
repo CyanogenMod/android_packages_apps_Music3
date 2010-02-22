@@ -1488,9 +1488,9 @@ public class RockOnNextGenService extends Service {
                 int numUnplayed = numTracks;
                 for (int i=0;i < numHistory; i++) {
                     int idx = mHistory.get(i).intValue();
-                    Log.i(TAG, "Checking history element: "+i+" - "+idx+" - track: "+tracks[idx]);
+//                    Log.i(TAG, "Checking history element: "+i+" - "+idx+" - track: "+tracks[idx]);
                     if (idx < numTracks && tracks[idx] >= 0) {
-                    	Log.i(TAG, " -- played already: "+numTracks);
+//                    	Log.i(TAG, " -- played already: "+numTracks);
                 	    numUnplayed--;
                         tracks[idx] = -1;
                     }
@@ -2030,7 +2030,7 @@ public class RockOnNextGenService extends Service {
      */
     public long getAudioId() {
         synchronized (this) {
-            if (mPlayPos >= 0 && mPlayer.isInitialized()) {
+            if (mPlayList.length > 0 && mPlayPos >= 0 && mPlayer.isInitialized()) {
             	// XXX Bug Report fix
             	if(mPlayPos < mPlayList.length)
             		return mPlayList[mPlayPos];
