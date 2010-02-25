@@ -27,8 +27,8 @@
 	<string name="no_sd_card_dialog_continue_anyway">Continue anyway</string>
 	<string name="no_sd_card_dialog_exit">Exit</string>
 	<!--	NO MUSIC MESSAGES -->
-	<string name="no_music_dialog_title">No music on SD card!</string>
-	<string name="no_music_dialog_message">Could not find any music on your SD card, please reload the application...</string>
+	<string name="no_music_dialog_title">No music on this playlist!</string>
+	<string name="no_music_dialog_message">Could not find any music for this playlist on your SD card, please reload the application or change the playlist...</string>
 	<string name="no_music_dialog_continue_anyway">Continue anyway</string>
 	<string name="no_music_dialog_exit">Exit</string>
 	
@@ -71,6 +71,7 @@
 	<!-- 	THEMES DIALOG -->
 	<string name="theme_normal">Normal</string>
 	<string name="theme_halftone">Half tone</string>
+	<string name="theme_earthquake">Earthquake</string>
 	
 	<!--	THEME PROCESSING MESSAGES	-->
 	<string name="art_processing_progress_title">Processing Album Art</string>
@@ -85,6 +86,14 @@
 	</string>
 	<string name="half_tone_dialog_yes">Do it!</string>
 	<string name="half_tone_dialog_no">It seems like trouble. Out!</string>
+	
+	<!--    EARTHQUAKE DIALOG -->
+	<string name="earthquake_dialog_title">Earthquake Theme</string>
+	<string name="earthquake_dialog_message">
+		Earthquake requires some processing of your current album art. But this one is fast don't worry (10 secs for 100 albums).
+	</string>
+	<string name="earthquake_dialog_yes">Do it!</string>
+	<string name="earthquake_dialog_no">It seems like trouble. Out!</string>
 	
 	
 	<!--	ACTIVITY INTENTS (some of them)-->

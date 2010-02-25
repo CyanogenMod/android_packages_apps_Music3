@@ -2030,13 +2030,16 @@ public class RockOnNextGenService extends Service {
      */
     public long getAudioId() {
         synchronized (this) {
-            if (mPlayList.length > 0 && mPlayPos >= 0 && mPlayer.isInitialized()) {
-            	// XXX Bug Report fix
-            	if(mPlayPos < mPlayList.length)
-            		return mPlayList[mPlayPos];
-            	else
-            		return mPlayList[mPlayList.length-1];
-            }
+        	if(mPlayList != null && mPlayList.length > 0)
+    	   	// XXX Bug Report fix
+        	{
+	            if (mPlayPos >= 0 && mPlayer.isInitialized()) {
+	            	if(mPlayPos < mPlayList.length)
+	            		return mPlayList[mPlayPos];
+	            	else
+	            		return mPlayList[mPlayList.length-1];
+	            }
+        	}
         }
         return -1;
     }

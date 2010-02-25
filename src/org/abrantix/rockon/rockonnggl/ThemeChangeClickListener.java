@@ -147,8 +147,15 @@ public class ThemeChangeClickListener implements OnClickListener{
 	
 	public void stopArtProcessing(){
 		mAlbumArtProcessor.stopAlbumArt();
-		mProgressDialog.dismiss();
 		mProcessing = false;
+		try
+		{
+			mProgressDialog.dismiss();
+		}
+		catch(IllegalArgumentException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 }

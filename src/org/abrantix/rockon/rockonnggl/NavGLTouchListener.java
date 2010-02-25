@@ -146,9 +146,9 @@ public class NavGLTouchListener implements OnTouchListener{
 					
 					mScrollingSpeed = 
 						(float) 
-						(-0.75 * (event.getY() - lastY) // /mItemDimension
+						(-0.85 * (event.getY() - lastY) // /mItemDimension
 						+
-						(1-0.75) * mScrollingSpeed);
+						(1-0.85) * mScrollingSpeed);
 				}
 				/**
 				 * HORIZONTAL MOVE
@@ -159,9 +159,9 @@ public class NavGLTouchListener implements OnTouchListener{
 
 					mScrollingSpeed = 
 						(float) 
-						(0.75 * (event.getX() - lastX) // /mItemDimension
+						(0.85 * (event.getX() - lastX) // /mItemDimension
 						+
-						(1-0.75) * mScrollingSpeed);
+						(1-0.85) * mScrollingSpeed);
 				}
 				
 				/**

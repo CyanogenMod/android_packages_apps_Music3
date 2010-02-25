@@ -96,6 +96,11 @@ public class AlbumNavItemUtils{
     				RockOnFileUtils.validateFileName(albumNavItem.albumId)+
     				Constants.THEME_HALF_TONE_FILE_EXT;
 	    		break;
+	    	case Constants.THEME_EARTHQUAKE:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+    				RockOnFileUtils.validateFileName(albumNavItem.albumId)+
+    				Constants.THEME_EARTHQUAKE_FILE_EXT;
+	    		break;
 	    	default:
 	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
 					RockOnFileUtils.validateFileName(albumNavItem.albumId);

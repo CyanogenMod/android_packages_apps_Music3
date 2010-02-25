@@ -86,7 +86,7 @@ public class RockOnNextGenGL extends Activity {
     private	AlertDialog.Builder					mPlaylistDialog;
     private	AlertDialog.Builder					mViewModeDialog;
     private	AlertDialog.Builder					mThemeDialog;
-    private	AlertDialog.Builder					mHalfToneThemeDialog;
+    private	AlertDialog.Builder					mSpecificThemeDialog;
 	private AlertDialog.Builder					mInstallConcertAppDialog;
     
 	/** Initialized vars */
@@ -578,14 +578,14 @@ public class RockOnNextGenGL extends Activity {
 						if(!PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
 								getBoolean(Constants.prefkey_mThemeHalfToneDone, false))
 						{
-							mHalfToneThemeDialog = new AlertDialog.Builder(RockOnNextGenGL.this);
-							mHalfToneThemeDialog.setTitle(R.string.half_tone_dialog_title);
-							mHalfToneThemeDialog.setMessage(R.string.half_tone_dialog_message);
-							mHalfToneThemeDialog.setPositiveButton(
+							mSpecificThemeDialog = new AlertDialog.Builder(RockOnNextGenGL.this);
+							mSpecificThemeDialog.setTitle(R.string.half_tone_dialog_title);
+							mSpecificThemeDialog.setMessage(R.string.half_tone_dialog_message);
+							mSpecificThemeDialog.setPositiveButton(
 									R.string.half_tone_dialog_yes, 
 									mThemeChangeClickListener);
-							mHalfToneThemeDialog.setNegativeButton(R.string.half_tone_dialog_no, null);
-							mHalfToneThemeDialog.show();
+							mSpecificThemeDialog.setNegativeButton(R.string.half_tone_dialog_no, null);
+							mSpecificThemeDialog.show();
 						}
 						else
 						{
@@ -596,6 +596,47 @@ public class RockOnNextGenGL extends Activity {
 //							edit.commit();
 //							// reload views
 //							mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.THEME_HALFTONE);
+						}
+					}
+					else if(themeArray[which].equals(getString(R.string.theme_earthquake)))
+					{
+						/**
+						 * Create our image processing manager
+						 */
+						if(mThemeChangeClickListener == null)
+							mThemeChangeClickListener = 
+								new ThemeChangeClickListener(
+										RockOnNextGenGL.this, 
+										Constants.THEME_EARTHQUAKE,
+										mLoadNewViewModeOrTheme);
+						else
+							mThemeChangeClickListener.
+								changeTheme(Constants.THEME_EARTHQUAKE, false);
+						
+						/**
+						 * Check preferences to see if art was already processed
+						 */
+						if(!PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+								getBoolean(Constants.prefkey_mThemeEarthquakeDone, false))
+						{
+							mSpecificThemeDialog = new AlertDialog.Builder(RockOnNextGenGL.this);
+							mSpecificThemeDialog.setTitle(R.string.earthquake_dialog_title);
+							mSpecificThemeDialog.setMessage(R.string.earthquake_dialog_message);
+							mSpecificThemeDialog.setPositiveButton(
+									R.string.earthquake_dialog_yes, 
+									mThemeChangeClickListener);
+							mSpecificThemeDialog.setNegativeButton(R.string.earthquake_dialog_no, null);
+							mSpecificThemeDialog.show();
+						}
+						else
+						{
+							mThemeChangeClickListener.mArtProcessingTrigger.sendEmptyMessage(0);
+//							// save in preferences
+//							Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+//							edit.putInt(Constants.prefkey_mTheme, Constants.THEME_EARTHQUAKE);
+//							edit.commit();
+//							// reload views
+//							mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.THEME_EARTHQUAKE);
 						}
 					}
 				}
@@ -762,7 +803,7 @@ public class RockOnNextGenGL extends Activity {
 					}
 				});
     	// TODO: better to set an ondismiss listener
-    	noSdCardAlert.setCancelable(false);
+    	noSdCardAlert.setCancelable(true);
     	noSdCardAlert.show();
     }
     
@@ -782,7 +823,7 @@ public class RockOnNextGenGL extends Activity {
 					}
 				});
     	// TODO: better to set an ondismiss listener
-    	noMusicAlert.setCancelable(false);
+//    	noMusicAlert.setCancelable(false);
     	noMusicAlert.show();
     }
 //	
@@ -1462,9 +1503,6 @@ public class RockOnNextGenGL extends Activity {
 			try{
 				/* song list cursor */
 				CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
-//				Cursor		songCursor = cursorUtils.getSongListCursorFromSongList(
-//						mService.getQueue(),
-//						mService.getQueuePosition()); // TODO: read the actual playlist ID
 				Cursor		songCursor = 
 					cursorUtils.getSongListCursorFromSongList(
 						mService.getOutstandingQueue(),
@@ -1478,10 +1516,6 @@ public class RockOnNextGenGL extends Activity {
 					dialogBuilder.setTitle(
 							getString(R.string.play_queue_title));
 					/* show the album song list  in a dialog */
-	//				dialogBuilder.setCursor(
-	//						songCursor,
-	//						new SongSelectedClickListener(mSongItemSelectedHandler, songCursor),
-	//						MediaStore.Audio.Media.TITLE);
 					SongCursorAdapter songCursorAdapter = 
 						new SongCursorAdapter(
 								getApplicationContext(),
@@ -1524,6 +1558,7 @@ public class RockOnNextGenGL extends Activity {
 					mService.removeTracks(
 						0,
 						mService.getQueue().length-1);
+					updateCurrentPlayerStateButtonsFromServiceHandler.sendEmptyMessage(0);
 				}catch(Exception e){
 					e.printStackTrace();
 				}

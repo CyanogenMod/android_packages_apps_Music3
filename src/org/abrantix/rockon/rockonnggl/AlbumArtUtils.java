@@ -296,8 +296,8 @@ public class AlbumArtUtils{
 			if(bitmap != null && buffer != null)
 			{
 				/** Check if file has already been created */
-				File fileOut = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey+Constants.THEME_HALF_TONE_FILE_EXT);
-				if(fileOut.exists() && fileOut.length() > 0 &&
+				File fileOut = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey+imgProc.getThemeFileExt());
+				if(false && fileOut.exists() && fileOut.length() > 0 &&
 						fileOut.length() == bitmap.getHeight() * bitmap.getWidth() * 2) // 2bytes - RGB565 format
 				{
 					return null;

@@ -24,12 +24,18 @@ public class Constants{
 	/** Theme Types */
 	static final int THEME_NORMAL = 100; // these should not coincide with the Renderer modes
 	static final int THEME_HALFTONE = 101;
+	static final int THEME_EARTHQUAKE = 102;
 	
 	/** Half Tone Theme */
 	static final int 	THEME_HALF_TONE_PROC_RESOLUTION = 640; 
 	static final int 	THEME_HALF_TONE_BLOCK_COUNT = 64; 
 	static final String THEME_HALF_TONE_FILE_EXT = ".halftone";
 
+	/** Earthquake Theme */
+	static final int	THEME_EARTHQUAKE_BLOCK_COUNT = 256;
+	static final int	THEME_EARTHQUAKE_RANDOM_AMOUNT = 16;
+	static final String THEME_EARTHQUAKE_FILE_EXT = ".earthquake";
+	
 	/** Playlist Ids **/
 	static final int PLAYLIST_UNKNOWN = -1; // uninitialized variable
 	static final int PLAYLIST_ALL = -2;
@@ -314,6 +320,7 @@ public class Constants{
 	static final String	prefkey_mThemeProcessing = "mThemeProcessing";
 	static final String	prefkey_mThemeBeingProcessed = "mThemeBeingProcessed";
 	static final String	prefkey_mThemeHalfToneDone = "mThemeHalfToneDone";
+	static final String	prefkey_mThemeEarthquakeDone = "mThemeEarthquakeDone";
 	static final String	prefkey_mNavigatorPositionX = "mNavigatorPositionX";
 	static final String prefkey_mNavigatorTargetPositionX = "mNavigatorTargetPositionX";
 	static final String	prefkey_mNavigatorPositionY = "mNavigatorPositionY";

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 public class ImageProcessor
 {
@@ -31,6 +32,9 @@ public class ImageProcessor
 		case Constants.THEME_HALFTONE:
 			initHalfTonePaint();
 			return;
+		case Constants.THEME_EARTHQUAKE:
+			initEarthquakePaint();
+			return;
 		}
 	}
 	
@@ -45,12 +49,25 @@ public class ImageProcessor
 		mHalfToneBlackPaint.setAntiAlias(true);
 	}
 	
+	private void initEarthquakePaint()
+	{
+//		mHalfToneWhitePaint = new Paint();
+//		mHalfToneWhitePaint.setColor(Color.WHITE);
+//		mHalfToneWhitePaint.setAntiAlias(true);
+//		
+//		mHalfToneBlackPaint = new Paint();
+//		mHalfToneBlackPaint.setColor(Color.BLACK);
+//		mHalfToneBlackPaint.setAntiAlias(true);
+	}
+	
 	public Bitmap process(Bitmap bm)
 	{
 		switch(mTheme)
 		{
 		case Constants.THEME_HALFTONE:
-			return processHalfTone(bm);
+			return processHalfTone(bm);		
+		case Constants.THEME_EARTHQUAKE:
+			return processEarthquake(bm);
 		}
 		
 		return null;
@@ -114,5 +131,72 @@ public class ImageProcessor
 		}
 		
 		return Bitmap.createScaledBitmap(bm, origBmSize, origBmSize, true);
+	}
+	
+	public Bitmap processEarthquake(Bitmap bm)
+	{
+		Bitmap bmTmp = Bitmap.createBitmap(bm);
+		bm = Bitmap.createScaledBitmap(
+				bmTmp,
+//				bmTmp.getWidth(), 
+//				bmTmp.getHeight(),
+				bmTmp.getWidth() + Constants.THEME_EARTHQUAKE_RANDOM_AMOUNT, 
+				bmTmp.getHeight() + Constants.THEME_EARTHQUAKE_RANDOM_AMOUNT,
+				false);
+		
+		Rect rSrc = new Rect();
+		Rect rDst = new Rect();
+		
+		bm.eraseColor(Color.TRANSPARENT);
+		Canvas c = new Canvas();
+		c.setBitmap(bm);
+		
+		int offset;
+		int blockSize = bmTmp.getHeight() / Constants.THEME_EARTHQUAKE_BLOCK_COUNT;
+		
+		for(int i=0; i<(bmTmp.getHeight()-1)/blockSize; i++)
+		{
+			
+			offset = (int) (Math.random() * Constants.THEME_EARTHQUAKE_RANDOM_AMOUNT);
+//			offset = 2 * Math.abs((i % Constants.THEME_EARTHQUAKE_RANDOM_AMOUNT) - Constants.THEME_EARTHQUAKE_RANDOM_AMOUNT/2);
+			
+			/** source bitmap area */
+			rSrc.top = i*blockSize;
+			rSrc.bottom = i*blockSize+blockSize;
+			rSrc.left = 0;
+			rSrc.right = bmTmp.getWidth()-1;
+			
+			/** destination bitmap area */
+			rDst.top = i*blockSize;
+			rDst.bottom = i*blockSize+blockSize;
+			rDst.left = offset;
+			rDst.right = bmTmp.getWidth() - 1 + offset;
+			
+			c.drawBitmap(
+					bmTmp, 
+					rSrc, 
+					rDst, 
+					null);
+		}
+		
+		return Bitmap.createScaledBitmap(
+				bm, 
+				bmTmp.getWidth(), 
+				bmTmp.getHeight(), 
+				true);
+	}
+	
+	public String getThemeFileExt()
+	{
+		switch(mTheme)
+		{
+		case Constants.THEME_NORMAL:
+			return "";
+		case Constants.THEME_HALFTONE:
+			return Constants.THEME_HALF_TONE_FILE_EXT;
+		case Constants.THEME_EARTHQUAKE:
+			return Constants.THEME_EARTHQUAKE_FILE_EXT;
+		}
+		return null;
 	}
 }

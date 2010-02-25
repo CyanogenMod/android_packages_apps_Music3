@@ -28,6 +28,7 @@
 	<string-array name="themes">
 		<item>@string/theme_normal</item>
 		<item>@string/theme_halftone</item>
+		<item>@string/theme_earthquake</item>
 	</string-array>
 	
     <string-array name="preference_scrobble_list_names">

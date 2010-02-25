@@ -806,7 +806,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(mAlbumCursor != null){
     		/** Y checks */
     		if(mPositionY <= 0)
-	    		mTargetPositionY = 1;
+	    		mTargetPositionY = Math.min(1, (mAlbumCursor.getCount()-1)/2);
 	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1)/2)
 	    		mTargetPositionY = (mAlbumCursor.getCount() - 1)/2 - 1;
 	    	
