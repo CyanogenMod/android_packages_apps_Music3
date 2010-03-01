@@ -297,8 +297,9 @@ public class AlbumArtUtils{
 			{
 				/** Check if file has already been created */
 				File fileOut = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey+imgProc.getThemeFileExt());
-				if(false && fileOut.exists() && fileOut.length() > 0 &&
-						fileOut.length() == bitmap.getHeight() * bitmap.getWidth() * 2) // 2bytes - RGB565 format
+//				if(false && fileOut.exists() && fileOut.length() > 0 &&
+				if(fileOut.exists() && fileOut.length() > 0 &&
+					fileOut.length() == bitmap.getHeight() * bitmap.getWidth() * 2) // 2bytes - RGB565 format
 				{
 					return null;
 				}

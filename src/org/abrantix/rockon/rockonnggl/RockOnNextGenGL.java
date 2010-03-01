@@ -17,6 +17,7 @@ import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -53,6 +54,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -60,6 +63,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -81,6 +85,7 @@ public class RockOnNextGenGL extends Activity {
 	RockOnRenderer	 								mRockOnRenderer;
     private RockOnNextGenDefaultExceptionHandler 	mDefaultExceptionHandler; 
     boolean											mIsSdCardPresentAndHasMusic = true;
+    String											mNewPlaylistName;
 
     /** Dialogs */
     private	AlertDialog.Builder					mPlaylistDialog;
@@ -539,6 +544,15 @@ public class RockOnNextGenGL extends Activity {
 					// reload views
 					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_WALL);
 				}
+				else if(rendererArray[which].equals(getString(R.string.view_mode_boring)))
+				{
+					// save in preferences
+					Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_BORING);
+					edit.commit();
+					// reload views
+					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_BORING);
+				}
 			}
 		};
 	
@@ -657,7 +671,7 @@ public class RockOnNextGenGL extends Activity {
     private Handler mPlaylistSelectedHandler = new Handler(){
     	public void handleMessage(Message msg){
     		int playlistId = msg.what;
-    		Log.i(TAG, "New Playlist Id: "+playlistId);
+//    		Log.i(TAG, "New Playlist Id: "+playlistId);
     		CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
     		// reget the album cursor
     		Cursor albumCursor = cursorUtils.getAlbumListFromPlaylist(playlistId);
@@ -1005,6 +1019,14 @@ public class RockOnNextGenGL extends Activity {
 	   		mGlSurfaceView.setRenderer(rockOnWallRenderer);
 	   		mRockOnRenderer = (RockOnRenderer) rockOnWallRenderer;	
 	        break;
+        case Constants.RENDERER_BORING:
+        	RockOnBoringRenderer rockOnBoringRenderer = new RockOnBoringRenderer(
+	        		getApplicationContext(),
+	        		mRequestRenderHandler,
+	        		mTheme);
+	   		mGlSurfaceView.setRenderer(rockOnBoringRenderer);
+	   		mRockOnRenderer = (RockOnRenderer) rockOnBoringRenderer;	
+	        break;
         }
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         
@@ -1025,10 +1047,7 @@ public class RockOnNextGenGL extends Activity {
      */
     Handler mRequestRenderHandler = new Handler(){
     	public void handleMessage(Message msg){
-//    		Log.i(TAG, "requesting GL surface to render");
-    		if(mGlSurfaceView.getRenderMode() == GLSurfaceView.RENDERMODE_CONTINUOUSLY)
-    			mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-    		mGlSurfaceView.requestRender();
+    		mGlSurfaceView.setRenderMode(msg.what);
     	}
     };
     
@@ -1532,8 +1551,11 @@ public class RockOnNextGenGL extends Activity {
 //									songCursor)); // can be null
 					dialogBuilder.setNegativeButton(
 							R.string.clear_playlist_dialog_option, 
-							mClearPlayQueueClickListener);
+							mDialogPlayQueueClickListener);
 					dialogBuilder.setOnCancelListener(mSongDialogCancelListener);
+					dialogBuilder.setPositiveButton(
+							R.string.create_playlist_dialog_option, 
+							mDialogPlayQueueClickListener);
 					/* set the selection listener */
 					songCursorAdapter.setDialogInterface(dialogBuilder.show());
 				} else {
@@ -1549,22 +1571,102 @@ public class RockOnNextGenGL extends Activity {
 		}
 	};
 
-	DialogInterface.OnClickListener mClearPlayQueueClickListener = new DialogInterface.OnClickListener() {
+	DialogInterface.OnClickListener mDialogPlayQueueClickListener = new DialogInterface.OnClickListener() {
 		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-			if(mService != null){
-				try{
-					mService.removeTracks(
-						0,
-						mService.getQueue().length-1);
-					updateCurrentPlayerStateButtonsFromServiceHandler.sendEmptyMessage(0);
-				}catch(Exception e){
-					e.printStackTrace();
+			switch(which)
+			{
+			/** 
+			 * Positive Button 
+			 * 
+			 * (Save playlist)
+			 */
+			case DialogInterface.BUTTON_POSITIVE:
+				showCreatePlaylistDialog();
+				break;
+			/**
+			 * Negative button
+			 * 
+			 * (Clear play queue)
+			 */
+			case DialogInterface.BUTTON_NEGATIVE:
+				if(mService != null){
+					try{
+						mService.removeTracks(
+							0,
+							mService.getQueue().length-1);
+						updateCurrentPlayerStateButtonsFromServiceHandler.sendEmptyMessage(0);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
+				break;
 			}
 		}
 	};
+	
+	private void showCreatePlaylistDialog()
+	{
+		AlertDialog.Builder aBuilder = new AlertDialog.Builder(RockOnNextGenGL.this);
+		aBuilder.setTitle(R.string.create_playlist_dialog_title);
+		View setPlaylistNameView = 
+			((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
+				inflate(R.layout.create_playlist_dialog, null);
+		final EditText setPlaylistNameEditText = (EditText)
+			setPlaylistNameView.findViewById(R.id.new_playlist_name);
+		aBuilder.setView(setPlaylistNameView);
+		aBuilder.setPositiveButton(
+				R.string.create_playlist_dialog_save_option, 
+				new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(setPlaylistNameEditText.getText().toString() != null &&
+							setPlaylistNameEditText.getText().toString().length() > 0)
+						{
+							createPlaylist(setPlaylistNameEditText.getText().toString());
+						}
+						else
+							Toast.makeText(
+									RockOnNextGenGL.this, 
+									R.string.create_playlist_toaster_name_required, 
+									Toast.LENGTH_SHORT).
+								show();
+					}
+				});
+		aBuilder.show();
+	}
+	
+	private void createPlaylist(String playlistName)
+	{
+		try
+		{
+			CursorUtils cUtils = new CursorUtils(RockOnNextGenGL.this);
+			if(!cUtils.createPlaylist(playlistName))
+				throw new Exception();
+			long playlistId = cUtils.getPlaylistIdFromName(playlistName);
+			cUtils.addSongsToPlaylist(playlistId, mService.getOutstandingQueue());
+			String message = 
+				(mService.getOutstandingQueue().length-1) +
+				" " + getString(R.string.create_playlist_toaster_added_part_1) +
+				" '" + playlistName + "'!"; 
+			Toast.makeText(
+					RockOnNextGenGL.this, 
+					message, 
+					Toast.LENGTH_SHORT).
+				show();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			Toast.makeText(
+					RockOnNextGenGL.this, 
+					R.string.create_playlist_toaster_failed, 
+					Toast.LENGTH_SHORT).
+				show();
+		}
+	}
 	
 	/**
 	 * AlbumClick Handler

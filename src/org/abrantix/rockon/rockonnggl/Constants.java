@@ -20,6 +20,7 @@ public class Constants{
 	/** Renderer Types */
 	static final int RENDERER_CUBE = 0;
 	static final int RENDERER_WALL = 1;
+	static final int RENDERER_BORING = 2;
 	
 	/** Theme Types */
 	static final int THEME_NORMAL = 100; // these should not coincide with the Renderer modes
@@ -184,8 +185,9 @@ public class Constants{
 	static final float	CPU_SMOOTHNESS = 0.1f; // as the fraction of the overall animation that should be obtained (per second)
 	static final float	MIN_SCROLL = 1.5f; // as the fraction of the cover size (per second)
 	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
-	static final float	SCROLL_SPEED_BOOST = 35.f;
-	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
+	static final float	SCROLL_SPEED_BOOST = 25.f;
+//	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
+	static final float	MAX_LOW_SPEED = .05f; // mScrollingSpeed...
 	static final float	MIN_SCROLL_TOUCH_MOVE = 0.08f;
 	static final double	MAX_CLICK_DOWNTIME = 1000;
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;

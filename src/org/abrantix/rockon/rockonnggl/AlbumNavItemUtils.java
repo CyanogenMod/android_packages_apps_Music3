@@ -33,6 +33,8 @@ public class AlbumNavItemUtils{
 	Paint	labelBgPaint;
 	Paint	labelAlbumPaint;
 	Paint	labelArtistPaint;
+	Paint	labelAlbumBoringPaint;
+	Paint	labelArtistBoringPaint;
 	
 	public AlbumNavItemUtils(int width, int height) {
 		canvas = new Canvas();
@@ -59,6 +61,22 @@ public class AlbumNavItemUtils{
 		labelArtistPaint.setSubpixelText(true);
 		labelArtistPaint.setStyle(Style.FILL_AND_STROKE);
 		labelArtistPaint.setTextAlign(Align.CENTER);
+		
+		labelAlbumBoringPaint = new Paint();
+		labelAlbumBoringPaint.setColor(Color.parseColor("#ffaaaaaa"));
+		labelAlbumBoringPaint.setStrokeWidth(1.33f);
+		labelAlbumBoringPaint.setAntiAlias(true);
+		labelAlbumBoringPaint.setSubpixelText(true);
+		labelAlbumBoringPaint.setStyle(Style.FILL_AND_STROKE);
+		labelAlbumBoringPaint.setTextAlign(Align.LEFT);
+		
+		labelArtistBoringPaint = new Paint();
+		labelArtistBoringPaint.setColor(Color.parseColor("#ffffffff"));
+		labelArtistBoringPaint.setStrokeWidth(1.1f);
+		labelArtistBoringPaint.setAntiAlias(true);
+		labelArtistBoringPaint.setSubpixelText(true);
+		labelArtistBoringPaint.setStyle(Style.FILL_AND_STROKE);
+		labelArtistBoringPaint.setTextAlign(Align.LEFT);
 	}
 	
 	/**
@@ -240,6 +258,61 @@ public class AlbumNavItemUtils{
 					labelArtistPaint);
     	}
     	
+		return true;
+	}
+	
+	/**
+	 * fillAlbumBoringLabel
+	 * @param albumNavItem
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	boolean fillAlbumBoringLabel(
+			AlbumNavItem albumNavItem,
+			int width,
+			int height)
+	{
+		/** Sanity check */
+    	if(albumNavItem.label.getWidth() != width || 
+				albumNavItem.label.getHeight() != height)
+    	{
+			Log.i(TAG, " - reading pixels from file failed");
+    		return false;
+    	}
+    	/** Create bitmap */
+    	albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
+    	canvas.setBitmap(albumNavItem.label);
+//    	canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
+    	labelAlbumBoringPaint.setTextSize(.24f * height);
+    	labelArtistBoringPaint.setTextSize(.48f * height);
+    	if(albumNavItem.artistName != null){
+	    	canvas.drawText(
+	    			albumNavItem.artistName.substring(
+	    					0, 
+	    					labelArtistBoringPaint.breakText(
+	    							albumNavItem.artistName, 
+	    							false, 
+	    							width*.95f, 
+	    							null)),
+					0.f * width, 
+					.5f * height, 
+					labelArtistBoringPaint);
+    	}
+    	if(albumNavItem.albumName != null){
+	    	canvas.drawText(
+	    			albumNavItem.albumName.substring(
+	    					0, 
+	    					labelAlbumBoringPaint.breakText(
+	    							albumNavItem.albumName, 
+	    							false, 
+	    							width*0.95f, 
+	    							null)), 
+	    			0.f * width, 
+	    			.9f * height,
+	    			labelAlbumBoringPaint);
+    	}
+
 		return true;
 	}
 	

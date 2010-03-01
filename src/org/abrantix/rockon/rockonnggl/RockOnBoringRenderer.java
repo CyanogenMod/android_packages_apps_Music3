@@ -27,9 +27,9 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
-public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
+public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
 
-	final String TAG = "RockOnWallRenderer";
+	final String TAG = "RockOnBoringRenderer";
 	
 	public void renderNow(){
 //		if(!mIsRendering)
@@ -41,12 +41,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
 	
-    public RockOnWallRenderer(Context context, Handler requestRenderHandler, int theme) {
+    public RockOnBoringRenderer(Context context, Handler requestRenderHandler, int theme) 
+    {
         mContext = context;
         mRequestRenderHandler = requestRenderHandler;
         mTheme = theme;
         
-    	initNonGlVars(context, false);
+        initCursorVars(context, false);
     }
     
     public void changePlaylist(int playlistId){
@@ -54,12 +55,12 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	mTargetPositionY = 0;
     	mPositionX = 0;
     	mTargetPositionX = 0;
-    	initNonGlVars(mContext, true);
+    	initCursorVars(mContext, true);
+    	initCacheVars(true);
     	this.triggerPositionUpdate();
     }
     
-    private void initNonGlVars(Context context, boolean force){
-    	
+    private void initCursorVars(Context context, boolean force){
     	/** init album cursor **/
     	if(mAlbumCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
@@ -70,11 +71,17 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     							Constants.prefkey_mPlaylistId,
     							Constants.PLAYLIST_ALL));
     	}
-    	
-    	/** init dimensions */
-    	mBitmapWidth = Constants.ALBUM_ART_TEXTURE_SIZE;
-    	mBitmapHeight = Constants.ALBUM_ART_TEXTURE_SIZE;
-    	
+    }
+
+    private void initCacheVars(boolean force){
+       	/** init dimensions */
+    	mBitmapWidth = 
+    		Constants.ALBUM_ART_TEXTURE_SIZE * 
+    		(int) Math.ceil((float)mWidth / (float)Constants.ALBUM_ART_TEXTURE_SIZE);
+    	mBitmapHeight = 
+    		Constants.ALBUM_ART_TEXTURE_SIZE * 
+    		(int) Math.ceil((float)mWidth / (float)Constants.ALBUM_ART_TEXTURE_SIZE);
+   	
     	/** albumNavUtils */
     	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
     	
@@ -82,16 +89,16 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	for(int i = 0; i < mCacheSize; i++){
     		mAlbumNavItem[i] = new AlbumNavItem();
         	mAlbumNavItem[i].index = -1;
-    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
-    				mBitmapWidth, 
-    				mBitmapHeight, 
-    				Bitmap.Config.RGB_565);
+//    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
+//    				mBitmapWidth, 
+//    				mBitmapHeight, 
+//    				Bitmap.Config.RGB_565);
     		mAlbumNavItem[i].label = Bitmap.createBitmap(
     				mBitmapWidth,
-    				mBitmapHeight/4,
+    				mBitmapHeight/5,
     				Bitmap.Config.ARGB_8888);
     	}
-    	mColorComponentBuffer = new byte[4*mBitmapWidth*mBitmapHeight];
+//    	mColorComponentBuffer = new byte[4*mBitmapWidth*(mBitmapHeight/4)];
     	
     }
 
@@ -152,15 +159,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
          * surface is created.
          */
         // album covers - vertical
-        gl.glGenTextures(mTextureId.length, mTextureId, 0);
+//        gl.glGenTextures(mTextureId.length, mTextureId, 0);
         // album labels
         gl.glGenTextures(mTextureLabelId.length, mTextureLabelId, 0);
         // album labels
 //        gl.glGenTextures(mTextureAlphabetId.length, mTextureAlphabetId, 0);
         
-        mRockOnCover = new RockOnCover();
-//        mAlbumLabelGlText = new AlbumLabelGlText(mTextureLabelId[0]);
-        
+        mRockOnAlbumTextLabel = new RockOnAlbumTextLabel();        
         
         /*
          * By default, OpenGL enables features that improve quality
@@ -344,19 +349,26 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         texturesUpdated = updateTextures(gl);
          
         /* set the fog distance */
-        gl.glFogf(GL10.GL_FOG_START, -mEyeZ-1.f);
-        gl.glFogf(GL10.GL_FOG_END, -mEyeZ+11.f);
-//        gl.glDisable(GL10.GL_FOG);
+        gl.glFogf(GL10.GL_FOG_START, -mEyeNormal[2]);
+        gl.glFogf(GL10.GL_FOG_END, -mEyeClicked[2]-mEyeClicked[0]-5.f);
 
         int deltaToCenter;
         /* draw each cover */
         for(int i = 0; i<mCacheSize; i++)
         {
         	gl.glLoadIdentity();
-        	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
+                	     
+        	if(mAlbumNavItem[i].index != mClickedPosition)
+        	{
+        		GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
+        	}
+        	else
+        	{
+        		GLU.gluLookAt(gl, mEyeNormal[0], mEyeNormal[1], mEyeNormal[2], mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
+        	}
         	
         	// poor variable name -- dont mind it
-        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY * 2;
+        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY;
         	// make it all positive
         	deltaToCenter += mCacheSize/2 - 1; // (-4) negative numbers go bad with integer divisions
         	
@@ -365,17 +377,23 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //        		continue;
         	
         	/* place the covers */
+        	// Star wars effect
+//        	gl.glRotatef(60.f, 1.f, 0.f, 0.f);
+
         	gl.glTranslatef(
-        			-1.f + i%2 * 2.f,  // we just dont need to use delta center here because the navigator always moves by 2 positions (1 row)
-        			-4.f + deltaToCenter/2 * 2.f, 
+        			0,  // we just dont need to use delta center here because the navigator always moves by 2 positions (1 row)
+        			-1.6f + deltaToCenter * .4f, 
         			0);
         	gl.glTranslatef(
         			0, 
-        			-(mPositionY-flooredPositionY) * 2.f, 
+        			-(mPositionY-flooredPositionY) * .4f, 
         			0);
 
-        	mRockOnCover.setTextureId(mTextureId[i]);
-        	mRockOnCover.draw(gl);
+//        	gl.glRotatef(15.f, 1.f, 0.f, 0.f);
+        	
+        	mRockOnAlbumTextLabel.setTextureId(mTextureLabelId[i]);
+        	mRockOnAlbumTextLabel.draw(gl);
+        	
         }
         
         if(mTargetPositionY == mPositionY && 
@@ -402,12 +420,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         * each time we draw, but usually a new projection needs to
         * be set when the viewport is resized.
         */
-
         float ratio = (float) w / h;
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
         gl.glFrustumf(-ratio, ratio, -1, 1, 3, 20);
-
+        
+        /**
+         * Initialize some variables
+         */
+    	initCacheVars(false);
     }
 
     /* optimization */
@@ -421,18 +442,17 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
      */
     int	getPositionFromScreenCoordinates(float x, float y)
     {
-    	rowFromY = (int) (y / (mHeight*.25f));
-    	if(rowFromY == 2) rowFromY--;
-    	else if(rowFromY == 3) rowFromY--;
+    	y += (mPositionY - flooredPositionY) * (mWidth * .2f);
+    	if(y >= mHeight/2 - mWidth * .1f)
+    		rowFromY = (int) ((y - (mHeight/2 - mWidth * .1f)) / (mWidth * .2f));
+    	else
+    		rowFromY = -1 - (int) (((mHeight/2 - mWidth * .1f) - y) / (mWidth * .2f));
     	
-    	columnFromX = (int) (x / (mWidth*.5f));
-    	
-    	return 
-    		flooredPositionY*2 - 2
-    		+
-    		2 * rowFromY
-    		+
-    		columnFromX;
+    	if(true || mPositionY == mTargetPositionY)
+	    	return 
+	    		flooredPositionY + rowFromY;
+    	else
+    		return flooredPositionY;
     }
     
     int getVerifiedPositionFromScreenCoordinates(float x, float y)
@@ -455,11 +475,12 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
      */
     int[]	getRowAndColumnFromScreenCoordinates(float x, float y)
     {
-    	rowFromY = (int) (y / (mHeight*.25f));
-    	if(rowFromY == 2) rowFromY--;
-    	else if(rowFromY == 3) rowFromY--;
-    	
-    	columnFromX = (int) (x / (mWidth*.5f));
+    	if(y >= mHeight/2)
+    		rowFromY = (int) ((y - (mHeight/2)) / (mWidth * .2f));
+    	else
+    		rowFromY = -1 - (int) (((mHeight/2) - y) / (mWidth * .2f));
+    		
+    	columnFromX = 0;
     	
     	rowAndColumn[0] = columnFromX;
     	rowAndColumn[1] = rowFromY;
@@ -481,13 +502,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.mEyeInitialY = this.mEyeY;
     	this.mEyeInitialZ = this.mEyeZ;
     	
-    	this.mCenterTargetX = -1 + 2*getRowAndColumnFromScreenCoordinates(x, y)[0];
-    	this.mCenterTargetY = -2 + 2*getRowAndColumnFromScreenCoordinates(x, y)[1]; // duplicated effort -- FIXME
-    	this.mCenterTargetZ = 0;
+//    	this.mCenterTargetX = -1 + 2*getRowAndColumnFromScreenCoordinates(x, y)[0];
+//    	this.mCenterTargetY = -2 + 2*getRowAndColumnFromScreenCoordinates(x, y)[1]; // duplicated effort -- FIXME
+//    	this.mCenterTargetZ = 0;
+//    	
+//    	this.mCenterInitialX = this.mCenterX;
+//    	this.mCenterInitialY = this.mCenterY;
+//    	this.mCenterInitialZ = this.mCenterZ;
     	
-    	this.mCenterInitialX = this.mCenterX;
-    	this.mCenterInitialY = this.mCenterY;
-    	this.mCenterInitialZ = this.mCenterZ;
+    	this.mClickedPosition = getVerifiedPositionFromScreenCoordinates(x, y);
     	
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
@@ -508,13 +531,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.mEyeInitialY = this.mEyeY;
     	this.mEyeInitialZ = this.mEyeZ;
     	
-    	this.mCenterTargetX = 0;
-    	this.mCenterTargetY = 0;
-    	this.mCenterTargetZ = 0;
+//    	this.mCenterTargetX = 0;
+//    	this.mCenterTargetY = 0;
+//    	this.mCenterTargetZ = 0;
+//    	
+//    	this.mCenterInitialX = this.mCenterX;
+//    	this.mCenterInitialY = this.mCenterY;
+//    	this.mCenterInitialZ = this.mCenterZ;
     	
-    	this.mCenterInitialX = this.mCenterX;
-    	this.mCenterInitialY = this.mCenterY;
-    	this.mCenterInitialZ = this.mCenterZ;
+//    	this.mClickedPosition = -1000;
     	    	
     	pTimestamp = System.currentTimeMillis();
     	this.renderNow();
@@ -542,17 +567,17 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		for(int i = 0; i < mCacheSize; i++){
     			// we try to minimize cache reshuffling to the max
     			albumIndexTmp = 
-    				(int)Math.floor((flooredPositionY * 2) / mCacheSize) * mCacheSize
+    				(int)Math.floor(flooredPositionY / mCacheSize) * mCacheSize
     				+ i;
     			if(albumIndexTmp < 
-    					flooredPositionY * 2  
+    					flooredPositionY  
         					- 4)
     			{
     				albumIndexTmp += mCacheSize;
     			} 
     			// should never happen
     			else if(albumIndexTmp >=
-    					flooredPositionY * 2  
+    					flooredPositionY 
     						- 4 
     						+ mCacheSize)
     			{
@@ -623,6 +648,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	    			mAlbumNavItem[cacheIndex].artistName = "";
 	    			mAlbumNavItem[cacheIndex].cover = undefined;
 	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
+	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 	    		} 
 	    		else 
 	    		{
@@ -636,23 +662,18 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    			mAlbumNavItem[cacheIndex].artistName = null;
 		    			mAlbumNavItem[cacheIndex].albumKey = null;
 		    		}
-		    		if(!mAlbumNavItemUtils.fillAlbumBitmap(
-		    				mAlbumNavItem[cacheIndex], 
-		    				mBitmapWidth, 
-		    				mBitmapHeight, 
-		    				mColorComponentBuffer,
-		    				mTheme))
+		    		if(!mAlbumNavItemUtils.fillAlbumBoringLabel(
+		    				mAlbumNavItem[cacheIndex],
+		    				mAlbumNavItem[cacheIndex].label.getWidth(),
+		    				mAlbumNavItem[cacheIndex].label.getHeight()))
 		    		{
-	//	    			Log.i(TAG, "BM failed, error loading bm");
-		    			mAlbumNavItem[cacheIndex].cover = undefined;
-		    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
-		
+		    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 		    		}
 	    		}
 //    		}
     		    		
 	    	/** bind new texture */
-    		bindTexture(gl, mAlbumNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
+//    		bindTexture(gl, mAlbumNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
     		bindTexture(gl, mAlbumNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
     		
     		return true;
@@ -773,9 +794,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction
 									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* Constants.MIN_SCROLL)
+									* .5f * Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * Constants.MAX_SCROLL * 2.f); // XXX *4.f is a HACK
+					, updateFraction * Constants.MAX_SCROLL * 111112.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
@@ -784,17 +805,17 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction
 								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* -Constants.MIN_SCROLL)
+								* .5f * -Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * -Constants.MAX_SCROLL * 2.f); // XXX *4.f is a HACK
+					, updateFraction * -Constants.MAX_SCROLL * 11111112.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
     	if(mAlbumCursor != null){
     		/** Y checks */
     		if(mPositionY <= 0)
-	    		mTargetPositionY = Math.min(1, (mAlbumCursor.getCount()-1)/2);
-	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1)/2)
-	    		mTargetPositionY = (mAlbumCursor.getCount() - 1)/2 - 1;
+	    		mTargetPositionY = Math.min(1, (mAlbumCursor.getCount()-1));
+	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1))
+	    		mTargetPositionY = (mAlbumCursor.getCount() - 1) - 1;
 	    	
 //	    	/** are we done? */
 //	    	if(mTargetPositionY == (float)mPositionY){
@@ -828,12 +849,12 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	switch(direction)
     	{
     	case Constants.SCROLL_MODE_VERTICAL:
-			mTargetPositionY = mPositionY - px/(mHeight*.5f);
+			mTargetPositionY = mPositionY - px/(mHeight*.2f);
 			/* make we dont exceed the cube limits */
 			if(mTargetPositionY <= -1 + Constants.MAX_POSITION_OVERSHOOT)
 				mTargetPositionY = -1 + Constants.MAX_POSITION_OVERSHOOT;
-			else if(mTargetPositionY >= (mAlbumCursor.getCount() - 1)/2 - 1 + Constants.MAX_POSITION_OVERSHOOT)
-				mTargetPositionY = (mAlbumCursor.getCount() - 1)/2 - 1 + Constants.MAX_POSITION_OVERSHOOT;
+			else if(mTargetPositionY >= (mAlbumCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = (mAlbumCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT;
 			
 			mPositionY = mTargetPositionY;
     		return;
@@ -846,28 +867,15 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	switch(direction)
     	{
     	case Constants.SCROLL_MODE_VERTICAL:
-    		/* make the movement harder for lower rotations */
-    		if(Math.abs(scrollSpeed/(mHeight*.5f)) < Constants.MAX_LOW_SPEED)
-    		{
-    			mTargetPositionY = 
-    				Math.round(
-    						mPositionY
-    						+
-    						0.5f * Math.signum(scrollSpeed/(mHeight*.5f)) // needs to be .5f because of the rounding...
-    				);
-    		} 
-    		/* full speed ahead */
-    		else
-    		{
-    			mTargetPositionY = 
-    				Math.round(
-    						mPositionY
-    						+
-    						Constants.SCROLL_SPEED_BOOST
-    						*
-    						scrollSpeed/(mHeight*.5f)
-    				);
-    		}
+			mTargetPositionY = 
+				Math.round(
+						mPositionY
+						+
+						Constants.SCROLL_SPEED_BOOST
+						*
+						scrollSpeed/(mHeight*.2f)
+				);
+		
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == 0)
     			mTargetPositionY = -2;
@@ -997,14 +1005,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    	for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
 		    		mAlbumCursor.moveToPosition(i);
 		    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
-		    			mTargetPositionY = i/2;
+		    			mTargetPositionY = i;
 		    			mPositionY = 
 		    				mTargetPositionY - 
 		    				Math.signum(mTargetPositionY - mPositionY)
 		    				*
 		    				Math.min(
 		    					Math.abs(mTargetPositionY-mPositionY), 
-		    					5.5f);
+		    					10.f);
 		    			// TODO: trigger rotation
 		    			this.renderNow();
 		    			return i;
@@ -1023,38 +1031,37 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
-    private int 				mTheme;
-    private	int					mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
-    private Context 			mContext;
+    private int 					mTheme;
+    private	int						mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
+    private Context 				mContext;
 //    private Handler				mRequestRenderHandler;
-    private RockOnCover			mRockOnCover;
-    private int[] 				mTextureId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
-    private int[] 				mTextureLabelId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
+    private RockOnAlbumTextLabel	mRockOnAlbumTextLabel;
+    private int[] 					mTextureId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
+    private int[] 					mTextureLabelId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
 //    private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
-    private	int					mScrollMode = Constants.SCROLL_MODE_VERTICAL;
-    public	boolean				mClickAnimation = false;
-    private	Cursor				mAlbumCursor = null;
-//    private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
-    private AlbumNavItem[]		mAlbumNavItem = new AlbumNavItem[mCacheSize];
-    private AlbumNavItemUtils	mAlbumNavItemUtils;
-    private	int					mBitmapWidth;
-    private int 				mBitmapHeight;
-    private byte[]				mColorComponentBuffer;
-    private	boolean				mForceTextureUpdate = false;
-    private int					mWidth = 0;
-    private int					mHeight = 0;
+    private	int						mScrollMode = Constants.SCROLL_MODE_VERTICAL;
+    public	boolean					mClickAnimation = false;
+    private	Cursor					mAlbumCursor = null;
+//    private AlphabetNavItem[]		mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
+    private AlbumNavItem[]			mAlbumNavItem = new AlbumNavItem[mCacheSize];
+    private AlbumNavItemUtils		mAlbumNavItemUtils;
+    private	int						mBitmapWidth;
+    private int 					mBitmapHeight;
+    private	boolean					mForceTextureUpdate = false;
+    private int						mWidth = 0;
+    private int						mHeight = 0;
 
     private float[]		mEyeNormal = 
     {
     		0.f,
     		0.f,
-    		-6.25f
+    		-4.f
     };
     private float[]		mEyeClicked = 
     {
+    		-12.f, // XX dont care
     		0.f, // XX dont care
-    		0.f, // XX dont care
-    		-4.0f
+    		-4.f
     };
     private float		mEyeX = mEyeNormal[0];
     private float		mEyeY = mEyeNormal[1];
@@ -1076,6 +1083,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mCenterInitialZ = 0;
     private float		MAX_CLICK_ANIMATION_STEPS = 25;
     private float		mClickAnimationStep = 0;
+    private int			mClickedPosition;
     
     /** 
      * optimization vars 
@@ -1093,21 +1101,21 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 }
 
 
-class RockOnCover {
+class RockOnAlbumTextLabel {
 	
-	private final String TAG = "RockOnCover";
+	private final String TAG = "RockOnAlbumTextLabel";
 	
-    public RockOnCover() {
+    public RockOnAlbumTextLabel() {
 //  public RockOnCover(int[] textureId, int[] textureAlphabetId) {
     	/**
     	 * cover coordinates
     	 */
     	float[] coords = {
         		// X, Y, Z
-        		-1.f, 1.f, 0.f,
-        		1.f, 1.f, 0.f, 
-        		1.f, -1.f, 0.f,
-        		-1.f, -1.f, 0.f
+        		-1.f, .2f, 0.f,
+        		1.f, .2f, 0.f, 
+        		1.f, -.2f, 0.f,
+        		-1.f, -.2f, 0.f
         };
         
         /**

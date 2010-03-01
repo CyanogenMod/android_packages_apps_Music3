@@ -22,6 +22,7 @@
 	<string-array name="view_modes">
 		<item>@string/view_mode_cube</item>
 		<item>@string/view_mode_wall</item>
+		<item>@string/view_mode_boring</item>
 	</string-array>
 	
 	<!--	THEMES	-->

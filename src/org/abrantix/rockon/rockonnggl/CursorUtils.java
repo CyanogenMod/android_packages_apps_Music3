@@ -3,12 +3,15 @@ package org.abrantix.rockon.rockonnggl;
 import java.util.LinkedList;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
+import android.widget.Toast;
 
 public class CursorUtils{
 
@@ -488,4 +491,85 @@ public class CursorUtils{
 		return nextAlbumId;
 	}
 	
+	/**
+	 * create a playlist entry
+	 * @param name
+	 * @return
+	 */
+	public boolean createPlaylist(String name)
+	{
+		try
+		{
+			ContentValues values = new ContentValues();
+			values.put(
+					MediaStore.Audio.Playlists.NAME,
+					name);
+			ContentResolver res = ctx.getContentResolver();
+			res.insert(
+					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+					values);
+			return true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * getPlaylistId
+	 * @param playlistName
+	 * @return
+	 */
+	public long getPlaylistIdFromName(String playlistName)
+	{
+		ContentResolver res = ctx.getContentResolver();
+		Cursor c = res.query(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+				Constants.playlistProjection, 
+				MediaStore.Audio.Playlists.NAME + "='" + playlistName + "'", 
+				null, 
+				null);
+		c.moveToFirst();
+		return c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Playlists._ID));
+	}
+	
+	/**
+	 * add songs to a playlist
+	 * @param playlistName
+	 * @param songIds
+	 * @return
+	 */
+	public boolean addSongsToPlaylist(long playlistId, long[] ids)
+	{
+        if (ids == null) {
+            // this shouldn't happen (the menuitems shouldn't be visible
+            // unless the selected item represents something playable
+            Log.e(TAG, "ListSelection null");
+            return false;
+        } else {
+            int size = ids.length;
+            ContentValues values [] = new ContentValues[size];
+            ContentResolver resolver = ctx.getContentResolver();
+            // need to determine the number of items currently in the playlist,
+            // so the play_order field can be maintained.
+            String[] cols = new String[] {
+                    "count(*)"
+            };
+            Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+            Cursor cur = resolver.query(uri, cols, null, null, null);
+            cur.moveToFirst();
+            int base = cur.getInt(0);
+            cur.close();
+
+            for (int i = 0; i < size; i++) {
+                values[i] = new ContentValues();
+                values[i].put(MediaStore.Audio.Playlists.Members.PLAY_ORDER, Integer.valueOf(base + i));
+                values[i].put(MediaStore.Audio.Playlists.Members.AUDIO_ID, ids[i]);
+            }
+            resolver.bulkInsert(uri, values);
+            return true;
+        }
+	}
 }

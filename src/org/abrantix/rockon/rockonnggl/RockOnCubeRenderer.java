@@ -31,9 +31,22 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
 	final String TAG = "RockOnCubeRenderer";
 	
-	public void renderNow(){
-		mRequestRenderHandler.sendEmptyMessage(0);
-	}
+//	public boolean needsRender()
+//	{
+//        if(mTargetPositionX != mPositionX ||
+//            	mPositionX != 0 ||
+//            	mTargetPositionY != mPositionY || 
+//            	mClickAnimation ||
+//            	texturesUpdated)
+//        {
+//            return true;
+//        }
+//        else
+//        {
+//        	Log.i(TAG, "mTargetY: "+mTargetPositionY+" mPositionY: "+mPositionY);
+//        	return false;    	
+//        }
+//    }
 	
     public RockOnCubeRenderer(Context context, Handler requestRenderHandler, int theme) {
         mContext = context;
@@ -215,6 +228,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     public void onDrawFrame(GL10 gl) {
     	  
     	frameStartTime = System.currentTimeMillis();
+    	mIsRendering = true;
     	
     	/** Calculate new position */
     	if(!updatePosition(false)){
@@ -235,7 +249,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         /*
          * Now we're ready to draw some 3D objects
          */
-
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
 
@@ -380,15 +393,27 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
             else
             	mAlbumLabelGlText.setTexture(mTextureLabelId[tmpTextureIdx]);
         	mAlbumLabelGlText.draw(gl);
-//        	}
         }
-        if(mTargetPositionX != mPositionX ||
-        	mPositionX != 0 ||
-        	mTargetPositionY != mPositionY || 
-        	mClickAnimation ||
-        	texturesUpdated)
-        	renderNow();
-
+    	
+    	mIsRendering = false;
+    	
+        if(mTargetPositionX == mPositionX &&
+        	mPositionX == 0 &&
+        	mTargetPositionY == mPositionY && 
+        	!mClickAnimation &&
+        	!texturesUpdated)
+        {
+        	stopRender();
+        }
+        
+//        Log.i(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+//        Log.i(TAG, "mTargetPositionX: "+mTargetPositionX+" mPositionX: "+mPositionX);
+//        Log.i(TAG, "mTargetPositionY: "+mTargetPositionY+" mPositionY: "+mPositionY);
+//        Log.i(TAG, "mEyeX: "+mEyeX+" mEyeY: "+mEyeY+" mEyeZ: "+mEyeZ);
+//        Log.i(TAG, "mEyeTargetX: "+mEyeTargetX+" mEyeTargetY: "+mEyeTargetY+" mEyeTargetZ: "+mEyeTargetZ);
+//        Log.i(TAG, "mClickAnimation: "+mClickAnimation);
+//        Log.i(TAG, "texturesUpdated: "+texturesUpdated);
+        
 //      Log.i(TAG, ""+(System.currentTimeMillis() - frameStartTime));
 //        fps++;
 //        if(System.currentTimeMillis()-lastSecond > 1000)
@@ -1171,7 +1196,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private int					mTheme;
     private	int					mCacheSize = 4;
     private Context 			mContext;
-    private Handler				mRequestRenderHandler;
+//    private Handler				mRequestRenderHandler; // part of the abstract class
     private RockOnCube 			mRockOnCube;
     private AlbumLabelGlText	mAlbumLabelGlText;
     private int[] 				mTextureId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
@@ -1189,6 +1214,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private	boolean				mForceTextureUpdate = false;
     private int					mHeight = 0;
     private int					mWidth = 0;
+    private boolean				mIsRendering = false;
 
 //    public	float		mPositionX = 0.f;
 //    public	float		mTargetPositionX = 0.f;

@@ -52,6 +52,17 @@
 	<!--	PLAY QUEUE	-->
 	<string name="play_queue_title">Play Queue</string>
 	<string name="clear_playlist_dialog_option">Clear</string>
+	<string name="create_playlist_dialog_option">Save</string>
+	
+	<!--	CREATE PLAYLIST DIALOG -->
+	<string name="create_playlist_dialog_title">Choose Playlist Name</string>
+	<string name="create_playlist_dialog_save_option">Save</string>
+	<string name="create_playlist_dialog_text_hint">Type playlist name...</string>
+	
+	<!--	CREATE PLAYLIST TOASTER	-->
+	<string name="create_playlist_toaster_added_part_1">songs added to playlist</string>
+	<string name="create_playlist_toaster_failed">Failed to create playlist!</string>
+	<string name="create_playlist_toaster_name_required">Playlist name is required...</string>
 	
 	<!--	ALBUM SONG LIST DIALOG -->
 	<string name="album_song_list_play_all">Play all</string>
@@ -67,6 +78,7 @@
 	<!-- 	VIEW MODES DIALOG -->
 	<string name="view_mode_cube">³</string>
 	<string name="view_mode_wall">Wall</string>
+	<string name="view_mode_boring">Boring</string>
 	
 	<!-- 	THEMES DIALOG -->
 	<string name="theme_normal">Normal</string>

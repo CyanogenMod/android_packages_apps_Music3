@@ -31,8 +31,16 @@ import android.util.Log;
 public abstract class RockOnRenderer{
 
 	final String TAG = this.toString();
+	Handler	mRequestRenderHandler;
 	
-	abstract public void renderNow();
+	public void renderNow(){
+		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+	}
+	
+	public void stopRender()
+	{
+		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+	}
     
     abstract public void changePlaylist(int playlistId);
     
