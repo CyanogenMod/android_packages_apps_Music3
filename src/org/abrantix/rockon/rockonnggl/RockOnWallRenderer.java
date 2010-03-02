@@ -348,7 +348,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glFogf(GL10.GL_FOG_END, -mEyeZ+11.f);
 //        gl.glDisable(GL10.GL_FOG);
 
-        int deltaToCenter;
+        positionYTmp = mPositionY;
+        flooredPositionYTmp = flooredPositionY;
         /* draw each cover */
         for(int i = 0; i<mCacheSize; i++)
         {
@@ -356,7 +357,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
         	
         	// poor variable name -- dont mind it
-        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY * 2;
+        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionYTmp * 2;
         	// make it all positive
         	deltaToCenter += mCacheSize/2 - 1; // (-4) negative numbers go bad with integer divisions
         	
@@ -371,7 +372,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         			0);
         	gl.glTranslatef(
         			0, 
-        			-(mPositionY-flooredPositionY) * 2.f, 
+        			-(positionYTmp-flooredPositionYTmp) * 2.f, 
         			0);
 
         	mRockOnCover.setTextureId(mTextureId[i]);
@@ -1090,6 +1091,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private boolean	texturesUpdated;
     private double	updateFraction;
     private int		tmpTextureIdx;
+    private int		deltaToCenter;
+    private float	positionYTmp;
+    private int		flooredPositionYTmp;
 }
 
 

@@ -185,7 +185,7 @@ public class Constants{
 	static final float	CPU_SMOOTHNESS = 0.1f; // as the fraction of the overall animation that should be obtained (per second)
 	static final float	MIN_SCROLL = 1.5f; // as the fraction of the cover size (per second)
 	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
-	static final float	SCROLL_SPEED_BOOST = 25.f;
+	static final float	SCROLL_SPEED_BOOST = 28.f;
 //	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
 	static final float	MAX_LOW_SPEED = .05f; // mScrollingSpeed...
 	static final float	MIN_SCROLL_TOUCH_MOVE = 0.08f;

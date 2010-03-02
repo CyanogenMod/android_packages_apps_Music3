@@ -1047,7 +1047,8 @@ public class RockOnNextGenGL extends Activity {
      */
     Handler mRequestRenderHandler = new Handler(){
     	public void handleMessage(Message msg){
-    		mGlSurfaceView.setRenderMode(msg.what);
+    		if(mGlSurfaceView.getRenderMode() != msg.what)
+    			mGlSurfaceView.setRenderMode(msg.what);
     	}
     };
     

@@ -81,6 +81,14 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	mBitmapHeight = 
     		Constants.ALBUM_ART_TEXTURE_SIZE * 
     		(int) Math.ceil((float)mWidth / (float)Constants.ALBUM_ART_TEXTURE_SIZE);
+//    	mBitmapWidth = 
+//    		Constants.ALBUM_ART_TEXTURE_SIZE * 
+//    		(int) Math.ceil((float)mWidth / 320.f);
+//    	mBitmapHeight = 
+//    		Constants.ALBUM_ART_TEXTURE_SIZE * 
+//    		(int) Math.ceil((float)mWidth / 320.f);
+    	
+    	mTextRatio = 4;
    	
     	/** albumNavUtils */
     	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
@@ -95,7 +103,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    				Bitmap.Config.RGB_565);
     		mAlbumNavItem[i].label = Bitmap.createBitmap(
     				mBitmapWidth,
-    				mBitmapHeight/5,
+    				mBitmapHeight/mTextRatio,
     				Bitmap.Config.ARGB_8888);
     	}
 //    	mColorComponentBuffer = new byte[4*mBitmapWidth*(mBitmapHeight/4)];
@@ -164,8 +172,6 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         gl.glGenTextures(mTextureLabelId.length, mTextureLabelId, 0);
         // album labels
 //        gl.glGenTextures(mTextureAlphabetId.length, mTextureAlphabetId, 0);
-        
-        mRockOnAlbumTextLabel = new RockOnAlbumTextLabel();        
         
         /*
          * By default, OpenGL enables features that improve quality
@@ -352,7 +358,8 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         gl.glFogf(GL10.GL_FOG_START, -mEyeNormal[2]);
         gl.glFogf(GL10.GL_FOG_END, -mEyeClicked[2]-mEyeClicked[0]-5.f);
 
-        int deltaToCenter;
+        positionYTmp = mPositionY;
+        flooredPositionYTmp = flooredPositionY;
         /* draw each cover */
         for(int i = 0; i<mCacheSize; i++)
         {
@@ -368,7 +375,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         	}
         	
         	// poor variable name -- dont mind it
-        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionY;
+        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionYTmp;
         	// make it all positive
         	deltaToCenter += mCacheSize/2 - 1; // (-4) negative numbers go bad with integer divisions
         	
@@ -382,17 +389,20 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 
         	gl.glTranslatef(
         			0,  // we just dont need to use delta center here because the navigator always moves by 2 positions (1 row)
-        			-1.6f + deltaToCenter * .4f, 
+        			-4.f*2.f/mTextRatio + deltaToCenter * 2.f/mTextRatio, 
         			0);
         	gl.glTranslatef(
         			0, 
-        			-(mPositionY-flooredPositionY) * .4f, 
+        			-(positionYTmp-flooredPositionYTmp) * 2.f/mTextRatio, 
         			0);
 
 //        	gl.glRotatef(15.f, 1.f, 0.f, 0.f);
         	
-        	mRockOnAlbumTextLabel.setTextureId(mTextureLabelId[i]);
-        	mRockOnAlbumTextLabel.draw(gl);
+        	if(mRockOnAlbumTextLabel != null)
+        	{
+	        	mRockOnAlbumTextLabel.setTextureId(mTextureLabelId[i]);
+	        	mRockOnAlbumTextLabel.draw(gl);
+        	}
         	
         }
         
@@ -429,6 +439,9 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
          * Initialize some variables
          */
     	initCacheVars(false);
+    	
+    	mRockOnAlbumTextLabel = new RockOnAlbumTextLabel(mTextRatio);        
+        
     }
 
     /* optimization */
@@ -442,11 +455,11 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
      */
     int	getPositionFromScreenCoordinates(float x, float y)
     {
-    	y += (mPositionY - flooredPositionY) * (mWidth * .2f);
+    	y += (mPositionY - flooredPositionY) * (mWidth * 1.f/mTextRatio);
     	if(y >= mHeight/2 - mWidth * .1f)
-    		rowFromY = (int) ((y - (mHeight/2 - mWidth * .1f)) / (mWidth * .2f));
+    		rowFromY = (int) ((y - (mHeight/2 - mWidth * .5f/mTextRatio)) / (mWidth * 1.f/mTextRatio));
     	else
-    		rowFromY = -1 - (int) (((mHeight/2 - mWidth * .1f) - y) / (mWidth * .2f));
+    		rowFromY = -1 - (int) (((mHeight/2 - mWidth * .5f/mTextRatio) - y) / (mWidth * 1.f/mTextRatio));
     	
     	if(true || mPositionY == mTargetPositionY)
 	    	return 
@@ -476,9 +489,9 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     int[]	getRowAndColumnFromScreenCoordinates(float x, float y)
     {
     	if(y >= mHeight/2)
-    		rowFromY = (int) ((y - (mHeight/2)) / (mWidth * .2f));
+    		rowFromY = (int) ((y - (mHeight/2)) / (mWidth * 1.f/mTextRatio));
     	else
-    		rowFromY = -1 - (int) (((mHeight/2) - y) / (mWidth * .2f));
+    		rowFromY = -1 - (int) (((mHeight/2) - y) / (mWidth * 1.f/mTextRatio));
     		
     	columnFromX = 0;
     	
@@ -849,7 +862,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	switch(direction)
     	{
     	case Constants.SCROLL_MODE_VERTICAL:
-			mTargetPositionY = mPositionY - px/(mHeight*.2f);
+			mTargetPositionY = mPositionY - px/(mHeight*1.f/mTextRatio);
 			/* make we dont exceed the cube limits */
 			if(mTargetPositionY <= -1 + Constants.MAX_POSITION_OVERSHOOT)
 				mTargetPositionY = -1 + Constants.MAX_POSITION_OVERSHOOT;
@@ -873,7 +886,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 						+
 						Constants.SCROLL_SPEED_BOOST
 						*
-						scrollSpeed/(mHeight*.2f)
+						scrollSpeed/(mHeight*1.f/mTextRatio)
 				);
 		
     		/* small optimization to avoid weird moves on the edges */
@@ -1050,6 +1063,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     private	boolean					mForceTextureUpdate = false;
     private int						mWidth = 0;
     private int						mHeight = 0;
+    private int						mTextRatio;
 
     private float[]		mEyeNormal = 
     {
@@ -1098,6 +1112,10 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     private boolean	texturesUpdated;
     private double	updateFraction;
     private int		tmpTextureIdx;
+    private int		deltaToCenter;
+    private float	positionYTmp;
+    private int		flooredPositionYTmp;
+
 }
 
 
@@ -1105,28 +1123,35 @@ class RockOnAlbumTextLabel {
 	
 	private final String TAG = "RockOnAlbumTextLabel";
 	
-    public RockOnAlbumTextLabel() {
+    public RockOnAlbumTextLabel(int mTextRatio) {
 //  public RockOnCover(int[] textureId, int[] textureAlphabetId) {
     	/**
     	 * cover coordinates
     	 */
     	float[] coords = {
         		// X, Y, Z
-        		-1.f, .2f, 0.f,
-        		1.f, .2f, 0.f, 
-        		1.f, -.2f, 0.f,
-        		-1.f, -.2f, 0.f
+        		-1.f, 1.f/mTextRatio, 0.f,
+        		1.f, 1.f/mTextRatio, 0.f, 
+        		1.f, -1.f/mTextRatio, 0.f,
+        		-1.f, -1.f/mTextRatio, 0.f
         };
         
         /**
          * Texture coordinates
          */
-        float[] textCoords = {
-	        		0.f, 1.f,
-	        		1.f, 1.f,
-	        		1.f, 0.f,
-	        		0.f, 0.f
-        };
+	    float[] textCoords = {
+	    		0.f, 1.f,
+	    		1.f, 1.f,
+	    		1.f, 0.f,
+	    		0.f, 0.f
+	    };
+	    // FOR THE G1 For Some reason
+//        float[] textCoords = {
+//        		0.f, .80f,
+//        		1.f, .80f,
+//        		1.f, .10f,
+//        		0.f, .10f
+//        };
         
     	/**
     	 * Generate our openGL buffers with the 
@@ -1185,11 +1210,13 @@ class RockOnAlbumTextLabel {
         gl.glTexParameterx(
         		GL10.GL_TEXTURE_2D, 
         		GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_REPEAT);
+                GL10.GL_CLAMP_TO_EDGE);
+//        		GL10.GL_REPEAT);
         gl.glTexParameterx(
         		GL10.GL_TEXTURE_2D, 
         		GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_REPEAT);
+        		GL10.GL_CLAMP_TO_EDGE);
+//        		GL10.GL_REPEAT);
     	
         gl.glFrontFace(GL10.GL_CCW);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
@@ -1221,161 +1248,3 @@ class RockOnAlbumTextLabel {
     public	int 		mTextureId;
 }
 
-//class AlbumLabelGlText{
-//	
-//	public void setTexture(int textureId){
-//		mTextureId = textureId;
-//	}
-//	
-//    public AlbumLabelGlText(int textureId) {
-//
-//    	/** 
-//    	 * Save the texture ids
-//    	 */
-//    	mTextureId = textureId;
-//    	
-//    	/** 
-//    	 * Our cube coordinate declaration
-//    	 */ 
-//    	ArrayList<float[]> faceCoordsArray = new ArrayList<float[]>(mCubeFaces);
-//    	
-//    	// FACE 0
-//        float[] coords0 = {
-//        		// X, Y, Z
-//        		-1.f, .25f, 0.f,
-//        		1.f, .25f, 0.f,
-//        		1.f, -.25f, 0.f, 
-//        		-1.f, -.25f, 0.f
-//        };
-//        faceCoordsArray.add(coords0);
-//        
-////        // FACE 1
-////        float[] coords1 = {
-////        		// X, Y, Z
-////        		-1.f, 1.1f, -.5f,
-////        		1.f, 1.1f, -5f,
-////        		1.f, 1.1f, -1.f,
-////        		-1.f, 1.1f, -1.f
-////        };
-////        faceCoordsArray.add(coords1);
-////        
-////        // FACE 2
-////        float[] coords2 = {
-////                // X, Y, Z
-////        		-1.f, .5f, 1.1f,
-////        		1.f, .5f, 1.1f,
-////        		1.f, 1.f, 1.1f,
-////        		-1.f, 1.f, 1.1f
-////        };
-////        faceCoordsArray.add(coords2);
-////        
-////        // FACE 3
-////        float[] coords3 = {
-////        		// X, Y, Z
-////        		-1.f, -1.1f, .5f,
-////        		1.f, -1.1f, .5f,
-////         		1.f, -1.1f, 1.f,
-////        		-1.f, -1.1f, 1.f
-////        };
-////        faceCoordsArray.add(coords3);
-////        
-//        // General texture coords
-//        float[] textCoords = {
-//	        		0.f, 1.f,
-//	        		1.f, 1.f,
-//	        		1.f, 0.f,
-//	        		0.f, 0.f
-//        };
-//        
-////    	/**
-////    	 * Generate our openGL buffers with the 
-////    	 * vertice and texture coordinates 
-////    	 * and drawing indexes
-////    	 */
-////    	for(int k = 0; k < mCubeFaces; k++){
-////	        // Buffers to be passed to gl*Pointer() functions
-////	        // must be direct, i.e., they must be placed on the
-////	        // native heap where the garbage collector cannot
-////	        // move them.
-////	        //
-////	        // Buffers with multi-byte datatypes (e.g., short, int, float)
-////	        // must have their byte order set to native order
-//	
-//	        ByteBuffer vbb = ByteBuffer.allocateDirect(VERTS * 3 * 4); // verts * ncoords * bytes per vert??
-//	        vbb.order(ByteOrder.nativeOrder());
-//	        mFVertexBuffer = vbb.asFloatBuffer();
-//	
-//	        ByteBuffer tbb = ByteBuffer.allocateDirect(VERTS * 2 * 4);
-//	        tbb.order(ByteOrder.nativeOrder());
-//	        mTexBuffer = tbb.asFloatBuffer();
-//	
-//	        ByteBuffer ibb = ByteBuffer.allocateDirect(VERTS * 2);
-//	        ibb.order(ByteOrder.nativeOrder());
-//	        mIndexBuffer = ibb.asShortBuffer();
-//	
-//	        float[] coords = faceCoordsArray.get(0);
-//	        
-//	        for (int i = 0; i < VERTS; i++) {
-//	            for(int j = 0; j < 3; j++) {
-//	            	mFVertexBuffer.put(coords[i*3+j]);
-//	            }
-//	        }
-//	
-//	        
-////	        for (int i = 0; i < VERTS; i++) {
-////	            for(int j = 0; j < 2; j++) {
-////	                mTexBuffer[k].put(coords[i*3+j]);
-////	            }
-////	        }
-//	        mTexBuffer.put(textCoords);
-//	        
-//	
-//	        for(int i = 0; i < VERTS; i++) {
-//	            mIndexBuffer.put((short) i);
-//	        }
-//	
-//	        mFVertexBuffer.position(0);
-//	        mTexBuffer.position(0);
-//	        mIndexBuffer.position(0);
-////    	}
-//    }
-//
-//    public void draw(GL10 gl) {
-//    	
-////    	for(int i = 0; i < mTextureId.length; i++){
-//    		gl.glActiveTexture(GL10.GL_TEXTURE0);
-//	        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
-//	        gl.glTexParameterx(
-//	        		GL10.GL_TEXTURE_2D, 
-//	        		GL10.GL_TEXTURE_WRAP_S,
-//	                GL10.GL_REPEAT);
-//	        gl.glTexParameterx(
-//	        		GL10.GL_TEXTURE_2D, 
-//	        		GL10.GL_TEXTURE_WRAP_T,
-//	                GL10.GL_REPEAT);
-//	    	
-//	        gl.glFrontFace(GL10.GL_CCW);
-//	        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
-//	        gl.glEnable(GL10.GL_TEXTURE_2D);
-//	        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
-//	        gl.glDrawElements(
-//	//        		GL10.GL_TRIANGLE_STRIP,
-//	        		GL10.GL_TRIANGLE_FAN,
-//	//        		GL10.GL_LINE_LOOP,
-//	        		VERTS,
-//	                GL10.GL_UNSIGNED_SHORT,
-//	                mIndexBuffer);
-////    	}
-//    }
-//
-//    private final static int VERTS = 4;
-//	private final int mCubeFaces = 4;
-//	private final int pointsPerFace = 4;
-//    
-//    private FloatBuffer mFVertexBuffer;
-//    private FloatBuffer mTexBuffer;
-//    private ShortBuffer mIndexBuffer;
-//    
-//    /** our texture id */
-//    public	int mTextureId;
-//}

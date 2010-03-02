@@ -223,49 +223,9 @@ public class NavGLTouchListener implements OnTouchListener{
 				 */
 				if(mScrollingY){
 					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_VERTICAL);
-					
-//					/* make the movement harder for lower rotations */
-//					if(Math.abs(mScrollingSpeed) < Constants.MAX_LOW_SPEED)
-//					{
-//						mRenderer.mTargetPositionY = 
-//							Math.round(
-//									mRenderer.mPositionY
-//									+
-//									0.5f * Math.signum(mScrollingSpeed) // needs to be .5f because of the rounding...
-//							);
-//					} 
-//					
-//					/* full speed ahead */
-//					else
-//					{
-//						mRenderer.mTargetPositionY = 
-//							Math.round(
-//									mRenderer.mPositionY
-//									+
-//									Constants.SCROLL_SPEED_BOOST
-//									*
-//									mScrollingSpeed
-//							);
-//					}
-//					/* small optimization to avoid weird moves on the edges */
-//					if(mRenderer.mTargetPositionY == -1)
-//						mRenderer.mTargetPositionY = -2;
-//					else if(mRenderer.mTargetPositionY == mRenderer.getAlbumCount())
-//						mRenderer.mTargetPositionY = mRenderer.getAlbumCount() + 1;
 				} else if(mScrollingX){
 					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_HORIZONTAL);
-//					mRenderer.mTargetPositionX = Math.round(
-//							mRenderer.mPositionX
-//							-
-//							(Constants.SCROLL_SPEED_BOOST * mScrollingSpeed));
-//					/* small optimization to avoid weird moves on the edges */
-////					if(mRenderer.mTargetPositionX == -1)
-////						mRenderer.mTargetPositionX = -2;
-////					else if(mRenderer.mTargetPositionX == 24)
-////						mRenderer.mTargetPositionX = 24 + 1;
 				}
-				
-
 				
 				/**
 				 * RESET STATE 
