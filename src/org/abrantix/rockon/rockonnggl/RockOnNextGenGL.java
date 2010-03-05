@@ -115,7 +115,6 @@ public class RockOnNextGenGL extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG, "ON CREATE!");
         /* set up our default exception handler */
         mDefaultExceptionHandler = new RockOnNextGenDefaultExceptionHandler(this);
         
@@ -145,7 +144,7 @@ public class RockOnNextGenGL extends Activity {
 //        	showNoMusicAlert();
 //        	return;
 //        }
-        
+
         resumeAlbumArtDownload();
         resumeAlbumArtProcessing();
         
@@ -961,7 +960,7 @@ public class RockOnNextGenGL extends Activity {
          * OPENGL ES HACK FOR GALAXY AND OTHERS
          * 
          *************************************************/
-        mGlSurfaceView.setEGLConfigChooser(
+    	mGlSurfaceView.setEGLConfigChooser(
         	     new GLSurfaceView.EGLConfigChooser() {
 					@Override
 					public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -991,7 +990,7 @@ public class RockOnNextGenGL extends Activity {
         /************************************************
          * HACK END
          ************************************************/
-
+    	
         mRendererMode = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
@@ -1004,13 +1003,13 @@ public class RockOnNextGenGL extends Activity {
         switch(mRendererMode)
         {
         case Constants.RENDERER_CUBE:
-	   		RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
+        	RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
 	        		getApplicationContext(),
 	        		mRequestRenderHandler,
 	        		mTheme);
 	   		mGlSurfaceView.setRenderer(rockOnCubeRenderer);
 	   		mRockOnRenderer = (RockOnRenderer) rockOnCubeRenderer;	
-	        break;
+	   		break;
         case Constants.RENDERER_WALL:
         	RockOnWallRenderer rockOnWallRenderer = new RockOnWallRenderer(
 	        		getApplicationContext(),
@@ -1028,10 +1027,11 @@ public class RockOnNextGenGL extends Activity {
 	   		mRockOnRenderer = (RockOnRenderer) rockOnBoringRenderer;	
 	        break;
         }
+    	
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         
         /** check if we were able to find any music */
-        if(mRockOnRenderer.getAlbumCount() <= 0)
+    	if(mRockOnRenderer.getAlbumCount() <= 0)
         {
         	mIsSdCardPresentAndHasMusic = false;
    			showNoMusicAlert();
@@ -1254,11 +1254,11 @@ public class RockOnNextGenGL extends Activity {
     		if(!PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
     				.contains(getResources().getString(R.string.preference_key_version)))
     		{
-    			showAlbumArtDownloadDialog();
-    			Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+        		showAlbumArtDownloadDialog();
+        		Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
     				.edit();
-    			editor.putString(getResources().getString(R.string.preference_key_version), "1");
-    			editor.commit();
+        		editor.putString(getResources().getString(R.string.preference_key_version), "1");
+        		editor.commit();
     		}
     	}
     };

@@ -66,7 +66,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     private void initNonGlVars(Context context, boolean force){
-    	
+        
     	/** init album cursor **/
     	if(mAlbumCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
@@ -80,14 +80,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		if(mAlbumCursor == null)
     			Log.i(TAG, "ALBUM CURSOR IS NULL");
     	}
-    	
+        
     	/** init dimensions */
     	mBitmapWidth = Constants.ALBUM_ART_TEXTURE_SIZE;
     	mBitmapHeight = Constants.ALBUM_ART_TEXTURE_SIZE;
-    	
+        
     	/** albumNavUtils */
     	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
-    	
+        
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
     		mAlbumNavItem[i] = new AlbumNavItem();
@@ -101,10 +101,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				mBitmapHeight/4,
     				Bitmap.Config.ARGB_8888);
     	}
-    	mColorComponentBuffer = new byte[4*mBitmapWidth*mBitmapHeight];
+        mColorComponentBuffer = new byte[4*mBitmapWidth*mBitmapHeight];
     	
     	/** init alphabet bitmap cache */
-    	for(int i = 0; i < mCacheSize; i++){
+        for(int i = 0; i < mCacheSize; i++){
     		mAlphabetNavItem[i] = new AlphabetNavItem();
     		mAlphabetNavItem[i].letter = -1;
     		mAlphabetNavItem[i].letterBitmap = Bitmap.createBitmap(
@@ -225,6 +225,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     double	frameStartTime ;
     double	lastSecond = 0;
     double	fps = 0;
+    boolean drawOneMoreTime = false;
     public void onDrawFrame(GL10 gl) {
     	  
     	frameStartTime = System.currentTimeMillis();
@@ -234,6 +235,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(!updatePosition(false)){
     		
     	} 
+    	
+        /* update textures if needed -- whenever we cross one album */
+        texturesUpdated = updateTextures(gl);
   
     	mRockOnCube.setHorizontalIndex((int) mPositionX, mPositionX);
     	mRockOnCube.setVerticalIndex((int) mPositionY, mPositionY);
@@ -355,9 +359,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         	gl.glRotatef(rotationAngleX, 0.f, 1.f, 0.f);
         	gl.glRotatef(-rotationAngleY, 1.f, 0.f, 0.f);
         }
-        
-        /* update textures if needed -- whenever we cross one album */
-        texturesUpdated = updateTextures(gl);
                 
     	/* 
     	 * ??
@@ -397,13 +398,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	
     	mIsRendering = false;
     	
-        if(mTargetPositionX == mPositionX &&
-        	mPositionX == 0 &&
-        	mTargetPositionY == mPositionY && 
+        if(mPositionX == 0 &&
+        	positionOffsetY == 0 &&
+        	positionOffsetX == 0 &&
         	!mClickAnimation &&
         	!texturesUpdated)
         {
-        	stopRender();
+        		stopRender();
         }
         
 //        Log.i(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
@@ -1241,8 +1242,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private boolean	texturesUpdated;
     private double	updateFraction;
     private int		tmpTextureIdx;
-    
-
 }
 
 
@@ -1662,8 +1661,9 @@ class RockOnCube {
     	/**
     	 * Vertical scrolling, only draw covers
     	 */
-    	if(horizontalIndexFloat < 1 && horizontalIndexFloat > -1){
-	    	for(int i = 0; i < mTextureId.length; i++){
+//    	if(horizontalIndexFloat < 1 && horizontalIndexFloat > -1){
+    	if(horizontalIndexFloat == 0){
+    		   	for(int i = 0; i < mTextureId.length; i++){
 	    		gl.glActiveTexture(GL10.GL_TEXTURE0);
 		        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId[i]);
 		        gl.glTexParameterx(

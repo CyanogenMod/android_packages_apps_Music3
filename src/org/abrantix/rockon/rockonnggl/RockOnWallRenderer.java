@@ -847,19 +847,19 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	switch(direction)
     	{
     	case Constants.SCROLL_MODE_VERTICAL:
-    		/* make the movement harder for lower rotations */
-    		if(Math.abs(scrollSpeed/(mHeight*.5f)) < Constants.MAX_LOW_SPEED)
-    		{
-    			mTargetPositionY = 
-    				Math.round(
-    						mPositionY
-    						+
-    						0.5f * Math.signum(scrollSpeed/(mHeight*.5f)) // needs to be .5f because of the rounding...
-    				);
-    		} 
-    		/* full speed ahead */
-    		else
-    		{
+//    		/* make the movement harder for lower rotations */
+//    		if(Math.abs(scrollSpeed/(mHeight*.5f)) < Constants.MAX_LOW_SPEED)
+//    		{
+//    			mTargetPositionY = 
+//    				Math.round(
+//    						mPositionY
+//    						+
+//    						0.5f * Math.signum(scrollSpeed/(mHeight*.5f)) // needs to be .5f because of the rounding...
+//    				);
+//    		} 
+//    		/* full speed ahead */
+//    		else
+//    		{
     			mTargetPositionY = 
     				Math.round(
     						mPositionY
@@ -868,7 +868,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     						*
     						scrollSpeed/(mHeight*.5f)
     				);
-    		}
+//    		}
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == 0)
     			mTargetPositionY = -2;
