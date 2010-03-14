@@ -62,6 +62,7 @@ public class NavGLTouchListener implements OnTouchListener{
 				mDownX = event.getX();
 				mDownY = event.getY();
 				mDownTimestamp = System.currentTimeMillis();
+				lastTimestamp = mDownTimestamp;
 				
 				lastX = mDownX;
 				lastY = mDownY;
@@ -74,7 +75,7 @@ public class NavGLTouchListener implements OnTouchListener{
 				
 				// AVOID EVENT FLOODING XXX
 				try {
-					Thread.sleep(32);
+					Thread.sleep(16);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -102,10 +103,6 @@ public class NavGLTouchListener implements OnTouchListener{
 							mClickHandler.sendMessageDelayed(
 									mMsg,
 									mRenderer.getClickActionDelay());
-//							mClickHandler.sendEmptyMessageDelayed(
-//									Constants.LONG_CLICK,
-//									mRenderer.getClickActionDelay());
-////									Constants.CLICK_ACTION_DELAY);
 							mRenderer.showClickAnimation(event.getX(), event.getY());
 							mLongClick = true;
 						}
@@ -146,9 +143,9 @@ public class NavGLTouchListener implements OnTouchListener{
 					
 					mScrollingSpeed = 
 						(float) 
-						(-0.85 * (event.getY() - lastY) // /mItemDimension
+						(-0.5 * (event.getY() - lastY) / (System.currentTimeMillis() - lastTimestamp) // /mItemDimension
 						+
-						(1-0.85) * mScrollingSpeed);
+						(1-0.5) * mScrollingSpeed);
 				}
 				/**
 				 * HORIZONTAL MOVE
@@ -159,16 +156,21 @@ public class NavGLTouchListener implements OnTouchListener{
 
 					mScrollingSpeed = 
 						(float) 
-						(0.85 * (event.getX() - lastX) // /mItemDimension
+						(0.5 * (event.getX() - lastX) / (System.currentTimeMillis() - lastTimestamp) // /mItemDimension
 						+
-						(1-0.85) * mScrollingSpeed);
+						(1-0.5) * mScrollingSpeed);
 				}
+				
+//				Log.i(TAG, "XXXXXXXXXXXXXXXXXXXX");
+//				Log.i(TAG, "touch interval:" + (System.currentTimeMillis() - lastTimestamp));
+//				Log.i(TAG, "scroll speed:" + mScrollingSpeed);
 				
 				/**
 				 * SAVE STATE
 				 */
 				lastY = event.getY();
 				lastX = event.getX();
+				lastTimestamp = System.currentTimeMillis();
 
 				/**
 				 * SHOW MOVEMENT

@@ -67,10 +67,6 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
         		Constants.ALBUM_ART_TEXTURE_SIZE, 
         		Constants.ALBUM_ART_TEXTURE_SIZE, 
         		Config.RGB_565);
-        albumCover = Bitmap.createBitmap(
-        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-        		Config.RGB_565);
     }
     
     /**

@@ -1376,7 +1376,7 @@ public class RockOnNextGenService extends Service {
 
     public void prev() {
         synchronized (this) {
-            if (mOneShot) {
+            if (mOneShot || mRepeatMode == Constants.REPEAT_CURRENT) {
                 // we were playing a specific file not part of a playlist, so there is no 'previous'
                 seek(0);
                 play();
@@ -1451,7 +1451,7 @@ public class RockOnNextGenService extends Service {
 
     public void next(boolean force) {
         synchronized (this) {
-            if (mOneShot) {
+            if (mOneShot || mRepeatMode == Constants.REPEAT_CURRENT) {
                 // we were playing a specific file not part of a playlist, so there is no 'next'
                 seek(0);
                 play();

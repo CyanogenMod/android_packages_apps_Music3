@@ -178,16 +178,21 @@ public class Constants{
 //	/** UI Dimension proportions */
 //	static final float navItemMinFraction = 0.6f; // minimum fraction of the smallest screen dimension
 	
+	/** Inactivity intervals */
+	static final double	MAX_INACTIVITY_INTERVAL_TO_MAINTAIN_STATE = 10 * 1000; // 10 secs
+	static final double MAX_INACTIVITY_INTERVAL_TO_MAINTAIN_PLAYLIST = 60 * 60 * 12 * 1000; // 12 hours
+	
 	/** UI scrolling parameters */
 	static final double	FRAME_DURATION_STD = 40;
 	static final double	FRAME_JUMP_MAX = 10;
 	static final float	SCROLL_SPEED_SMOOTHNESS = 2.5f; // as the fraction of the overall animation that should be obtained (per second)
 	static final float	CPU_SMOOTHNESS = 0.1f; // as the fraction of the overall animation that should be obtained (per second)
 	static final float	MIN_SCROLL = 1.5f; // as the fraction of the cover size (per second)
-	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
-	static final float	SCROLL_SPEED_BOOST = 28.f;
+//	static final float	MAX_SCROLL = 6.f; // as the fraction of the cover size (per second)
+	static final float	MAX_SCROLL = 9.f; // as the fraction of the cover size (per second)
+	static final float	SCROLL_SPEED_BOOST = 675.f;
 //	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
-	static final float	MAX_LOW_SPEED = .05f; // mScrollingSpeed...
+	static final float	MAX_LOW_SPEED = .0025f; // mScrollingSpeed...
 	static final float	MIN_SCROLL_TOUCH_MOVE = 0.08f;
 	static final double	MAX_CLICK_DOWNTIME = 1000;
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;
@@ -327,8 +332,11 @@ public class Constants{
 	static final String prefkey_mNavigatorTargetPositionX = "mNavigatorTargetPositionX";
 	static final String	prefkey_mNavigatorPositionY = "mNavigatorPositionY";
 	static final String prefkey_mNavigatorTargetPositionY = "mNavigatorTargetPositionY";
+	static final String prefkey_mLastAppUiActionTimestamp = "mLastAppUiActionTimestamp"; // everytime the app pauses this is updated
+	static final String prefkey_mLastAppActionTimestamp = "mLastAppActionTimestamp"; // includes also playing song in service
 	static final String prefkey_mPlaylistId = "mPlaylistId";
 	static final String prefkey_mFullscreen = "mFullScreen"; // duplicated in resources... FIXME
+	static final String prefkey_mControlsOnBottom = "mControlsOnBottom"; // duplicated in resources... FIXME
 	
 	
 }

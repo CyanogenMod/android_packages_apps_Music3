@@ -864,7 +864,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     				Math.round(
     						mPositionY
     						+
-    						Constants.SCROLL_SPEED_BOOST
+    						.75f * Constants.SCROLL_SPEED_BOOST
     						*
     						scrollSpeed/(mHeight*.5f)
     				);
@@ -872,8 +872,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == 0)
     			mTargetPositionY = -2;
-    		else if(mTargetPositionY == getAlbumCount())
-    			mTargetPositionY = getAlbumCount() + 1;		
+    		else if(mTargetPositionY == getAlbumCount()/2 - 1)
+    			mTargetPositionY = getAlbumCount()/2;		
     		return;
     	}
     }

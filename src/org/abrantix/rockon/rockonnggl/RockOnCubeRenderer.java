@@ -163,7 +163,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glClearColor(0.f, 0.f, 0.f, 0);
 //        gl.glClearColor(.5f, .5f, .5f, 1);
         gl.glShadeModel(GL10.GL_SMOOTH);
-        gl.glEnable(GL10.GL_DEPTH_TEST);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
+//        gl.glDisable(GL10.GL_BLEND);
+//        gl.glEnable(GL10.GL_DEPTH_TEST);
         gl.glEnable(GL10.GL_TEXTURE_2D);
         
         gl.glEnable(GL10.GL_CULL_FACE);
@@ -205,7 +208,60 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         		GL10.GL_TEXTURE_ENV_MODE,
                 GL10.GL_MODULATE);
 
-        /** FOG */
+//        /**
+//         * LIGHT
+//         */
+//        float[] lightAmbient= { 
+//        		1.f, 
+//        		1.f, 
+//        		1.f, 
+//        		1.f };				
+//        float[] lightDiffuse= { 
+//        		1.f, 
+//        		1.f, 
+//        		1.f, 
+//        		1.f };				
+//        float[] lightPosition= { 
+//        		0.f, 
+//        		-4.5f, 
+//        		2.5f, 
+//        		3.0f };				
+//        
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_AMBIENT, FloatBuffer.wrap(lightAmbient));
+//        gl.glLightfv(GL10.GL_LIGHT2, GL10.GL_AMBIENT, FloatBuffer.wrap(lightAmbient));
+//        gl.glLightfv(GL10.GL_LIGHT3, GL10.GL_AMBIENT, FloatBuffer.wrap(lightAmbient));
+////        gl.glLightfv(GL10.GL_LIGHT4, GL10.GL_AMBIENT, FloatBuffer.wrap(lightAmbient));
+////        gl.glLightfv(GL10.GL_LIGHT5, GL10.GL_AMBIENT, FloatBuffer.wrap(lightAmbient));
+//        
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT2, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT3, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT4, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT5, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT6, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        gl.glLightfv(GL10.GL_LIGHT7, GL10.GL_DIFFUSE, FloatBuffer.wrap(lightDiffuse));
+//        
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT2, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT3, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT4, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT5, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT6, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        gl.glLightfv(GL10.GL_LIGHT7, GL10.GL_POSITION, FloatBuffer.wrap(lightPosition));
+//        
+//        gl.glEnable(GL10.GL_LIGHT1);
+//        gl.glEnable(GL10.GL_LIGHT2);
+//        gl.glEnable(GL10.GL_LIGHT3);
+//        gl.glEnable(GL10.GL_LIGHT4);
+//        gl.glEnable(GL10.GL_LIGHT5);
+//        gl.glEnable(GL10.GL_LIGHT6);
+//        gl.glEnable(GL10.GL_LIGHT7);
+        
+//        gl.glEnable(GL10.GL_LIGHTING);
+        
+        /** 
+         * FOG 
+         */
         gl.glEnable(GL10.GL_FOG);
         gl.glFogx(GL10.GL_FOG_MODE, GL10.GL_LINEAR);
 //        gl.glFogx(GL10.GL_FOG_MODE, GL10.GL_EXP); // GL_EXP2 doesnt show anything
@@ -220,7 +276,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	return (int)(mHeight * .8f);
     }
     
-    /* optmization */
+    /* optimization */
     float	distanceToRotationLimits = 0.f;
     double	frameStartTime ;
     double	lastSecond = 0;
@@ -333,6 +389,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        gl.glEnableClientState(GL10.GL_NORMAL_ARRAY); // LIGHTING
         
         /* Center (or at least compensate) in the X axis */
         gl.glTranslatef(.1f, 0.f, 0.f);
@@ -401,6 +458,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         if(mPositionX == 0 &&
         	positionOffsetY == 0 &&
         	positionOffsetX == 0 &&
+        	mPositionX % 1 == 0 &&
+        	mPositionY % 1 == 0 &&
         	!mClickAnimation &&
         	!texturesUpdated)
         {
@@ -715,15 +774,18 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
     	/** bind new texture */
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-    	
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D, 
-        		GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_LINEAR);
+
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D,
                 GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
+//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
+        		GL10.GL_LINEAR);
+        gl.glTexParameterf(
+        		GL10.GL_TEXTURE_2D, 
+        		GL10.GL_TEXTURE_MIN_FILTER,
+//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                GL10.GL_NEAREST);
+        		GL10.GL_LINEAR);
 
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D, 
@@ -742,11 +804,17 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glTexEnvf(
         		GL10.GL_TEXTURE_ENV, 
         		GL10.GL_TEXTURE_ENV_MODE,
-        		GL10.GL_MODULATE);
-//        		GL10.GL_DECAL);
 //        		GL10.GL_MODULATE);
+//        		GL10.GL_DECAL);
+        		GL10.GL_MODULATE);
 //        		GL10.GL_BLEND);
 //                GL10.GL_REPLACE);
+
+//        gl.glColor4f(1.0f,1.0f,1.0f,0.5f);
+        
+        gl.glBlendFunc(
+        		GL10.GL_SRC_ALPHA, 
+        		GL10.GL_ONE);
 
 
         if(bitmap != null)
@@ -755,7 +823,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         			0, 
         			bitmap, 
         			0);
-
+	    	
     }
     
     float getPositionX(){
@@ -1269,6 +1337,7 @@ class RockOnCube {
     	 * when transitioning, 2 sets may be drawn
     	 */ 
     	ArrayList<float[]> faceCoordsArray = new ArrayList<float[]>(4);
+    	ArrayList<float[]> faceNormArray = new ArrayList<float[]>(4);
 //    	for(int i=0; i<mCubeFaces; i++){
 //    		faceCoordsArray.add(new ArrayList<float[]>(mCubeFaces));
 //    	}
@@ -1285,6 +1354,10 @@ class RockOnCube {
         		-1.f, -1.f, -1.f
         };
         faceCoordsArray.add(coords0);
+        float[] norm0 = {
+        	0.f, 0.f, -1.f	
+        };
+        faceNormArray.add(norm0);
         
         // FACE 1
         float[] coords1 = {
@@ -1295,7 +1368,11 @@ class RockOnCube {
         		-1.f, 1.f, -1.f
         };
         faceCoordsArray.add(coords1);
-        
+        float[] norm1 = {
+            	0.f, 1.f, 0.f	
+            };
+        faceNormArray.add(norm1);
+            
         // FACE 2
         float[] coords2 = {
                 // X, Y, Z
@@ -1305,6 +1382,11 @@ class RockOnCube {
         		-1.f, 1.f, 1.f
         };
         faceCoordsArray.add(coords2);
+        float[] norm2 = {
+            	0.f, 0.f, 1.f	
+            };
+        faceNormArray.add(norm2);
+            
         
         // FACE 3
         float[] coords3 = {
@@ -1315,136 +1397,14 @@ class RockOnCube {
         		-1.f, -1.f, 1.f
         };
         faceCoordsArray.add(coords3);
+        float[] norm3 = {
+            	0.f, -1.f, 0.f	
+            };
+        faceNormArray.add(norm3);
         
-//        /**
-//    	 * 2ND FACE SET
-//    	 */
-//    	// FACE 0
-//        float[] coords10 = {
-//        		// X, Y, Z
-//        		1.f, 1.f, -1.f,
-//        		1.f, 1.f, 1.f, 
-//        		1.f, -1.f, 1.f,
-//        		1.f, -1.f, -1.f
-//        };
-//        faceCoordsArray.get(1).add(coords10);
-//        
-//        // FACE 1
-//        float[] coords11 = {
-//        		// X, Y, Z
-//        		1.f, -1.f, -1.f,
-//        		1.f, -1.f, 1.f,
-//        		-1.f, -1.f, 1.f,
-//        		-1.f, -1.f, -1.f
-//        };
-//        faceCoordsArray.get(1).add(coords11);
-//        
-//        // FACE 2
-//        float[] coords12 = {
-//                // X, Y, Z
-//        		-1.f, -1.f, -1.f,
-//        		-1.f, -1.f, 1.f,
-//        		-1.f, 1.f, 1.f,
-//        		-1.f, 1.f, -1.f
-//        };
-//        faceCoordsArray.get(1).add(coords12);
-//        
-//        // FACE 3
-//        float[] coords13 = {
-//        		// X, Y, Z
-//        		-1.f, -1.f, -1.f,
-//        		1.f, -1.f, -1.f,
-//        		1.f, -1.f, 1.f,
-//        		-1.f, -1.f, 1.f
-//        };
-//        faceCoordsArray.get(1).add(coords13);
-//        
-//        /**
-//    	 * 3RD FACE SET
-//    	 */
-//    	// FACE 0
-//        float[] coords20 = {
-//        		// X, Y, Z
-//        		1.f, 1.f, 1.f,
-//        		-1.f, 1.f, 1.f, 
-//        		-1.f, -1.f, 1.f,
-//        		1.f, -1.f, 1.f
-//        };
-//        faceCoordsArray.get(2).add(coords20);
-//        
-//        // FACE 1
-//        float[] coords21 = {
-//        		// X, Y, Z
-//        		1.f, -1.f, 1.f,
-//        		-1.f, -1.f, 1.f,
-//        		-1.f, -1.f, -1.f,
-//        		1.f, -1.f, -1.f
-//        };
-//        faceCoordsArray.get(2).add(coords21);
-//        
-//        // FACE 2
-//        float[] coords22 = {
-//                // X, Y, Z
-//        		1.f, -1.f, -1.f,
-//        		-1.f, -1.f, -1.f,
-//        		-1.f, 1.f, -1.f,
-//        		1.f, 1.f, -1.f
-//        };
-//        faceCoordsArray.get(2).add(coords22);
-//        
-//        // FACE 3
-//        float[] coords23 = {
-//        		// X, Y, Z
-//        		1.f, 1.f, -1.f,
-//        		-1.f, 1.f, -1.f,
-//        		-1.f, 1.f, 1.f,
-//        		1.f, 1.f, 1.f
-//        };
-//        faceCoordsArray.get(2).add(coords23);
-//        
-//        /**
-//    	 * 4TH FACE SET
-//    	 */
-//    	// FACE 0
-//        float[] coords30 = {
-//        		// X, Y, Z
-//        		-1.f, 1.f, 1.f,
-//        		-1.f, 1.f, -1.f, 
-//        		-1.f, -1.f, -1.f,
-//        		-1.f, -1.f, 1.f
-//        };
-//        faceCoordsArray.get(3).add(coords30);
-//        
-//        // FACE 1
-//        float[] coords31 = {
-//        		// X, Y, Z
-//        		-1.f, -1.f, 1.f,
-//        		-1.f, -1.f, -1.f,
-//        		1.f, -1.f, -1.f,
-//        		1.f, -1.f, 1.f
-//        };
-//        faceCoordsArray.get(3).add(coords31);
-//        
-//        // FACE 2
-//        float[] coords32 = {
-//                // X, Y, Z
-//        		1.f, -1.f, 1.f,
-//        		1.f, -1.f, -1.f,
-//        		1.f, 1.f, -1.f,
-//        		1.f, 1.f, 1.f
-//        };
-//        faceCoordsArray.get(3).add(coords32);
-//        
-//        // FACE 3
-//        float[] coords33 = {
-//        		// X, Y, Z
-//        		1.f, 1.f, 1.f,
-//        		1.f, 1.f, -1.f,
-//        		-1.f, 1.f, -1.f,
-//        		-1.f, 1.f, 1.f
-//        };
-//        faceCoordsArray.get(3).add(coords33);
-        
+        /**
+         * Alphabet faces
+         */
         float[] coordsAlphabet = {
         		// 1ST SET OF 4
         		// 1 - X, Y, Z
@@ -1566,7 +1526,11 @@ class RockOnCube {
 	        ByteBuffer tbb = ByteBuffer.allocateDirect(VERTS * 2 * 4);
 	        tbb.order(ByteOrder.nativeOrder());
 	        mTexBuffer[k] = tbb.asFloatBuffer();
-	
+	        
+	        ByteBuffer nbb = ByteBuffer.allocateDirect(3 * 4);
+	        nbb.order(ByteOrder.nativeOrder());
+	        mNormalBuffer[k] = nbb.asFloatBuffer();
+	        
 	        ByteBuffer ibb = ByteBuffer.allocateDirect(VERTS * 2);
 	        ibb.order(ByteOrder.nativeOrder());
 	        mIndexBuffer[k] = ibb.asShortBuffer();
@@ -1578,13 +1542,10 @@ class RockOnCube {
 	            	mFVertexBuffer[k].put(coords[i*3+j]);
 	            }
 	        }
-	
 	        
-//	        for (int i = 0; i < VERTS; i++) {
-//	            for(int j = 0; j < 2; j++) {
-//	                mTexBuffer[k].put(coords[i*3+j]);
-//	            }
-//	        }
+	        for(int i = 0; i < 3; i++)
+	        	mNormalBuffer[k].put(faceNormArray.get(k)[i]);
+	        
 	        mTexBuffer[k].put(textCoords);
 	        
 	
@@ -1594,6 +1555,7 @@ class RockOnCube {
 	
 	        mFVertexBuffer[k].position(0);
 	        mTexBuffer[k].position(0);
+	        mNormalBuffer[k].position(0);
 	        mIndexBuffer[k].position(0);
     	}
 
@@ -1664,28 +1626,29 @@ class RockOnCube {
 //    	if(horizontalIndexFloat < 1 && horizontalIndexFloat > -1){
     	if(horizontalIndexFloat == 0){
     		   	for(int i = 0; i < mTextureId.length; i++){
-	    		gl.glActiveTexture(GL10.GL_TEXTURE0);
-		        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId[i]);
-		        gl.glTexParameterx(
-		        		GL10.GL_TEXTURE_2D, 
-		        		GL10.GL_TEXTURE_WRAP_S,
-		                GL10.GL_REPEAT);
-		        gl.glTexParameterx(
-		        		GL10.GL_TEXTURE_2D, 
-		        		GL10.GL_TEXTURE_WRAP_T,
-		                GL10.GL_REPEAT);
-		    	
-		        gl.glFrontFace(GL10.GL_CCW);
-		        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer[i]);
-		        gl.glEnable(GL10.GL_TEXTURE_2D);
-		        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer[i]);
-		        gl.glDrawElements(
-		//        		GL10.GL_TRIANGLE_STRIP,
-		        		GL10.GL_TRIANGLE_FAN,
-		//        		GL10.GL_LINE_LOOP,
-		        		VERTS,
-		                GL10.GL_UNSIGNED_SHORT,
-		                mIndexBuffer[i]);
+		    		gl.glActiveTexture(GL10.GL_TEXTURE0);
+			        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId[i]);
+			        gl.glTexParameterx(
+			        		GL10.GL_TEXTURE_2D, 
+			        		GL10.GL_TEXTURE_WRAP_S,
+			                GL10.GL_REPEAT);
+			        gl.glTexParameterx(
+			        		GL10.GL_TEXTURE_2D, 
+			        		GL10.GL_TEXTURE_WRAP_T,
+			                GL10.GL_REPEAT);
+			    	
+			        gl.glFrontFace(GL10.GL_CCW);
+			        gl.glNormalPointer(GL10.GL_FLOAT, 0, mNormalBuffer[i]);
+			        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer[i]);
+			        gl.glEnable(GL10.GL_TEXTURE_2D);
+			        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer[i]);
+			        gl.glDrawElements(
+			//        		GL10.GL_TRIANGLE_STRIP,
+			        		GL10.GL_TRIANGLE_FAN,
+			//        		GL10.GL_LINE_LOOP,
+			        		VERTS,
+			                GL10.GL_UNSIGNED_SHORT,
+			                mIndexBuffer[i]);
 	    	}
     	}
     	/**
@@ -1709,6 +1672,7 @@ class RockOnCube {
 		                GL10.GL_REPEAT);
 		    	
 		        gl.glFrontFace(GL10.GL_CCW);
+//		        gl.glNormalPointer(type, stride, pointer);
 		        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBufferHorizontal[y][i]);
 		        gl.glEnable(GL10.GL_TEXTURE_2D);
 		        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBufferHorizontal[y][i]);
@@ -1745,6 +1709,7 @@ class RockOnCube {
 	/* vertical scrolling buffers */
 	private FloatBuffer mFVertexBuffer[] = new FloatBuffer[mCubeFaces];
     private FloatBuffer mTexBuffer[] = new FloatBuffer[mCubeFaces];
+    private FloatBuffer mNormalBuffer[] = new FloatBuffer[mCubeFaces];
     private ShortBuffer mIndexBuffer[] = new ShortBuffer[mCubeFaces];
     
     /* horizontal scrolling buffers */

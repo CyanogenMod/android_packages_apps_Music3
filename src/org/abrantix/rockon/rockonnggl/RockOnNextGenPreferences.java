@@ -57,6 +57,14 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_full_screen))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
 		
+		/* Controls on Bottom */
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
+			setChecked(
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+					getBoolean(getString(R.string.preference_key_controls_on_bottom), false));
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
+			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+		
 		/* Always Embedded Album Art */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_embedded_album_art))).
 			setChecked(

@@ -3,7 +3,7 @@
       package="org.abrantix.rockon.rockonnggl"
       android:versionName="1.0.28" android:versionCode="29">
     <application 
-    		android:icon="@drawable/icon" 
+    		android:icon="@drawable/icon_invisible" 
     		android:label="@string/app_name">
     		
 		<!-- 	MAIN ACTIVITY	-->

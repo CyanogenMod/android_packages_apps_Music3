@@ -237,8 +237,8 @@ public class RockOnNextGenGL extends Activity {
     	if(mIsSdCardPresentAndHasMusic)
     	{
 	//    	Log.i(TAG, "ON DESTROY!");
-	    	/* save navigator state */
-	    	saveNavigatorState();
+//	    	/* save navigator state */
+//	    	saveNavigatorState();
 	    	
 	    	/* check if downloading album art */
 	    	if(mAlbumArtDownloadOkClickListener != null &&
@@ -741,6 +741,7 @@ public class RockOnNextGenGL extends Activity {
     		// reload preferences :P
     		/* in case the user changed to full screen */
     		// TODO: reload app -- creaty dummy act that starts the main activity and finish this one
+    		mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
     		break;
     	case Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE:
 //    		mRockOnCubeRenderer.reverseClickAnimation();
@@ -908,28 +909,31 @@ public class RockOnNextGenGL extends Activity {
      * save navigator state
      */
     private void saveNavigatorState(){
-//    	if(mRockOnCubeRenderer != null){
-//    		mNavigatorPositionX = mRockOnCubeRenderer.mPositionX;
-//	    	mNavigatorTargetPositionX = mRockOnCubeRenderer.mTargetPositionX;
-//	    	mNavigatorPositionY = mRockOnCubeRenderer.mPositionY;
-//	    	mNavigatorTargetPositionY = mRockOnCubeRenderer.mTargetPositionY;
+    	
+       	Editor editor = PreferenceManager.
+		getDefaultSharedPreferences(getApplicationContext()).edit();
+
     	if(mRockOnRenderer != null){
     		mNavigatorPositionX = mRockOnRenderer.getPositionX();
 	    	mNavigatorTargetPositionX = mRockOnRenderer.getTargetPositionX();
 	    	mNavigatorPositionY = mRockOnRenderer.getPositionY();
 	    	mNavigatorTargetPositionY = mRockOnRenderer.getTargetPositionY();
-		   	Editor editor = PreferenceManager.
-	    		getDefaultSharedPreferences(getApplicationContext()).edit();
 		   	/* navigator position */
 	    	editor.putFloat(Constants.prefkey_mNavigatorPositionX, mNavigatorPositionX);
 	    	editor.putFloat(Constants.prefkey_mNavigatorTargetPositionX, mNavigatorTargetPositionX);
 	    	editor.putFloat(Constants.prefkey_mNavigatorPositionY, mNavigatorPositionY);
 	    	editor.putFloat(Constants.prefkey_mNavigatorTargetPositionY, mNavigatorTargetPositionY);
-	    	/* renderer mode */
-	    	editor.putInt(Constants.prefkey_mRendererMode, mRendererMode);
-	    	
-	    	editor.commit();
-    	}
+	    }
+
+    	/* renderer mode */
+    	editor.putInt(Constants.prefkey_mRendererMode, mRendererMode);	    		
+    	
+    	/* app inactivity */
+    	editor.putLong(Constants.prefkey_mLastAppUiActionTimestamp, System.currentTimeMillis());
+    	editor.putLong(Constants.prefkey_mLastAppActionTimestamp, System.currentTimeMillis());
+    	
+    	editor.commit();
+    	
     }
     
     /**
@@ -952,8 +956,18 @@ public class RockOnNextGenGL extends Activity {
     /**
      * showNavigator
      */
+    boolean oBottomControls = false;
     private void showNavigator(){
-    	setContentView(R.layout.navigator_main);
+    	/** Check which layout to use */
+    	oBottomControls = 
+    		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    			getBoolean(Constants.prefkey_mControlsOnBottom, false);
+    	if(!oBottomControls)
+    		setContentView(R.layout.navigator_main);
+    	else
+    		setContentView(R.layout.navigator_main_controls_down);
+    	
+    	/** Setup our 3d accelerated Surface */
     	mGlSurfaceView = (GLSurfaceView) findViewById(R.id.cube_surface_view);
     	/*************************************************
          * 
@@ -991,6 +1005,7 @@ public class RockOnNextGenGL extends Activity {
          * HACK END
          ************************************************/
     	
+    	/** Setup the appropriate renderer and theme */
         mRendererMode = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
@@ -1150,22 +1165,61 @@ public class RockOnNextGenGL extends Activity {
     	updateCurrentPlayerStateButtonsFromServiceHandler
     		.sendEmptyMessage(0);
     
+    	Log.i(TAG, "interval from last activity: "+
+    			(System.currentTimeMillis()
+    			-
+    			PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    				getLong(Constants.prefkey_mLastAppUiActionTimestamp, 0)));
+    	
     	/* set the navigator in the right position */
-    	if(mNavigatorPositionY == -1)
-    		mNavigatorPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorPositionY, 0);
-    	if(mNavigatorTargetPositionY == -1)
-    		mNavigatorTargetPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorTargetPositionY, 0);
-    	if(mNavigatorPositionX == -1)
-    		mNavigatorPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorPositionX, 0);
-    	if(mNavigatorTargetPositionX == -1)
-    		mNavigatorTargetPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getFloat(Constants.prefkey_mNavigatorTargetPositionX, 0);
-    	setNavigatorPosition(
-    			mNavigatorPositionX, mNavigatorTargetPositionX,
-    			mNavigatorPositionY, mNavigatorTargetPositionY);    	
+    	if(System.currentTimeMillis()
+    			-
+    			PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    				getLong(Constants.prefkey_mLastAppUiActionTimestamp, 0)
+    			<
+    			Constants.MAX_INACTIVITY_INTERVAL_TO_MAINTAIN_STATE
+    	)
+    	{
+	    	if(mNavigatorPositionY == -1)
+	    		mNavigatorPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+	    			getFloat(Constants.prefkey_mNavigatorPositionY, 0);
+	    	if(mNavigatorTargetPositionY == -1)
+	    		mNavigatorTargetPositionY = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+	    			getFloat(Constants.prefkey_mNavigatorTargetPositionY, 0);
+	    	if(mNavigatorPositionX == -1)
+	    		mNavigatorPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+	    			getFloat(Constants.prefkey_mNavigatorPositionX, 0);
+	    	if(mNavigatorTargetPositionX == -1)
+	    		mNavigatorTargetPositionX = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+	    			getFloat(Constants.prefkey_mNavigatorTargetPositionX, 0);
+	    	setNavigatorPosition(
+	    			mNavigatorPositionX, mNavigatorTargetPositionX,
+	    			mNavigatorPositionY, mNavigatorTargetPositionY);
+    	}
+    	else
+    	{
+//    		mSetNavigatorCurrent.sendEmptyMessage(0);
+    		try
+    		{
+	    		mRockOnRenderer.setCurrentByAlbumId(mService.getAlbumId());
+	    		mNavigatorPositionX = mRockOnRenderer.getPositionX();
+	    		mNavigatorPositionY = mRockOnRenderer.getPositionY();
+	    		mNavigatorTargetPositionX = mRockOnRenderer.getTargetPositionX();
+	    		mNavigatorTargetPositionY = mRockOnRenderer.getTargetPositionY();
+    		}
+    		catch(Exception e)
+    		{
+//    			CursorUtils cUtils = new CursorUtils(getApplicationContext());
+//    			Cursor c = cUtils.getAlbumListFromPlaylist(mPlaylistId);
+//    			c.moveToFirst();
+//    			mRockOnRenderer.setCurrentByAlbumId(
+//    					c.getLong(
+//    							c.getColumnIndexOrThrow(
+//    									MediaStore.Audio.Albums._ID)));
+//    			c.close();
+    			e.printStackTrace();
+    		}
+    	}
     }
     
     /**
@@ -1446,8 +1500,18 @@ public class RockOnNextGenGL extends Activity {
 		
 		@Override
 		public void handleMessage(Message msg){
-			// TODO:
-		}
+			try{
+				if(mService.getRepeatMode() == Constants.REPEAT_CURRENT ||
+						mService.getShuffleMode() == Constants.REPEAT_ALL){
+					mService.setRepeatMode(Constants.REPEAT_NONE);
+					setRepeatNoneButton();
+				} else {
+					mService.setRepeatMode(Constants.REPEAT_CURRENT);
+					setRepeatButton(Constants.REPEAT_CURRENT);
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}		}
 		
 	};
 	
@@ -2001,10 +2065,18 @@ public class RockOnNextGenGL extends Activity {
 				setImageResource(R.drawable.shuffle_none_selector);
 	}
 	
-	public void setRepeatCurrentButton(){
+	public void setRepeatButton(int repeatCode){
 		if(findViewById(R.id.player_controls_repeat) != null)
-			((ImageView)findViewById(R.id.player_controls_repeat)).
-				setImageResource(R.drawable.repeat_current_selector);
+		{
+			switch(repeatCode)
+			{
+			case Constants.REPEAT_CURRENT:
+				((ImageView)findViewById(R.id.player_controls_repeat)).
+					setImageResource(R.drawable.repeat_current_selector);
+				break;
+			// TODO: REPEAT_ALL
+			}
+		}
 	}
 	
 	public void setRepeatNoneButton(){
@@ -2051,7 +2123,7 @@ public class RockOnNextGenGL extends Activity {
     	if(repeat == Constants.REPEAT_NONE)
     		setRepeatNoneButton();
     	else if(repeat == Constants.REPEAT_CURRENT)
-    		setRepeatCurrentButton();
+    		setRepeatButton(Constants.REPEAT_CURRENT);
 	}
 	
 	/**
@@ -2265,45 +2337,24 @@ public class RockOnNextGenGL extends Activity {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName classname, IBinder obj) {
             mService = IRockOnNextGenService.Stub.asInterface(obj);
-//            startPlayback();
             try {
-//                // Assume something is playing when the service says it is,
-//                // but also if the audio ID is valid but the service is paused.
-//                if (mService.getAudioId() >= 0 || mService.isPlaying() ||
-//                        mService.getPath() != null) {
-//                    // something is playing now, we're done
-//                    if (mOneShot || mService.getAudioId() < 0) {
-//                        mRepeatButton.setVisibility(View.INVISIBLE);
-//                        mShuffleButton.setVisibility(View.INVISIBLE);
-//                        mQueueButton.setVisibility(View.INVISIBLE);
-//                    } else {
-//                        mRepeatButton.setVisibility(View.VISIBLE);
-//                        mShuffleButton.setVisibility(View.VISIBLE);
-//                        mQueueButton.setVisibility(View.VISIBLE);
-//                        setRepeatButtonImage();
-//                        setShuffleButtonImage();
-//                    }
-//                    setPauseButtonImage();
-//                    return;
-//                }
                 if(mService.getAudioId() >= 0 || mService.getPath() != null){
-                	/* get playing meta */
-                	updateTrackMetaFromService();
-                	
-                	/* update UI */
-                	updateCurrentPlayerStateButtonsFromServiceHandler
-                		.sendEmptyMessage(0);
-                	
                 	Log.i(TAG, "track: "+mTrackName);
                 	Log.i(TAG, "artist: "+mArtistName);
                 	Log.i(TAG, "duration: "+mTrackDuration);
                 	Log.i(TAG, "progress: "+mTrackProgress);
-                	
+
+                	// XXX - ??? DUPLICATED CODE ?
+                	resumeState();
+                	//updateTrackMetaFromService();
+                	//updateCurrentPlayerStateButtonsFromServiceHandler
+                	//	.sendEmptyMessage(0);                	
                 	return;
                 } else {
                 	Log.i(TAG, "Not Playing...");
                 }
-            } catch (RemoteException ex) {
+            } 
+            catch (RemoteException ex) {
             }
 //            // Service is dead or not playing anything. If we got here as part
 //            // of a "play this file" Intent, exit. Otherwise go to the Music

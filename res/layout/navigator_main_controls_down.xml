@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/the_mother_of_all_views_navigator"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff000000"
+    >
+<!--        android:background="#ff542437"-->
+    
+   	<LinearLayout 
+		android:id="@+id/player_current_playing_layout"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="@dimen/button_default_height"
+	    android:layout_alignParentBottom="true"
+    >
+    	<ImageView
+    		android:id="@+id/search_button"
+    		android:layout_width="@dimen/button_default_width"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="0"
+    		android:src="@drawable/search_selector"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
+    	<include
+    		layout="@layout/song_label_and_progress"
+    		android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="3"
+    		android:layout_gravity="center"/>
+    		
+<!--    	<ImageView-->
+<!--    		android:layout_width="wrap_content"-->
+<!--    		android:layout_height="fill_parent"-->
+<!--    		android:layout_weight="3"-->
+<!--    		android:background="#00000000"/>-->
+    	<ImageView
+    		android:id="@+id/play_queue_button"
+    		android:layout_width="@dimen/button_default_width"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="0"
+    		android:src="@drawable/play_queue_selector"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
+    </LinearLayout> 
+
+    <!--    	android:layout_below="@id/player_controls_layout"-->
+<!--    	android:layout_above="@id/player_current_playing_layout"-->
+    
+    
+    <LinearLayout
+    	android:id="@+id/player_controls_layout"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="@dimen/button_default_height"
+	    android:layout_above="@id/player_current_playing_layout"
+    >
+    	<ImageView
+    		android:id="@+id/player_controls_previous"
+    		android:layout_width="@dimen/button_default_width"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="0"
+    		android:src="@drawable/previous_selector"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_small_padding"-->
+<!--    		android:paddingBottom="@dimen/button_small_padding"-->
+    		
+    	<ImageView
+    		android:id="@+id/player_controls_repeat"
+    		android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		    		android:src="@drawable/repeat_none_selector"-->
+<!--    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    		android:paddingBottom="@dimen/button_medium_padding"-->
+    		
+    	<ImageView
+    		android:id="@+id/player_controls_play"
+    		android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		    		android:src="@drawable/play_selector"-->
+<!--    		android:paddingTop="@dimen/button_large_padding"-->
+<!--    		android:paddingBottom="@dimen/button_large_padding"-->
+    		
+    		
+    	<ImageView
+    		android:id="@+id/player_controls_shuffle"
+    		android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="1"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		    		android:src="@drawable/shuffle_selector"-->
+<!--    		android:paddingTop="@dimen/button_medium_padding"-->
+<!--    		android:paddingBottom="@dimen/button_medium_padding"-->
+    		
+    	<ImageView
+    		android:id="@+id/player_controls_next"
+    		android:layout_width="@dimen/button_default_width"
+    		android:layout_height="fill_parent"
+    		android:layout_weight="0"
+    		android:src="@drawable/next_selector"
+    		android:dither="true"
+    		android:scaleType="fitCenter"
+    		android:background="#00000000"/>
+<!--    		android:paddingTop="@dimen/button_small_padding"-->
+<!--    		android:paddingBottom="@dimen/button_small_padding"-->
+    		
+    </LinearLayout>
+
+
+    <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_weight="1"
+    	android:layout_above="@id/player_controls_layout">
+<!--	    android:layout_below="@id/player_current_playing_layout">-->
+    	
+		<android.opengl.GLSurfaceView
+			android:id="@+id/cube_surface_view"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_margin="0dp"
+			/>
+	</LinearLayout>
+
+	<ImageView
+		android:id="@+id/shading_top"
+		android:layout_width="fill_parent"
+		android:layout_height="@dimen/navigator_shading_height"
+		android:layout_alignParentTop="true"
+		android:src="@drawable/black_to_transparent_grad_minus_90"/>
+<!--				android:layout_below="@id/player_current_playing_layout"-->
+		
+	<ImageView
+		android:id="@+id/shading_bottom"
+		android:layout_width="fill_parent"
+		android:layout_height="@dimen/navigator_shading_height"
+		android:layout_above="@id/player_controls_layout"
+		android:src="@drawable/black_to_transparent_grad_90"/>
+		
+</RelativeLayout>
