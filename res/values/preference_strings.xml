@@ -21,7 +21,7 @@
 
 	<!--	CONTROLS ON TOP    -->
     <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
-    <string name="preference_title_controls_on_bottom">Thumb controls</string>
+    <string name="preference_title_controls_on_bottom">Thumb controls"res/layout-land"</string>
     <string name="preference_summary_controls_on_bottom">Place the controls on the bottom of the screen.</string>
 
 	<!--	PREFERENCE CATEGORIES    -->
