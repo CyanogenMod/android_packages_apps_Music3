@@ -17,7 +17,11 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.BitmapFactory.Options;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -641,11 +645,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	return changed;
     }
     
-    Bitmap undefined = Bitmap.createBitmap(
-			Constants.REASONABLE_ALBUM_ART_SIZE, 
-			Constants.REASONABLE_ALBUM_ART_SIZE, 
-			Bitmap.Config.RGB_565);
-    
+//    Bitmap undefined = BitmapFactory.decodeResource(
+//    		mContext.getResources(), 
+//    		R.drawable.unknown_256); 
+//    	Bitmap.createBitmap(
+//			Constants.REASONABLE_ALBUM_ART_SIZE, 
+//			Constants.REASONABLE_ALBUM_ART_SIZE, 
+//			Bitmap.Config.RGB_565);
+//    
     private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int albumIndex, boolean force){
     	/** texture needs update? */
     	if(mAlbumNavItem[cacheIndex].index != albumIndex || force){
@@ -658,15 +665,17 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		{
     			mAlbumNavItem[cacheIndex].albumName = "";
     			mAlbumNavItem[cacheIndex].artistName = "";
-//    			mAlbumNavItem[cacheIndex].cover = undefined;
+//    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
+//    					mAlbumNavItem[cacheIndex], 
+//    					mContext.getResources(), 
+//    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
+//    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
+//    					mColorComponentBuffer, 
+//    					mTheme);
     			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
     			// we cannot change the bitmap reference of the item
     			// we need to write to the existing reference
     			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-//    			mAlbumNavItemUtils.fillAlbumLabel(
-//    					mAlbumNavItem[cacheIndex],
-//    					mBitmapWidth, 
-//    					mBitmapHeight/4);
     		} 
     		else 
     		{
@@ -686,15 +695,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    				mColorComponentBuffer,
 	    				mTheme))
 	    		{
-	//    			mAlbumNavItem[cacheIndex].cover = null;
-	//    			mAlbumNavItem[cacheIndex].cover = 
-	//    				Bitmap.createBitmap(
-	//    						mBitmapWidth, 
-	//    						mBitmapHeight, 
-	//    						Bitmap.Config.RGB_565);
-//	    			mAlbumNavItem[cacheIndex].cover = undefined;
-	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
-	
+	    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
+	    					mAlbumNavItem[cacheIndex], 
+	    					mContext.getResources(), 
+	    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
+	    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
+	    					mColorComponentBuffer, 
+	    					mTheme);	
 	    		}
 	    		if(!mAlbumNavItemUtils.fillAlbumLabel(
 	    				mAlbumNavItem[cacheIndex],
@@ -731,7 +738,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		if(letter < 'a'-1 || letter > 'z') // 24?????
     		{
         		Log.i(TAG, " + letter failed: "+(char)letter);
-    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
     			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
     		} 
     		else 
@@ -742,21 +748,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    				mBitmapHeight))
 	    		{
 	        		Log.i(TAG, " + letter failed to create bitmap: "+(char)letter);
-	    			mAlphabetNavItem[cacheIndex].letterBitmap = undefined;
 	    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
 	
 	    		}
-//	    		if(Math.abs(mTargetPositionY - mPositionY) < 3 ||
-//	    				mPositionY < 3){ // avoid unnecessary processing
-//		    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-//		    				mAlbumNavItem[cacheIndex],
-//		    				mBitmapWidth,
-//		    				mBitmapHeight/4))
-//		    		{
-//	//	    			mAlbumNavItem[cacheIndex].label = undefined;
-//	//	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-//		    		}
-//	    		}
     		}
     		
 //    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");

@@ -833,7 +833,12 @@ public class RockOnNextGenGL extends Activity {
     			new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						mPlaylistId = Constants.PLAYLIST_ALL;
+						Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+						editor.putInt(Constants.prefkey_mPlaylistId, Constants.PLAYLIST_ALL);
+						editor.commit();
 						finish();
+//						mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
 					}
 				});
     	// TODO: better to set an ondismiss listener

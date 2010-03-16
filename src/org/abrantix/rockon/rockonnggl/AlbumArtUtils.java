@@ -19,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -248,6 +249,48 @@ public class AlbumArtUtils{
 		}
 	}
 	
+	static public boolean saveSmallUnknownAlbumCoverInSdCard(
+			Resources res,
+			byte[] colorComponent,
+			String path,
+			int theme)
+	{
+		try{
+			Log.i(TAG, "saving small unknown album cover");
+			
+			/** 
+			 * SMALL HACK
+			 */
+			Bitmap unknownBitmap = 
+				BitmapFactory.decodeResource(
+						res, 
+						R.drawable.unknown_256);
+			saveSmallAlbumCoverInSdCard(
+					unknownBitmap, 
+					Constants.ROCKON_UNKNOWN_ART_FILENAME);
+			/** */
+			
+			Bitmap	tmpBm = 
+				Bitmap.createBitmap(
+					Constants.ALBUM_ART_TEXTURE_SIZE, 
+					Constants.ALBUM_ART_TEXTURE_SIZE, 
+					Bitmap.Config.RGB_565);
+			if(unknownBitmap != null){
+				processAndSaveSmallAlbumCoverInSdCard(
+						tmpBm,
+						colorComponent,
+						Constants.ROCKON_UNKNOWN_ART_FILENAME,
+						new ImageProcessor(theme));
+				return true;
+			} else {
+				return false;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	static private Bitmap smallCoverPostProc(Bitmap smallBitmap){
 		try{
 			Bitmap smallBitmapPostProc = 
@@ -297,7 +340,6 @@ public class AlbumArtUtils{
 			{
 				/** Check if file has already been created */
 				File fileOut = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey+imgProc.getThemeFileExt());
-//				if(false && fileOut.exists() && fileOut.length() > 0 &&
 				if(fileOut.exists() && fileOut.length() > 0 &&
 					fileOut.length() == bitmap.getHeight() * bitmap.getWidth() * 2) // 2bytes - RGB565 format
 				{
@@ -305,6 +347,7 @@ public class AlbumArtUtils{
 				}
 				/** Read small normal bitmap */
 				File fileIn = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey);
+//				Log.i(TAG, "3 - "+fileIn.getAbsolutePath());
 				if(fileIn.exists() && fileIn.length() > 0)
 				{
 					FileInputStream albumCoverFileInputStream = new FileInputStream(fileIn);
@@ -329,10 +372,14 @@ public class AlbumArtUtils{
 			{
 				return outputBitmap;
 			}
-		} catch(OutOfMemoryError err) {
+		} 
+		catch(OutOfMemoryError err) 
+		{
 			err.printStackTrace();
 			return outputBitmap;
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 			return outputBitmap;
 		}

@@ -320,6 +320,7 @@ public class Constants{
 	/** File paths */
 	static final String ROCKON_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/";
 	static final String ROCKON_SMALL_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/small/";
+	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mRendererMode = "mRendererMode";

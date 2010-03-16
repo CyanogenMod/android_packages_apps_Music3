@@ -64,6 +64,8 @@ public class ImageProcessor
 	{
 		switch(mTheme)
 		{
+		case Constants.THEME_NORMAL:
+			return bm;
 		case Constants.THEME_HALFTONE:
 			return processHalfTone(bm);		
 		case Constants.THEME_EARTHQUAKE:

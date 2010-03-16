@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -132,6 +134,92 @@ public class AlbumNavItemUtils{
 			} else {
 //				Log.i(TAG, " - album cover bmp file has a problem "+path);
 				return false;
+			}
+			
+			/** Read File and fill bitmap */
+			try {
+				FileInputStream albumCoverFileInputStream = new FileInputStream(albumCoverFile);
+				albumCoverFileInputStream.read(colorComponent, 0, colorComponent.length);
+				albumNavItem.cover.copyPixelsFromBuffer(ByteBuffer.wrap(colorComponent));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			return true;
+		} catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * fill album bitmap
+	 * @param bitmap
+	 * @param position
+	 * @return
+	 */
+	boolean fillAlbumUnknownBitmap(
+			AlbumNavItem albumNavItem,
+			Resources res,		
+			int width, 
+			int height, 
+			byte[] colorComponent,
+			int theme)
+	{
+		try{
+			/** Sanity check */
+	    	if(albumNavItem.cover.getWidth() != width || 
+					albumNavItem.cover.getHeight() != height)
+	    	{
+				Log.i(TAG, " - reading pixels from file failed");
+	    		return false;
+	    	}
+	    	
+	    	albumCoverPath = null;
+				
+	    	/** Get the path to the album art */
+	    	switch(theme)
+	    	{
+	    	case Constants.THEME_NORMAL:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+    				Constants.ROCKON_UNKNOWN_ART_FILENAME;
+	    		break;
+	    	case Constants.THEME_HALFTONE:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+	    			Constants.ROCKON_UNKNOWN_ART_FILENAME+
+    				Constants.THEME_HALF_TONE_FILE_EXT;
+	    		break;
+	    	case Constants.THEME_EARTHQUAKE:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+	    			Constants.ROCKON_UNKNOWN_ART_FILENAME+
+	    			Constants.THEME_EARTHQUAKE_FILE_EXT;
+	    		break;
+	    	default:
+	    		path = Constants.ROCKON_SMALL_ALBUM_ART_PATH+
+	    			Constants.ROCKON_UNKNOWN_ART_FILENAME;
+	    		break;
+	    	}
+	    
+			/** Access the file */
+			albumCoverFile = new File(path);
+			if(albumCoverFile.exists() && albumCoverFile.length() > 0)
+			{
+				albumCoverPath = path;
+			} 
+			else 
+			{
+//				Log.i(TAG, " - album cover bmp file has a problem "+path);
+				AlbumArtUtils.saveSmallUnknownAlbumCoverInSdCard(
+						res,
+						colorComponent,
+						path,
+						theme);
+				if(!albumCoverFile.exists() || !(albumCoverFile.length() > 0))
+					return false;
 			}
 			
 			/** Read File and fill bitmap */

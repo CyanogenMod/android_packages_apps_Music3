@@ -1066,12 +1066,15 @@ public class RockOnNextGenService extends Service {
     					numUnplayed--;
     			}
     			for(int i=0; i<mHistory.size(); i++){
-    				if(tmplist[mHistory.get(i).intValue()] >= 0){
-    					// always list the currently playing song
-    					if(mHistory.get(i).intValue() != mPlayPos){ 
-	    					tmplist[mHistory.get(i).intValue()] = -1;
-	    					numUnplayed--;
-    					}
+    				if(mHistory.get(i).intValue() < tmplist.length)
+    				{
+	    				if(tmplist[mHistory.get(i).intValue()] >= 0){
+	    					// always list the currently playing song
+	    					if(mHistory.get(i).intValue() != mPlayPos){ 
+		    					tmplist[mHistory.get(i).intValue()] = -1;
+		    					numUnplayed--;
+	    					}
+	    				}
     				}
     			}
     			// pass the unplayed item to our result list
