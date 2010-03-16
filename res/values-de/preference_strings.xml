@@ -21,8 +21,8 @@
 
 	<!--	CONTROLS ON BOTTOM    -->
     <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
-    <string name="preference_title_controls_on_bottom">Daumenkontrollen</string>
-    <string name="preference_summary_controls_on_bottom">Setzen Sie die Kontrollen auf den unteren Bildschirmrand.</string>
+    <string name="preference_title_controls_on_bottom">Steuerelemente</string>
+    <string name="preference_summary_controls_on_bottom">Platziert die Steuerelemente am unteren Bildschirmrand.</string>
 
 
 	<!--	PREFERENCE CATEGORIES    -->
