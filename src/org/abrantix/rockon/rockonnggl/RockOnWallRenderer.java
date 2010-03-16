@@ -645,9 +645,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    				mTheme))
 		    		{
 	//	    			Log.i(TAG, "BM failed, error loading bm");
-		    			mAlbumNavItem[cacheIndex].cover = undefined;
-		    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 0, 255, 0));
-		
+		    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
+		    					mAlbumNavItem[cacheIndex], 
+		    					mContext.getResources(), 
+		    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
+		    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
+		    					mColorComponentBuffer, 
+		    					mTheme);
 		    		}
 	    		}
 //    		}

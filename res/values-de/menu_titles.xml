@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_option_title_get_art">
+		Cover abrufen
+	</string>
+	<string name="menu_option_title_preferences">
+		Einstellungen
+	</string>
+	<string name="menu_option_title_playlist_id">
+		Wiedergabelisten
+	</string>
+	<string name="menu_option_title_concerts">
+		Konzerte
+	</string>
+	<string name="menu_option_title_view_mode">
+		Ansicht
+	</string>
+	<string name="menu_option_title_theme">
+		Theme
+	</string>
+</resources>
+

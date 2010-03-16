@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!--	INTRO SCREEN-->
+    <string name="intro_text_1">Rock</string>
+    <string name="intro_text_2">On</string>
+    <string name="intro_text_3">NextGen</string>
+    <string name="app_name">³</string>
+    
+	<!--    ALBUM ART MESSAGES-->
+	<string name="get_art_dialog_title">³ Album-Cover</string>
+	<string name="get_art_dialog_message">
+		³ kann fehlende Album-Cover aus dem Internet nachladen. Möchten Sie das jetzt ausführen? (Dies wird ~1 Min. für je 10 Alben dauern, und sollte bei einer bestehenden WLAN-Verbindung durchgeführt werden).
+	</string>
+	<string name="get_art_dialog_yes">Ja!</string>
+	<string name="get_art_dialog_no">Später</string>
+	
+	<!--	ART DOWNLOAD MESSAGES-->
+	<string name="art_download_no_inet">Keine Internetverbindung verfügbar!</string>
+	<string name="art_download_progress_title">Album-Cover herunterladen</string>
+	<string name="art_download_cancel">Abbrechen</string>
+	<string name="art_download_progress_initial_message">Suche nach Album-Cover...</string>
+	
+	<!--	NO SDCARD MESSAGES -->
+	<string name="no_sd_card_dialog_title">Keine SD-Karte!</string>
+	<string name="no_sd_card_dialog_message">Bitte legen Sie eine SD-karte ein...</string>
+	<string name="no_sd_card_dialog_continue_anyway">Trotzdem fortfahren</string>
+	<string name="no_sd_card_dialog_exit">Beenden</string>
+	<!--	NO MUSIC MESSAGES -->
+	<string name="no_music_dialog_title">Leere Wiedergabeliste!</string>
+	<string name="no_music_dialog_message">Es wurden keine Titel für diese Wiedergabeliste auf Ihrer SD-Karte gefunden. Bitte starten Sie diese App neu oder ändern die Wiedergabeliste...</string>
+	<string name="no_music_dialog_continue_anyway">Trotzdem fortfahren</string>
+	<string name="no_music_dialog_exit">Beenden</string>
+	
+	
+	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
+	<string name="concert_app_install_dialog_title">Concerts³ installieren</string>
+	<string name="concert_app_install_dialog_message">Diese Funktion benötigt ein installiertes Concerts³. Möchten Sie dieses App jetzt installieren?</string>
+	<string name="concert_app_install_dialog_ok">Ja</string>
+	<string name="concert_app_install_dialog_cancel">Nein danke!</string>
+	
+	<!--	TOASTER MESSAGES	-->
+	<string name="song_added_to_playlist">Titel hinzugefügt</string>
+	<string name="song_removed_from_playlist">Titel entfernt</string>
+	<string name="album_art_changed">Album-Cover geändert</string>
+	<string name="playlist_empty_toast">Fehler! Wiedergabeliste ist leer!</string>
+	<string name="playqueue_empty_toast">Liste ist leer!</string>
+	
+	<!-- 	SEARCH -->
+	<string name="search_hint">Titel oder Künstlername</string>
+	
+	<!--	PLAY QUEUE	-->
+	<string name="play_queue_title">Liste abspielen</string>
+	<string name="clear_playlist_dialog_option">Leeren</string>
+	<string name="create_playlist_dialog_option">Speichern</string>
+	
+	<!--	CREATE PLAYLIST DIALOG -->
+	<string name="create_playlist_dialog_title">Name der Wiedergabeliste</string>
+	<string name="create_playlist_dialog_save_option">Speichern</string>
+	<string name="create_playlist_dialog_text_hint">Name eingeben...</string>
+	
+	<!--	CREATE PLAYLIST TOASTER	-->
+	<string name="create_playlist_toaster_added_part_1">Titel zur Wiedergabeliste hinzugefügt</string>
+	<string name="create_playlist_toaster_failed">Wiedergabeliste konnte nicht ertellt werden!</string>
+	<string name="create_playlist_toaster_name_required">Name der Wiedergabeliste wird benötigt...</string>
+	
+	<!--	ALBUM SONG LIST DIALOG -->
+	<string name="album_song_list_play_all">Alle abspielen</string>
+	<string name="album_song_list_queue_all">Alle der Liste hinzufügen</string>
+	
+	<!--	PLAYLIST DIALOG		-->
+	<string name="playlist_dialog_title">Wiedergabeliste auswählen</string>
+	<string name="playlist_dialog_cancel">Abbrechen</string>
+	<string name="playlist_all_title">Alle abspielen</string>
+	<string name="playlist_most_recent_title">Kürzlich gespielte</string>
+	<string name="playlist_most_played_title">Am meisten gespielte</string>
+	
+	<!-- 	VIEW MODES DIALOG -->
+	<string name="view_mode_cube">³</string>
+	<string name="view_mode_wall">Wand</string>
+	<string name="view_mode_boring">Einfach</string>
+	
+	<!-- 	THEMES DIALOG -->
+	<string name="theme_normal">Normal</string>
+	<string name="theme_halftone">Half tone</string>
+	<string name="theme_earthquake">Earthquake</string>
+	
+	<!--	THEME PROCESSING MESSAGES	-->
+	<string name="art_processing_progress_title">Album-Cover aufbereiten</string>
+	<string name="art_processing_cancel">Abbrechen</string>
+	<string name="art_processing_go_background">Im Hintergrund ausführen</string>
+	<string name="art_processing_progress_initial_message">Suche nach Album-Cover...</string>
+	
+	<!--    HALF TONE DIALOG -->
+	<string name="half_tone_dialog_title">Half Tone Theme</string>
+	<string name="half_tone_dialog_message">
+		Half tone muss die aktuellen Album-Cover aufbereiten. Dies ist eine Prozessor-intensive Aufgabe und wird einige Zeit benötigen (~1 Min. für je 30 Alben).
+	</string>
+	<string name="half_tone_dialog_yes">Mach es!</string>
+	<string name="half_tone_dialog_no">Sieht schwierig aus. Abbrechen!</string>
+	
+	<!--    EARTHQUAKE DIALOG -->
+	<string name="earthquake_dialog_title">Earthquake Theme</string>
+	<string name="earthquake_dialog_message">
+		Earthquake muss die aktuellen Album-Cover aufbereiten. Dies ist eine Prozessor-intensive Aufgabe und wird einige Zeit benötigen (~1 Min. für je 30 Alben).
+	</string>
+	<string name="earthquake_dialog_yes">Mach es!</string>
+	<string name="earthquake_dialog_no">Sieht schwierig aus. Abbrechen!</string>
+	
+	
+	<!--	ACTIVITY INTENTS (some of them)-->
+	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+	
+	<!--	NOTIFICATION STRINGS -->
+	<string name="unknown_album_name">Unbekanntes Album</string>
+	<string name="unknown_artist_name">Unbekannter Künstler</string>
+	
+	<!-- 	MANUAL ALBUM ART MSGS -->
+	<string name="manual_albumart_error">Fehler</string>
+	<string name="manual_albumart_no_album_specified">Kein Album angegeben!</string>
+	<string name="manual_albumart_source">Quelle</string>
+	<string name="manual_albumart_source_local">lokal</string>
+	<string name="manual_albumart_source_internet">Internet</string>
+	<string name="manual_albumart_resolution_loading">Lade...</string>
+	<string name="manual_albumart_resolution_unavailable">Nicht verfügbar</string>
+	
+	<!--	BUG REPORTS	-->
+	<string name="bug_report_intro_part_one">Tut uns sehr leid!\n\nRockOn v</string>
+	<string name="bug_report_intro_part_two">ist abgestürzt! Bitte senden Sie diese Mail, damit wir das Problem analysieren/beheben können.\n</string>
+	
+<!--	<string name="bug_report_intro">-->
+<!--		"Sorry!\n\nRockOn v\"-->
+<!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
+<!--	</string>-->
+</resources>

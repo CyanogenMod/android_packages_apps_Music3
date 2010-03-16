@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--	VERSION	-->
+    <string name="preference_key_version">Version</string>
+    
+	<!--	DOWNLOAD STATE    -->
+    <string name="preference_key_downloading_art_state">DownloadingArt</string>
+    
+	<!--	PLAYLIST STATE    -->
+<!--    <string name="preference_key_playlist_id">mPlaylistId</string>-->
+        
+	<!--	HEADSET BUTTONS    -->
+    <string name="preference_key_use_headset_buttons">UseHeadset</string>
+    <string name="preference_title_use_headset_buttons">Kopfhörer verwenden</string>
+    <string name="preference_summary_use_headset_buttons">Reagiert auf Knopfdruck am Kopfhörer, um Titel abzuspielen, zu stoppen oder zu überspringen.</string>
+
+	<!--	FULL SCREEN    -->
+    <string name="preference_key_full_screen">mFullScreen</string>
+    <string name="preference_title_full_screen">Volbildmodus</string>
+    <string name="preference_summary_full_screen">Zeigt den Player im Vollbildmodus an.</string>
+
+	<!--	CONTROLS ON BOTTOM    -->
+    <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
+    <string name="preference_title_controls_on_bottom">Daumenkontrollen</string>
+    <string name="preference_summary_controls_on_bottom">Setzen Sie die Kontrollen auf den unteren Bildschirmrand.</string>
+
+
+	<!--	PREFERENCE CATEGORIES    -->
+    <string name="preference_category_general">Allgemeines</string>
+    <string name="preference_category_album_art">Album-Cover</string>
+    <string name="preference_category_other">Weitere</string>
+    
+	<!--	EMBEDDED ALBUM ART ONLY    -->
+	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
+    <string name="preference_title_embedded_album_art">Immer ID3-Cover verwenden</string>
+    <string name="preference_summary_embedded_album_art">Verwendet auch bei geringer Auflösung das eingebettete Album-Cover.</string>
+
+    <!--    SCROBBLING -->
+    <string name="preference_scrobble_list_key">scrobbling</string>
+    <string name="preference_scrobble_list_title">Last.fm Scrobbler</string>
+    <string name="preference_scrobble_list_summary">Verwendeten Scrobbler auswählen</string>
+    
+    <string name="preference_scrobble_name_dont">Nicht scrobblen</string>
+    <string name="preference_scrobble_name_sls">Simple Last.fm Scrobbler</string>
+    <string name="preference_scrobble_name_sd">Scrobble Droid</string>
+    <string name="preference_scrobble_value_dont">no</string>
+    <string name="preference_scrobble_value_sls">sls</string>
+    <string name="preference_scrobble_value_sd">sd</string>
+</resources>
