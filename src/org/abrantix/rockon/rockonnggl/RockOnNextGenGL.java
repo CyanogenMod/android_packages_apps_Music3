@@ -116,7 +116,7 @@ public class RockOnNextGenGL extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         /* set up our default exception handler */
-        mDefaultExceptionHandler = new RockOnNextGenDefaultExceptionHandler(this);
+        mDefaultExceptionHandler = new RockOnNextGenDefaultExceptionHandler(RockOnNextGenGL.this);
         
         setupWindow();
         
@@ -180,25 +180,6 @@ public class RockOnNextGenGL extends Activity {
     	}
     }
     
-    /** OnPause */
-    public void onPause(){
-    	super.onPause();
-//    	Log.i(TAG, "ON PAUSE!");
-    	if(mIsSdCardPresentAndHasMusic){
-	    	switch(mState){
-	    	case Constants.STATE_NAVIGATOR:
-	        	/* save Navigator state */
-	    		saveNavigatorState();
-	        	// XXX - small GlSurfaceView bughackfix
-	            mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-	            android.os.SystemClock.sleep(200);
-	            // 
-	    		mGlSurfaceView.onPause();
-	        	return;
-	    	}
-    	}
-    }
-    
     /** OnResume */
     public void onResume(){
     	super.onResume();
@@ -218,9 +199,29 @@ public class RockOnNextGenGL extends Activity {
     	}
     }
     
+    /** OnPause */
+    public void onPause(){
+    	super.onPause();
+//    	Log.i(TAG, "ON PAUSE!");
+    	if(mIsSdCardPresentAndHasMusic){
+	    	switch(mState){
+	    	case Constants.STATE_NAVIGATOR:
+	        	/* save Navigator state */
+	    		saveNavigatorState();
+	        	// XXX - small GlSurfaceView bughackfix
+	            mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+	            android.os.SystemClock.sleep(250);
+	            // 
+	    		mGlSurfaceView.onPause();
+	        	return;
+	    	}
+    	}
+    }
+    
     /** OnStop */
     public void onStop(){
     	super.onStop();
+
     	if(mIsSdCardPresentAndHasMusic)
     	{
 	    	/* unregister receivers */
@@ -234,6 +235,22 @@ public class RockOnNextGenGL extends Activity {
     /** OnDestroy */
     public void onDestroy(){
     	super.onDestroy();
+    	
+    	/** LITTLE HACK */ // sometimes onPause/onDestroy may not be called
+    	if(mGlSurfaceView.getRenderMode() != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+    	{
+    		try
+    		{
+		        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+		        android.os.SystemClock.sleep(250);
+		    	mGlSurfaceView.onPause();
+    		}
+    		catch(Exception e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    	
     	if(mIsSdCardPresentAndHasMusic)
     	{
 	//    	Log.i(TAG, "ON DESTROY!");
@@ -265,8 +282,17 @@ public class RockOnNextGenGL extends Activity {
 	    	}
 	    
 	    	/* Unbind service */
-	    	if(mService != null){
+	    	try
+	    	{
 	    		unbindService(mServiceConnection);
+	    	}
+	    	catch(Exception e)
+	    	{
+	    		e.printStackTrace();
+	    	}
+	    	catch(Error err)
+	    	{
+	    		err.printStackTrace();
 	    	}
 	    	
 	    	/* Remove our default exception handler */
@@ -1019,6 +1045,10 @@ public class RockOnNextGenGL extends Activity {
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
         			getInt(Constants.prefkey_mTheme, Constants.THEME_NORMAL);
+        
+        /** Clear up memory before 
+         * setting up caches in the renderers */
+        System.gc();
         
         switch(mRendererMode)
         {

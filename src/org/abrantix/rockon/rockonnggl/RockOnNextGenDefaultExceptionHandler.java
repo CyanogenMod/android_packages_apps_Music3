@@ -37,6 +37,13 @@ import android.util.Log;
 		public void uncaughtException(Thread t, Throwable e) {
 //			Log.e("RockOn", "Caught the following exception: ", e);
 
+//			if(e.getClass().equals(OutOfMemoryError.class))
+//			{
+//				e.printStackTrace();
+//				((RockOnNextGenGL)context).finish();
+//				return;
+//			}
+			
             PackageManager manager = context.getPackageManager();
             PackageInfo info;
             try{

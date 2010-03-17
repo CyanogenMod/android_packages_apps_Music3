@@ -14,6 +14,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -92,6 +93,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	/** albumNavUtils */
     	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
         
+
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
     		mAlbumNavItem[i] = new AlbumNavItem();
