@@ -225,6 +225,12 @@ public class Constants{
 	/** Search Parameters */
 	static final float SIMILARITY_THRESHOLD = 0.66f;
 	
+	/** Art Download Parameters */
+	static final int	GET_INET_ART_TOO = 0;
+	static final int	GET_LOCAL_ART_ONLY = 1;
+	
+	
+	
 	/** Inter Process Variables */
 	// album fetching thread - ui
 	static final String	ALBUM_ART_DOWNLOAD_UI_UPDATE_IPC_MSG = "info";

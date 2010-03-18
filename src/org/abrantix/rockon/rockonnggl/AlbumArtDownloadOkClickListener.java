@@ -30,29 +30,46 @@ public class AlbumArtDownloadOkClickListener implements OnClickListener{
 	
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		mArtDownloadTrigger.sendEmptyMessageDelayed(0, 500);
+		if(which == DialogInterface.BUTTON_POSITIVE)
+		{
+			Log.i(TAG, "Positive button");
+			mArtDownloadTrigger.sendEmptyMessageDelayed(Constants.GET_INET_ART_TOO, 500);
+		}
+		else
+		{
+			Log.i(TAG, "Negative button");
+			mArtDownloadTrigger.sendEmptyMessageDelayed(Constants.GET_LOCAL_ART_ONLY, 500);
+		}
 	}
 	
 	/* Handler for triggering art download */
 	public Handler mArtDownloadTrigger = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
-			mDownloading = true;
-			
-			/* show a progress dialog to give feedback to the user */
-			mProgressDialog = new ProgressDialog(mContext);
-			mProgressDialog.setTitle(R.string.art_download_progress_title);
-			mProgressDialog.setMessage(mContext.getResources().getString(
-					R.string.art_download_progress_initial_message));
-			mProgressDialog.setButton(
-					mContext.getString(R.string.art_download_cancel), 
-					cancelDownloadClickListener);
-			mProgressDialog.show();
-						
-			/* start fetching album art */
-			mAlbumArtImporter = new AlbumArtImporter(mContext, mArtDownloadUpdateHandler);
+			if(msg.what == Constants.GET_INET_ART_TOO)
+			{
+				mDownloading = true;
 				
-			mAlbumArtImporter.getAlbumArt();
+				/* show a progress dialog to give feedback to the user */
+				mProgressDialog = new ProgressDialog(mContext);
+				mProgressDialog.setTitle(R.string.art_download_progress_title);
+				mProgressDialog.setMessage(mContext.getResources().getString(
+						R.string.art_download_progress_initial_message));
+				mProgressDialog.setButton(
+						mContext.getString(R.string.art_download_cancel), 
+						cancelDownloadClickListener);
+				mProgressDialog.show();
+				
+				/* start fetching album art */
+				mAlbumArtImporter = new AlbumArtImporter(mContext, mArtDownloadUpdateHandler, true);
+				mAlbumArtImporter.getAlbumArt();							
+			}
+			else
+			{
+				/* start fetching album art */
+				mAlbumArtImporter = new AlbumArtImporter(mContext, null, false);
+				mAlbumArtImporter.getAlbumArt();
+			}
 		}
 	};
 	

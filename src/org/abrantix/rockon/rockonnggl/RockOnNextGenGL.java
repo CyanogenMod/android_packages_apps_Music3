@@ -1287,7 +1287,7 @@ public class RockOnNextGenGL extends Activity {
 				mAlbumArtDownloadOkClickListener);
 		dialogBuilder.setNegativeButton(
 				getResources().getString(R.string.get_art_dialog_no), 
-				null);
+				mAlbumArtDownloadOkClickListener);
 		dialogBuilder.setCancelable(false);
 		dialogBuilder.show();
     }

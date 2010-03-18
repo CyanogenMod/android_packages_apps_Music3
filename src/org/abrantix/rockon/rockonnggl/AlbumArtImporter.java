@@ -24,10 +24,16 @@ public class AlbumArtImporter{
 	private Context	mContext;
 	private Thread	mWorkerThread;
 	private Handler	mUiProgressHandler;
+	private boolean	mGetFromInet;
 	
-	AlbumArtImporter(Context context, Handler uiProgressHandler){
+	AlbumArtImporter(
+			Context context, 
+			Handler uiProgressHandler,
+			boolean	getFromInet)
+	{
 		this.mContext = context;
 		this.mUiProgressHandler = uiProgressHandler;
+		this.mGetFromInet = getFromInet;
 		createAlbumArtDirectories();
 		try {
 			/* Check for Internet Connection (Through whichever interface) */
@@ -36,7 +42,8 @@ public class AlbumArtImporter{
 			NetworkInfo netInfo = connManager.getActiveNetworkInfo();
 			/******* EMULATOR HACK - false condition needs to be removed *****/
 			//if (false && (netInfo == null || !netInfo.isConnected())){
-			if ((netInfo == null || netInfo.isConnected() == false)){
+			if (mGetFromInet && (netInfo == null || netInfo.isConnected() == false))
+			{
 				updateUi(mContext.getResources().getString(R.string.art_download_no_inet));
 				return;
 			}
@@ -84,9 +91,10 @@ public class AlbumArtImporter{
 		String	albumName;
 		String	albumKey;
 		Integer	albumId;
-    	for(int i=0; i<albumCursor.getCount(); i++){
+    	for(int i=0; i<albumCursor.getCount(); i++)
+    	{
 			/** check if we need to stop this thread */
-    		if(Thread.currentThread().isInterrupted())
+    		if(mGetFromInet && Thread.currentThread().isInterrupted())
     			return;
     		
     		/** move cursor to current position */
@@ -139,15 +147,19 @@ public class AlbumArtImporter{
     		
     		/** check if image (embedded or downloaded) exists and is big enough */
     		if(
+    				mGetFromInet
+    				&&
     				(
-    						!useAlwaysEmbedded &&
-    						artSize < Constants.REASONABLE_ALBUM_ART_SIZE
-    				)
-    				||
-    				(
-    						useAlwaysEmbedded &&
-    						artSize <= 0
-    				)
+	    				(
+	    						!useAlwaysEmbedded &&
+	    						artSize < Constants.REASONABLE_ALBUM_ART_SIZE
+	    				)
+	    				||
+	    				(
+	    						useAlwaysEmbedded &&
+	    						artSize <= 0
+	    				)
+	    			)
     			)
     		{
     			if(!artistName.equals("<unknown>")){
@@ -182,13 +194,19 @@ public class AlbumArtImporter{
     		// TODO: dont always recreate the small art
     		
     		/** create small art */
-    		if(internetArt != null){ // fresh art download
-    			AlbumArtUtils.saveSmallAlbumCoverInSdCard(internetArt, RockOnFileUtils.validateFileName(albumId.toString()));
+    		if(internetArt != null)
+    		{ // fresh art download
+    			AlbumArtUtils.saveSmallAlbumCoverInSdCard(
+    					internetArt, 
+    					RockOnFileUtils.validateFileName(albumId.toString()));
     			internetArt.recycle();
     		} else if(embeddedArtPath != null){
     			embeddedArt = BitmapFactory.decodeFile(embeddedArtPath);
-    			if(embeddedArt != null){
-    				AlbumArtUtils.saveSmallAlbumCoverInSdCard(embeddedArt, RockOnFileUtils.validateFileName(albumId.toString()));
+    			if(embeddedArt != null)
+    			{
+    				AlbumArtUtils.saveSmallAlbumCoverInSdCard(
+    						embeddedArt, 
+    						RockOnFileUtils.validateFileName(albumId.toString()));
     				embeddedArt.recycle();
     			} else {
     				// TODO ::::::: --- needs treatment
@@ -199,14 +217,16 @@ public class AlbumArtImporter{
     	closeUi();
 	}
 	
-	public void stopAlbumArt(){
+	public void stopAlbumArt()
+	{
 		Log.i(TAG, "Stopping worker thread");
 		if(mWorkerThread != null)
 			mWorkerThread.interrupt(); // XXX - it is not instantaneous
 	}
 	
 
-	private void createAlbumArtDirectories(){
+	private void createAlbumArtDirectories()
+	{
         File albumArtDirectory = new File(Constants.ROCKON_ALBUM_ART_PATH);
     	albumArtDirectory.mkdirs();
 		
@@ -214,30 +234,38 @@ public class AlbumArtImporter{
 		albumSmallArtDirectory.mkdirs();
 	}
 	
-	private void closeUi(){
-		Bundle data = new Bundle();
-		Message msg = new Message();
-		data.clear();
-		data.putString(
-				Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_DONE_IPC_MSG, 
-				"");
-		msg.setData(data);
-		msg.what = 0;
-		mUiProgressHandler.removeMessages(0);
-		mUiProgressHandler.sendMessage(msg);
+	private void closeUi()
+	{
+		if(mUiProgressHandler != null)
+		{
+			Bundle data = new Bundle();
+			Message msg = new Message();
+			data.clear();
+			data.putString(
+					Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_DONE_IPC_MSG, 
+					"");
+			msg.setData(data);
+			msg.what = 0;
+			mUiProgressHandler.removeMessages(0);
+			mUiProgressHandler.sendMessage(msg);
+		}
 	}
 	
-	private void updateUi(String message){
-		/* Give feedback to the user */
-		Bundle data = new Bundle();
-		Message msg = new Message();
-		data.clear();
-		data.putString(
-				Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_IPC_MSG,
-				message);
-		msg.setData(data);
-		msg.what = 0;
-		mUiProgressHandler.removeMessages(0);
-		mUiProgressHandler.sendMessage(msg);
+	private void updateUi(String message)
+	{
+		if(mUiProgressHandler != null)
+		{
+			/* Give feedback to the user */
+			Bundle data = new Bundle();
+			Message msg = new Message();
+			data.clear();
+			data.putString(
+					Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_IPC_MSG,
+					message);
+			msg.setData(data);
+			msg.what = 0;
+			mUiProgressHandler.removeMessages(0);
+			mUiProgressHandler.sendMessage(msg);
+		}
 	}
 }
