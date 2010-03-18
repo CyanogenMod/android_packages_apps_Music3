@@ -237,7 +237,8 @@ public class RockOnNextGenGL extends Activity {
     	super.onDestroy();
     	
     	/** LITTLE HACK */ // sometimes onPause/onDestroy may not be called
-    	if(mGlSurfaceView.getRenderMode() != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
+    	if(mGlSurfaceView != null && 
+    		mGlSurfaceView.getRenderMode() != GLSurfaceView.RENDERMODE_CONTINUOUSLY)
     	{
     		try
     		{
@@ -1955,35 +1956,38 @@ public class RockOnNextGenGL extends Activity {
 			{
 				AlertDialog aD = (AlertDialog) msg.obj;
 				SongCursorAdapter songCursorAdapter = (SongCursorAdapter) aD.getListView().getAdapter();
-				Cursor	cursor = songCursorAdapter.getCursor();
-				long[] songVector = new long[cursor.getCount()];
-				for(int i = 0; i<cursor.getCount(); i++){
-					cursor.moveToPosition(i);
-					// The _ID field has a different meaning in playlist content providers
-					//		-- if it is a playlist we need to fetch the AUDIO_ID field
-					songVector[i] = 
-						ContentProviderUnifier.
-							getAudioIdFromUnknownCursor(cursor);
-	//				// DEBUG TIME
-	//				Log.i(TAG, i + " - " + 
-	//						String.valueOf(
-	//								cursor.getLong(
-	//										cursor.getColumnIndexOrThrow(
-	//												MediaStore.Audio.Media._ID))));
-	//				Log.i(TAG, i + " - " + 
-	//						cursor.getString(
-	//										cursor.getColumnIndexOrThrow(
-	//												MediaStore.Audio.Media.ARTIST)));
-	//				Log.i(TAG, i + " - " + 
-	//						cursor.getString(
-	//										cursor.getColumnIndexOrThrow(
-	//												MediaStore.Audio.Media.ALBUM)));
-				}
-				try{
-					if(mService != null)
-						mService.enqueue(songVector, msg.arg1);
-				}catch(Exception e){
-					e.printStackTrace();
+				if(songCursorAdapter != null)
+				{
+					Cursor	cursor = songCursorAdapter.getCursor();
+					long[] songVector = new long[cursor.getCount()];
+					for(int i = 0; i<cursor.getCount(); i++){
+						cursor.moveToPosition(i);
+						// The _ID field has a different meaning in playlist content providers
+						//		-- if it is a playlist we need to fetch the AUDIO_ID field
+						songVector[i] = 
+							ContentProviderUnifier.
+								getAudioIdFromUnknownCursor(cursor);
+		//				// DEBUG TIME
+		//				Log.i(TAG, i + " - " + 
+		//						String.valueOf(
+		//								cursor.getLong(
+		//										cursor.getColumnIndexOrThrow(
+		//												MediaStore.Audio.Media._ID))));
+		//				Log.i(TAG, i + " - " + 
+		//						cursor.getString(
+		//										cursor.getColumnIndexOrThrow(
+		//												MediaStore.Audio.Media.ARTIST)));
+		//				Log.i(TAG, i + " - " + 
+		//						cursor.getString(
+		//										cursor.getColumnIndexOrThrow(
+		//												MediaStore.Audio.Media.ALBUM)));
+					}
+					try{
+						if(mService != null)
+							mService.enqueue(songVector, msg.arg1);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 			}
 		}

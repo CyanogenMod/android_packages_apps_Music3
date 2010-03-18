@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -419,27 +420,35 @@ public class AlbumNavItemUtils{
     		return false;
     	}
     	
-		/** move cursor */ 
-		albumCursor.moveToPosition(position);
-
-		/** get album info */
-		albumNavItem.artistName = albumCursor.getString(
-				albumCursor.getColumnIndexOrThrow(
-						MediaStore.Audio.Albums.ARTIST));
-		albumNavItem.albumName = albumCursor.getString(
-				albumCursor.getColumnIndexOrThrow(
-						MediaStore.Audio.Albums.ALBUM));
-    	albumNavItem.albumKey = albumCursor.getString(
-    			albumCursor.getColumnIndexOrThrow(
-    					MediaStore.Audio.Albums.ALBUM_KEY));
-    	albumNavItem.albumId = String.valueOf(
-    			albumCursor.getInt(
-    			albumCursor.getColumnIndexOrThrow(
-    					MediaStore.Audio.Albums._ID)));
-		
-//    	Log.i(TAG, albumNavItem.albumId+" - "+albumNavItem.artistName+" "+albumNavItem.albumName);
+    	try
+    	{
+			/** move cursor */ 
+			albumCursor.moveToPosition(position);
+	
+			/** get album info */
+			albumNavItem.artistName = albumCursor.getString(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Albums.ARTIST));
+			albumNavItem.albumName = albumCursor.getString(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Albums.ALBUM));
+	    	albumNavItem.albumKey = albumCursor.getString(
+	    			albumCursor.getColumnIndexOrThrow(
+	    					MediaStore.Audio.Albums.ALBUM_KEY));
+	    	albumNavItem.albumId = String.valueOf(
+	    			albumCursor.getInt(
+	    			albumCursor.getColumnIndexOrThrow(
+	    					MediaStore.Audio.Albums._ID)));
     	
-		return true;
+	    	//    	Log.i(TAG, albumNavItem.albumId+" - "+albumNavItem.artistName+" "+albumNavItem.albumName);
+    	
+	    	return true;
+    	}
+    	catch(CursorIndexOutOfBoundsException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
 
 	}
 }
