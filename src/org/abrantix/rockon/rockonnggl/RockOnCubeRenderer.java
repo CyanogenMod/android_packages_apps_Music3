@@ -17,6 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -1230,19 +1231,27 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	{
 	    	if(mAlbumCursor != null){
 		    	for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
-		    		mAlbumCursor.moveToPosition(i);
-		    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
-		    			mTargetPositionY = i;
-		    			mPositionY = 
-		    				i - 
-		    				Math.signum(mTargetPositionY - mPositionY)
-		    				*
-		    				Math.min(
-		    					Math.abs(mTargetPositionY-mPositionY), 
-		    					5.5f);
-		    			// TODO: trigger rotation
-		    			this.renderNow();
-		    			return i;
+		    		try
+		    		{
+			    		mAlbumCursor.moveToPosition(i);
+			    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
+			    			mTargetPositionY = i;
+			    			mPositionY = 
+			    				i - 
+			    				Math.signum(mTargetPositionY - mPositionY)
+			    				*
+			    				Math.min(
+			    					Math.abs(mTargetPositionY-mPositionY), 
+			    					5.5f);
+			    			// TODO: trigger rotation
+			    			this.renderNow();
+			    			return i;
+			    		}
+		    		}
+		    		catch(CursorIndexOutOfBoundsException e)
+		    		{
+		    			e.printStackTrace();
+		    			return -1;
 		    		}
 		    	}
 		    	return -1;
@@ -1254,6 +1263,35 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    /** 
+     * Recycle cached bitmaps
+     */
+    public void clearCache()
+    {
+    	for(int i=0; i<mAlbumNavItem.length; i++)
+    	{
+    		try
+    		{
+    			mAlbumNavItem[i].cover.recycle();
+        		mAlbumNavItem[i].label.recycle();	
+    		}
+    		catch(Exception e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    	for(int i=0; i<mAlphabetNavItem.length; i++)
+    	{
+    		try
+    		{
+    			mAlphabetNavItem[i].letterBitmap.recycle();
+    		}
+    		catch(Exception e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    }
     
     /**
      * Class members

@@ -41,6 +41,8 @@ public abstract class RockOnRenderer{
 	{
 		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
+	
+	abstract public void clearCache();
     
     abstract public void changePlaylist(int playlistId);
     

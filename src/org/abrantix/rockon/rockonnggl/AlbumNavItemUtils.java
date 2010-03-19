@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.StaleDataException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -445,6 +446,11 @@ public class AlbumNavItemUtils{
 	    	return true;
     	}
     	catch(CursorIndexOutOfBoundsException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
+    	catch(StaleDataException e)
     	{
     		e.printStackTrace();
     		return false;

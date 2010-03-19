@@ -236,6 +236,12 @@ public class RockOnNextGenGL extends Activity {
     public void onDestroy(){
     	super.onDestroy();
     	
+    	/** Clear renderer cache */
+    	if(mRockOnRenderer != null)
+    	{
+    		mRockOnRenderer.clearCache();
+    	}
+    	
     	/** LITTLE HACK */ // sometimes onPause/onDestroy may not be called
     	if(mGlSurfaceView != null && 
     		mGlSurfaceView.getRenderMode() != GLSurfaceView.RENDERMODE_CONTINUOUSLY)

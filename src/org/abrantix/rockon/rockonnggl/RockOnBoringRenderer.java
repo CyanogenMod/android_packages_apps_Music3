@@ -1040,6 +1040,24 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	}
     }
     
+    /** 
+     * Recycle cached bitmaps
+     */
+    public void clearCache()
+    {
+    	for(int i=0; i<mAlbumNavItem.length; i++)
+    	{
+    		try
+    		{
+	    		mAlbumNavItem[i].cover.recycle();
+	    		mAlbumNavItem[i].label.recycle();
+    		}
+    		catch(Exception e)
+    		{
+    			e.printStackTrace();
+    		}
+    	}
+    }
     
     /**
      * Class members
