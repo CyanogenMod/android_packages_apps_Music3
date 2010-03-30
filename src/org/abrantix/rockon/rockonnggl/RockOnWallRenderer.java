@@ -931,7 +931,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /* optimization */
     int cursorIdxValidation;
     /** get the current Album Id */
-    int getShownAlbumId(float x, float y){
+    synchronized int getShownAlbumId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mAlbumCursor == null ||
 			/**
@@ -944,23 +944,23 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		return -1;
     	}
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		
-    		// validate idx -- bug report
-    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
-//    		cursorIdxValidation = getPositionFromScreenCoordinates(x, y);
-//    		if(cursorIdxValidation < 0)
-//    			mAlbumCursor.moveToFirst();
-//    		else if(cursorIdxValidation >= mAlbumCursor.getCount())
-//    			mAlbumCursor.moveToLast();
-//    		else
-//    			mAlbumCursor.moveToPosition(cursorIdxValidation);
-
-    		int albumId = mAlbumCursor.getInt(
-    				mAlbumCursor.getColumnIndexOrThrow(
-    						MediaStore.Audio.Albums._ID));
-    		mAlbumCursor.moveToPosition(tmpIndex);
-    		return albumId;
+    		try
+    		{
+	    		int tmpIndex = mAlbumCursor.getPosition();
+	    		
+	    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+	
+	    		int albumId = mAlbumCursor.getInt(
+	    				mAlbumCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Albums._ID));
+	    		mAlbumCursor.moveToPosition(tmpIndex);
+	    		return albumId;
+    		}
+    		catch(NullPointerException e)
+    		{
+    			e.printStackTrace();
+    			return -1;
+    		}
     	}
     }
     

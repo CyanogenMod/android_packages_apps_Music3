@@ -1010,29 +1010,37 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     }
     
     /** move navigator to the specified album Id */
-    int setCurrentByAlbumId(long albumId){
+    synchronized int setCurrentByAlbumId(long albumId){
 
     	if(albumId >= 0)
     	{
-	    	if(mAlbumCursor != null){
-		    	for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
-		    		mAlbumCursor.moveToPosition(i);
-		    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
-		    			mTargetPositionY = i;
-		    			mPositionY = 
-		    				mTargetPositionY - 
-		    				Math.signum(mTargetPositionY - mPositionY)
-		    				*
-		    				Math.min(
-		    					Math.abs(mTargetPositionY-mPositionY), 
-		    					10.f);
-		    			// TODO: trigger rotation
-		    			this.renderNow();
-		    			return i;
-		    		}
+	    	try
+	    	{
+	    		if(mAlbumCursor != null){
+		    		for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
+			    		mAlbumCursor.moveToPosition(i);
+			    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
+			    			mTargetPositionY = i;
+			    			mPositionY = 
+			    				mTargetPositionY - 
+			    				Math.signum(mTargetPositionY - mPositionY)
+			    				*
+			    				Math.min(
+			    					Math.abs(mTargetPositionY-mPositionY), 
+			    					10.f);
+			    			// TODO: trigger rotation
+			    			this.renderNow();
+			    			return i;
+			    		}
+			    	}
+			    	return -1;
+		    	} else {
+		    		return -1;
 		    	}
-		    	return -1;
-	    	} else {
+	    	}
+	    	catch(android.database.CursorIndexOutOfBoundsException e)
+	    	{
+	    		e.printStackTrace();
 	    		return -1;
 	    	}
     	} else {

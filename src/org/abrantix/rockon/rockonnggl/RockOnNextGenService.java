@@ -242,6 +242,8 @@ public class RockOnNextGenService extends Service {
     public void onCreate() {
         super.onCreate();
         
+        Log.i(TAG, "SERVICE onCreate");
+        
 //        mPreferences = getSharedPreferences("Music", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mCardId = 0; // should be the serial number of the sd card
@@ -278,12 +280,13 @@ public class RockOnNextGenService extends Service {
         Message msg = mDelayedStopHandler.obtainMessage();
         mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
     }
-
+    
     @Override
     public void onDestroy() {
+        
         // Check that we're not being destroyed while something is still playing.
         if (isPlaying()) {
-            Log.e(TAG, "Service being destroyed while still playing.");
+            Log.i(TAG, "Service being destroyed while still playing.");
         }
         // release all MediaPlayer resources, including the native player and wakelocks
         mPlayer.release();
@@ -694,6 +697,7 @@ public class RockOnNextGenService extends Service {
         }
         
         // No active playlist, OK to stop the service right now
+        setForeground(false);
         stopSelf(mServiceStartId);
         return true;
     }
@@ -710,6 +714,7 @@ public class RockOnNextGenService extends Service {
             // since the user exited the music app (because of
             // party-shuffle or because the play-position changed)
             saveQueue(true);
+            setForeground(false);
             stopSelf(mServiceStartId);
         }
     };
@@ -1280,6 +1285,8 @@ public class RockOnNextGenService extends Service {
 //              startForeground(PLAYBACKSERVICE_STATUS, status);
 //            } catch(Exception e){
 //            	e.printStackTrace();
+            	// XXX - deprecated
+            	setForeground(true);
             	NotificationManager notificationManager = (NotificationManager) 
             		getSystemService(Context.NOTIFICATION_SERVICE);
             	notificationManager.notify(Constants.PLAY_NOTIFICATION_ID, status);	
@@ -2305,6 +2312,7 @@ public class RockOnNextGenService extends Service {
                     mMediaPlayer = new MediaPlayer(); 
                     mMediaPlayer.setWakeMode(RockOnNextGenService.this, PowerManager.PARTIAL_WAKE_LOCK);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(SERVER_DIED), 2000);
+                    Log.i(TAG, "MEDIA SERVER ERROR");
                     return true;
                 default:
                     break;

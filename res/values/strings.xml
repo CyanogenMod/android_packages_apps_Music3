@@ -38,6 +38,7 @@
 	<string name="concert_app_install_dialog_message">This feature requires the installation of Concerts³. Do you want to do it now?</string>
 	<string name="concert_app_install_dialog_ok">Yes</string>
 	<string name="concert_app_install_dialog_cancel">No. Leave me alone!</string>
+	<string name="concert_app_install_no_market_app_msg">Ooops! Looks like there is no Market app installed.</string>
 	
 	<!--	TOASTER MESSAGES	-->
 	<string name="song_added_to_playlist">Song queued</string>

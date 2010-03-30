@@ -309,7 +309,8 @@ public class AlbumNavItemUtils{
 			int width,
 			int height){
 		/** Sanity check */
-    	if(albumNavItem.label.getWidth() != width || 
+    	if(albumNavItem.label.isRecycled() ||
+    			albumNavItem.label.getWidth() != width || 
 				albumNavItem.label.getHeight() != height)
     	{
 			Log.i(TAG, " - reading pixels from file failed");

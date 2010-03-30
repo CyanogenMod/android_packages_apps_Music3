@@ -14,6 +14,7 @@ import org.abrantix.rockon.rockonnggl.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -472,20 +473,23 @@ public class RockOnNextGenGL extends Activity {
  
     		// 'normal' playlists +
     		Cursor playlistCursor = cursorUtils.getPlaylists();
-    		for(int i=0; i<playlistCursor.getCount(); i++){
-    			playlistCursor.moveToPosition(i);
-    			playlistArray.add(
-    					new Playlist(
-    							(int) playlistCursor.getLong(
-    									playlistCursor.getColumnIndexOrThrow(
-    											MediaStore.Audio.Playlists._ID)),
-    							playlistCursor.getString(
-    									playlistCursor.getColumnIndexOrThrow(
-    											MediaStore.Audio.Playlists.NAME))
-    					));
+    		if(playlistCursor != null)
+    		{
+	    		for(int i=0; i<playlistCursor.getCount(); i++){
+	    			playlistCursor.moveToPosition(i);
+	    			playlistArray.add(
+	    					new Playlist(
+	    							(int) playlistCursor.getLong(
+	    									playlistCursor.getColumnIndexOrThrow(
+	    											MediaStore.Audio.Playlists._ID)),
+	    							playlistCursor.getString(
+	    									playlistCursor.getColumnIndexOrThrow(
+	    											MediaStore.Audio.Playlists.NAME))
+	    					));
+	    		}
+	    		playlistCursor.close();
     		}
-    		playlistCursor.close();
- 
+    		
     		// genre cursor + 
     		Cursor genreCursor = cursorUtils.getGenres();
     		for (int i=0; i<genreCursor.getCount(); i++){
@@ -546,9 +550,21 @@ public class RockOnNextGenGL extends Activity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				Intent i = new Intent(Intent.ACTION_VIEW, 
-				Uri.parse("market://search?q=pname:"+Constants.CONCERT_APP_PACKAGE));
-				startActivity(i);					
+				try
+				{
+					Intent i = new Intent(Intent.ACTION_VIEW, 
+					Uri.parse("market://search?q=pname:"+Constants.CONCERT_APP_PACKAGE));
+					startActivity(i);					
+				}
+				catch(ActivityNotFoundException e)
+				{
+					e.printStackTrace();
+					Toast.makeText(
+							RockOnNextGenGL.this, 
+							R.string.concert_app_install_no_market_app_msg, 
+							Toast.LENGTH_LONG);
+					
+				}
 			}
 		};
     

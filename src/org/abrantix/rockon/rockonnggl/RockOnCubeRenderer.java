@@ -576,69 +576,77 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    	
     		/* Alphabetical textures in horizontal scrolling of the cube */
     		if(mPositionX != 0){
-    			for(int i=0; i<mTextureAlphabetId.length; i++){    	    		
-    				if(lastInitial == -1){
-    					/** 
-    					 * FIXME: quick fix for bug, untested, unchecked
-    					 */
-    					if(flooredPositionY > mAlbumCursor.getCount() - 1)
-						{
-    						mAlbumCursor.moveToLast();
-    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
-						} 
-    					else if(flooredPositionY < 0)
-    					{
-    						mAlbumCursor.moveToFirst();
-    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
-    					}
-    					else
-						{
-							mAlbumCursor.moveToPosition(flooredPositionY);
-						}
-    					lastInitial = 
-    						mAlbumCursor.
-    							getString(
-    									mAlbumCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
-    							toLowerCase().
-    								charAt(0);
-    					if(lastInitial < 'a')
-    						lastInitial = 'a' - 1;
-    				}
-    				
-//    				Log.i(TAG, "flooredX: "+flooredPositionX);
-//    				Log.i(TAG, "lastInitial: "+(char)lastInitial);
-//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" (int)/mCacheSize: "+(int)((flooredPositionX)/mCacheSize));
-//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" %mCacheSize: "+(flooredPositionX)%mCacheSize);
-    				
-    				charTmp = 
-    					lastInitial + 
-    					(int)((flooredPositionX)/mCacheSize)*mCacheSize + 
-    					i;
+				for(int i=0; i<mTextureAlphabetId.length; i++){    	    		
+					try
+	    			{
+		    		
+						if(lastInitial == -1){
+	    					/** 
+	    					 * FIXME: quick fix for bug, untested, unchecked
+	    					 */
+	    					if(flooredPositionY > mAlbumCursor.getCount() - 1)
+							{
+	    						mAlbumCursor.moveToLast();
+	    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
+							} 
+	    					else if(flooredPositionY < 0)
+	    					{
+	    						mAlbumCursor.moveToFirst();
+	    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
+	    					}
+	    					else
+							{
+								mAlbumCursor.moveToPosition(flooredPositionY);
+							}
+	    					lastInitial = 
+	    						mAlbumCursor.
+	    							getString(
+	    									mAlbumCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
+	    							toLowerCase().
+	    								charAt(0);
+	    					if(lastInitial < 'a')
+	    						lastInitial = 'a' - 1;
+	    				}
 	    				
-	    			/**
-	    			 * Transition special cases
-	    			 */
-	    			/* cache turn point when going forward in the alphabet */
-    				if(flooredPositionX%mCacheSize == mCacheSize - 1 &&
-	    				i == 0)
-	    			{
-	    				charTmp += mCacheSize;
+	//    				Log.i(TAG, "flooredX: "+flooredPositionX);
+	//    				Log.i(TAG, "lastInitial: "+(char)lastInitial);
+	//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" (int)/mCacheSize: "+(int)((flooredPositionX)/mCacheSize));
+	//    				Log.i(TAG, "flooredPositionX: "+flooredPositionX+" %mCacheSize: "+(flooredPositionX)%mCacheSize);
+	    				
+	    				charTmp = 
+	    					lastInitial + 
+	    					(int)((flooredPositionX)/mCacheSize)*mCacheSize + 
+	    					i;
+		    				
+		    			/**
+		    			 * Transition special cases
+		    			 */
+		    			/* cache turn point when going forward in the alphabet */
+	    				if(flooredPositionX%mCacheSize == mCacheSize - 1 &&
+		    				i == 0)
+		    			{
+		    				charTmp += mCacheSize;
+		    			}
+		    			
+		    			/* negative scrolling (going back in the alphabet) */
+		    			if(flooredPositionX%mCacheSize < 0 &&
+		    				i != 0)
+		    			{
+		    				charTmp -= mCacheSize;
+		    			}
+	
+	
+	    	    		if(setupAlphabetTextures(gl, i, charTmp, mForceTextureUpdate))
+	    	    			changed = true;
+	    	    		
+	    	    		/* DEBUG CODE */
+	//    				undefined.eraseColor(Color.CYAN);
+	//    	    		bindTexture(gl, undefined, mTextureAlphabetId[i]);
 	    			}
-	    			
-	    			/* negative scrolling (going back in the alphabet) */
-	    			if(flooredPositionX%mCacheSize < 0 &&
-	    				i != 0)
+	    			catch(NullPointerException e)
 	    			{
-	    				charTmp -= mCacheSize;
+	    				e.printStackTrace();
 	    			}
-
-
-    	    		if(setupAlphabetTextures(gl, i, charTmp, mForceTextureUpdate))
-    	    			changed = true;
-    	    		
-    	    		/* DEBUG CODE */
-//    				undefined.eraseColor(Color.CYAN);
-//    	    		bindTexture(gl, undefined, mTextureAlphabetId[i]);
     			}
     		}
 	    	
@@ -751,7 +759,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    				mBitmapHeight))
 	    		{
 	        		Log.i(TAG, " + letter failed to create bitmap: "+(char)letter);
-	    			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
+	        		if(!mAlphabetNavItem[cacheIndex].letterBitmap.isRecycled())
+	        			mAlphabetNavItem[cacheIndex].letterBitmap.eraseColor(Color.argb(127, 122, 122, 0));
 	
 	    		}
     		}

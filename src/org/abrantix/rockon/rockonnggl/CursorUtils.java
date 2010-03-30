@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
@@ -136,54 +137,62 @@ public class CursorUtils{
 					null,
 //					null);
 					Constants.genreMembersAlbumSorting);
-			/* get the albums in this playlist */
-			LinkedList<Long>	albumList = new LinkedList<Long>();
-			Long				albumId;
-			for(int i=0; i<genreSongsCursor.getCount(); i++){
-				genreSongsCursor.moveToPosition(i);
-				albumId = 
-					genreSongsCursor.getLong(
-							genreSongsCursor.getColumnIndexOrThrow(
-									MediaStore.Audio.Genres.Members.ALBUM_ID));
-				// small optimization -- check if albumId is different from the last 
-				Log.i(TAG, String.valueOf(
+			if(genreSongsCursor != null)
+			{
+				/* get the albums in this playlist */
+				LinkedList<Long>	albumList = new LinkedList<Long>();
+				Long				albumId;
+				for(int i=0; i<genreSongsCursor.getCount(); i++){
+					genreSongsCursor.moveToPosition(i);
+					albumId = 
 						genreSongsCursor.getLong(
 								genreSongsCursor.getColumnIndexOrThrow(
-										MediaStore.Audio.Genres.Members.ALBUM_ID))));
-				if(!albumList.contains(albumId))
-					albumList.add(albumId);
-			}
-			genreSongsCursor.close();
-			/* this genre has no songs? */
-			if(albumList.size() <= 0)
-				return null;
-			/* create the selection string for querying the album contentprovider */
-			String	selection = null;
-			for(int i=0; i<albumList.size(); i++){
-				if(i==0){
-					selection = 
-						MediaStore.Audio.Albums._ID +
-						" = "+
-						albumList.get(i).toString();
-				} else {
-					selection += 
-						" OR "+
-						MediaStore.Audio.Albums._ID+
-						" = "+
-						albumList.get(i).toString();
+										MediaStore.Audio.Genres.Members.ALBUM_ID));
+					// small optimization -- check if albumId is different from the last 
+					Log.i(TAG, String.valueOf(
+							genreSongsCursor.getLong(
+									genreSongsCursor.getColumnIndexOrThrow(
+											MediaStore.Audio.Genres.Members.ALBUM_ID))));
+					if(!albumList.contains(albumId))
+						albumList.add(albumId);
 				}
+				genreSongsCursor.close();
+				/* this genre has no songs? */
+				if(albumList.size() <= 0)
+					return null;
+				/* create the selection string for querying the album contentprovider */
+				String	selection = null;
+				for(int i=0; i<albumList.size(); i++){
+					if(i==0){
+						selection = 
+							MediaStore.Audio.Albums._ID +
+							" = "+
+							albumList.get(i).toString();
+					} else {
+						selection += 
+							" OR "+
+							MediaStore.Audio.Albums._ID+
+							" = "+
+							albumList.get(i).toString();
+					}
+				}
+				Log.i(TAG, "SELECT: "+selection);
+				/* query the album contentprovider */
+				Cursor albumCursor =
+					resolver.query(
+						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+						Constants.albumProjection, 
+						selection, 
+						null, 
+						Constants.albumAlphabeticalSortOrder);
+				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
+				return albumCursor;
 			}
-			Log.i(TAG, "SELECT: "+selection);
-			/* query the album contentprovider */
-			Cursor albumCursor =
-				resolver.query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					Constants.albumProjection, 
-					selection, 
-					null, 
-					Constants.albumAlphabeticalSortOrder);
-			Log.i(TAG, " + "+(System.currentTimeMillis()-start));
-			return albumCursor;
+			else
+			{
+				// TODO: reset playlist to play all
+				return null;
+			}
 		} 
 		/** NOT RECOGNIZED */
 		else {
