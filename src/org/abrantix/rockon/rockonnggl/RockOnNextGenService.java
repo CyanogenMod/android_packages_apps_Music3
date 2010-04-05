@@ -1604,11 +1604,21 @@ public class RockOnNextGenService extends Service {
                     			mPlayList[mPlayPos] = audioId; // FIXME: replaces the current song -- which is removed from the queue;
                     		} else {
                     			// lets add the id to the current queue
-                    			ensurePlayListCapacity(mPlayListLen+1);
-                    			mPlayList[mPlayPos+1] = audioId;
-                    			mPlayListLen++;
-                    			mPlayPos++;
-//                                Log.i(TAG, "PREV|| pos: "+mPlayPos+" len: "+mPlayListLen);
+//                    			if(mPlayPos <= mPlayListLen )
+//                    			{
+	                    			ensurePlayListCapacity(mPlayListLen+1);
+	                    			mPlayList[mPlayPos+1] = audioId;
+	                    			mPlayListLen++;
+	                    			mPlayPos++;
+//                    			}
+//                    			else
+//                    			{
+//                    				Log.i(TAG, "XXX - BugReport fix on service next()");
+//	                    			ensurePlayListCapacity(mPlayPos+1);
+//	                    			mPlayList[mPlayPos+1] = audioId;
+//	                    			mPlayPos++;
+//	                    			mPlayListLen = mPlayPos;
+//                    			}
                     		}
 //                    		long[] list = {audioId};
 //                    		addToPlayList(list, );

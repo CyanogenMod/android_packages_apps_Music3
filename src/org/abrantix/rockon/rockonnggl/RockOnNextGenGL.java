@@ -492,20 +492,23 @@ public class RockOnNextGenGL extends Activity {
     		
     		// genre cursor + 
     		Cursor genreCursor = cursorUtils.getGenres();
-    		for (int i=0; i<genreCursor.getCount(); i++){
-    			genreCursor.moveToPosition(i);
-    			playlistArray.add(
-    					new Playlist(
-    							(int) (Constants.PLAYLIST_GENRE_OFFSET 
-    								- genreCursor.getLong(
-    										genreCursor.getColumnIndexOrThrow(
-    												MediaStore.Audio.Genres._ID))),
-    							genreCursor.getString(
-    									genreCursor.getColumnIndexOrThrow(
-    											MediaStore.Audio.Genres.NAME))
-    					));
+    		if(genreCursor != null)
+    		{
+	    		for (int i=0; i<genreCursor.getCount(); i++){
+	    			genreCursor.moveToPosition(i);
+	    			playlistArray.add(
+	    					new Playlist(
+	    							(int) (Constants.PLAYLIST_GENRE_OFFSET 
+	    								- genreCursor.getLong(
+	    										genreCursor.getColumnIndexOrThrow(
+	    												MediaStore.Audio.Genres._ID))),
+	    							genreCursor.getString(
+	    									genreCursor.getColumnIndexOrThrow(
+	    											MediaStore.Audio.Genres.NAME))
+	    					));
+	    		}
+	    		genreCursor.close();
     		}
-    		genreCursor.close();
 
     		
     		// create adapter
@@ -793,11 +796,18 @@ public class RockOnNextGenGL extends Activity {
     		mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
     		break;
     	case Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE:
-//    		mRockOnCubeRenderer.reverseClickAnimation();
-    		mRockOnRenderer.reverseClickAnimation();
-//    		// reloadTextures??
-//    		mRockOnCubeRenderer.forceTextureUpdateOnNextDraw();
-    		mRockOnRenderer.forceTextureUpdateOnNextDraw();
+    		try
+    		{
+	//    		mRockOnCubeRenderer.reverseClickAnimation();
+	    		mRockOnRenderer.reverseClickAnimation();
+	//    		// reloadTextures??
+	//    		mRockOnCubeRenderer.forceTextureUpdateOnNextDraw();
+	    		mRockOnRenderer.forceTextureUpdateOnNextDraw();
+    		}
+    		catch(NullPointerException e)
+    		{
+    			e.printStackTrace();
+    		}
     		break;
     	}
     }
@@ -2271,21 +2281,28 @@ public class RockOnNextGenGL extends Activity {
     				R.id.autotext1, 
     				R.id.autotext2});
     	
-    	/* filter */
-		AutoCompleteFilterQueryProvider songSearchFilterProvider = 
-				new AutoCompleteFilterQueryProvider(
-						getApplicationContext(), 
-						playlistId);
-		
-		/* apply filter to view */
-		songAdapter.setFilterQueryProvider(songSearchFilterProvider);
-    	/* apply adapter to view */
-		((AutoCompleteTextView) findViewById(R.id.search_textview)).
-    			setAdapter(songAdapter);
-    	/* set conversion column of the adapter */
-		songAdapter.setStringConversionColumn(
-    			allSongsCursor.getColumnIndexOrThrow(
-    					MediaStore.Audio.Media.TITLE));
+    	try
+    	{
+	    	/* filter */
+			AutoCompleteFilterQueryProvider songSearchFilterProvider = 
+					new AutoCompleteFilterQueryProvider(
+							getApplicationContext(), 
+							playlistId);
+			
+			/* apply filter to view */
+			songAdapter.setFilterQueryProvider(songSearchFilterProvider);
+	    	/* apply adapter to view */
+			((AutoCompleteTextView) findViewById(R.id.search_textview)).
+	    			setAdapter(songAdapter);
+	    	/* set conversion column of the adapter */
+			songAdapter.setStringConversionColumn(
+	    			allSongsCursor.getColumnIndexOrThrow(
+	    					MediaStore.Audio.Media.TITLE));
+    	}
+    	catch(NullPointerException e)
+    	{
+    		e.printStackTrace();
+    	}
 	}
 	
 	/**

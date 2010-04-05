@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -646,13 +647,20 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 		    				mTheme))
 		    		{
 	//	    			Log.i(TAG, "BM failed, error loading bm");
-		    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
-		    					mAlbumNavItem[cacheIndex], 
-		    					mContext.getResources(), 
-		    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
-		    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
-		    					mColorComponentBuffer, 
-		    					mTheme);
+		    			try
+		    			{
+			    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
+			    					mAlbumNavItem[cacheIndex], 
+			    					mContext.getResources(), 
+			    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
+			    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
+			    					mColorComponentBuffer, 
+			    					mTheme);
+		    			}
+		    			catch(NullPointerException e)
+		    			{
+		    				e.printStackTrace();
+		    			}
 		    		}
 	    		}
 //    		}
@@ -669,13 +677,34 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
+    	/** MIPMAPPING requires this */
+        gl.glFlush();
+
     	/** bind new texture */
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
     	
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D, 
-        		GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_LINEAR);
+        if(gl instanceof GL11) 
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+//            		GL10.GL_LINEAR);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_TRUE);
+        }
+        else
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+            		GL10.GL_LINEAR);
+        }
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D,
                 GL10.GL_TEXTURE_MAG_FILTER,

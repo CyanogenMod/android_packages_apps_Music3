@@ -309,7 +309,9 @@ public class AlbumNavItemUtils{
 			int width,
 			int height){
 		/** Sanity check */
-    	if(albumNavItem.label.isRecycled() ||
+    	if(albumNavItem == null ||
+    			albumNavItem.label == null ||
+    			albumNavItem.label.isRecycled() ||
     			albumNavItem.label.getWidth() != width || 
 				albumNavItem.label.getHeight() != height)
     	{

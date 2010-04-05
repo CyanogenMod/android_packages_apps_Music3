@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -654,7 +655,8 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    		{
 	    		/** Update cache item */
 	    		mAlbumNavItem[cacheIndex].index = albumIndex;
-	    		if(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount())
+	    		if(mAlbumCursor != null &&
+	    			(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount()))
 	    		{
 	//    			Log.i(TAG, "BM failed, index oob");
 	    			mAlbumNavItem[cacheIndex].albumName = "";
@@ -697,18 +699,12 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     }
     
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
+    	/** MIPMAPPING requires this */
+        gl.glFlush();
+
     	/** bind new texture */
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-    	
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D, 
-        		GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_LINEAR);
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D,
-                GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
-
+    	        
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D, 
         		GL10.GL_TEXTURE_WRAP_S,
@@ -731,14 +727,48 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //        		GL10.GL_MODULATE);
 //        		GL10.GL_BLEND);
 //                GL10.GL_REPLACE);
-
+        
+        if(gl instanceof GL11) 
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+//            		GL10.GL_LINEAR);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_TRUE);
+        }
+        else
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+            		GL10.GL_LINEAR);
+        }
+//    	gl.glTexParameterf(
+//        		GL10.GL_TEXTURE_2D, 
+//        		GL10.GL_TEXTURE_MIN_FILTER,
+////        		GL10.GL_LINEAR_MIPMAP_LINEAR);
+////                GL10.GL_NEAREST);
+//        		GL10.GL_LINEAR);
+        gl.glTexParameterf(
+        		GL10.GL_TEXTURE_2D,
+                GL10.GL_TEXTURE_MAG_FILTER,
+                GL10.GL_LINEAR);
 
         if(bitmap != null)
+        {
         	GLUtils.texImage2D(
         			GL10.GL_TEXTURE_2D, 
         			0, 
         			bitmap, 
         			0);
+        }	
 
     }
     

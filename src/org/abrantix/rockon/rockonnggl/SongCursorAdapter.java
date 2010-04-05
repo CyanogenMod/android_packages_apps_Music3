@@ -115,29 +115,31 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
     OnClickListener	mSongListSongClick = new OnClickListener(){
 		@Override
 		public void onClick(View songLayout) {
-			/* 
-			 * Check song position 
-			 */
-			int position = ((ListView) songLayout.getParent()).
-					getPositionForView(songLayout);
-			mSongCursor.moveToPosition(position);
-			int songId = (int) 
-				ContentProviderUnifier.
-					getAudioIdFromUnknownCursor(mSongCursor);
-//				mSongCursor.getInt(
-//					mSongCursor.getColumnIndexOrThrow(
-//							MediaStore.Audio.Media._ID));
-			Message msg = new Message();
-			msg.arg1 = songId;
-			msg.arg2 = Constants.NOW;
-			mSongItemSelectedHandler.sendMessageDelayed(
-					msg, 
-					Constants.CLICK_ACTION_DELAY);
-			mDialogInterface.dismiss();
-//				((Filex) context).
-//								songListView.getPositionForView(songTextView);
-			
-			Log.i(TAG, "Song "+position+" clicked - ADAPTER");
+			try
+			{
+				/* 
+				 * Check song position 
+				 */
+				int position = ((ListView) songLayout.getParent()).
+						getPositionForView(songLayout);
+				mSongCursor.moveToPosition(position);
+				int songId = (int) 
+					ContentProviderUnifier.
+						getAudioIdFromUnknownCursor(mSongCursor);
+				Message msg = new Message();
+				msg.arg1 = songId;
+				msg.arg2 = Constants.NOW;
+				mSongItemSelectedHandler.sendMessageDelayed(
+						msg, 
+						Constants.CLICK_ACTION_DELAY);
+				mDialogInterface.dismiss();
+				
+//				Log.i(TAG, "Song "+position+" clicked - ADAPTER");
+			}
+			catch(NullPointerException e)
+			{
+				e.printStackTrace();
+			}
 		}
     };
     

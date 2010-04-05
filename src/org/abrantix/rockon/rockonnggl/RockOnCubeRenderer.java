@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.app.Activity;
 import android.content.Context;
@@ -683,10 +684,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
 //    					mColorComponentBuffer, 
 //    					mTheme);
-    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
+    			if(!mAlbumNavItem[cacheIndex].cover.isRecycled())
+    				mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
     			// we cannot change the bitmap reference of the item
     			// we need to write to the existing reference
-    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+    			if(!mAlbumNavItem[cacheIndex].label.isRecycled())
+    				mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
     		} 
     		else 
     		{
@@ -719,7 +722,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    				mBitmapWidth,
 	    				mBitmapHeight/4))
 	    		{
-	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+	    			if(!mAlbumNavItem[cacheIndex].label.isRecycled())
+	    				mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 	    		}
     		}
     		
@@ -778,20 +782,11 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     private void bindTexture(GL10 gl, Bitmap bitmap, int textureId){
-    	/** bind new texture */
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+    	/** MIPMAPPING requires this */
+        gl.glFlush();
 
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D,
-                GL10.GL_TEXTURE_MAG_FILTER,
-//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
-        		GL10.GL_LINEAR);
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D, 
-        		GL10.GL_TEXTURE_MIN_FILTER,
-//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                GL10.GL_NEAREST);
-        		GL10.GL_LINEAR);
+        /** bind new texture */
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
 
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D, 
@@ -821,16 +816,50 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glBlendFunc(
         		GL10.GL_SRC_ALPHA, 
         		GL10.GL_ONE);
-
+        
+        gl.glTexParameterf(
+        		GL10.GL_TEXTURE_2D,
+                GL10.GL_TEXTURE_MAG_FILTER,
+//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
+        		GL10.GL_LINEAR);
+        if(gl instanceof GL11) 
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+//            		GL10.GL_LINEAR);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_FALSE);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_TRUE);
+        }
+        else
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+            		GL10.GL_LINEAR);
+        }
 
         if(bitmap != null)
+        {
         	GLUtils.texImage2D(
         			GL10.GL_TEXTURE_2D, 
         			0, 
         			bitmap, 
         			0);
-	    	
+        }	
     }
+    
+    
     
     float getPositionX(){
     	return mPositionX;
@@ -1007,7 +1036,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
      * @return
      */
     private int findAlbumPositionAfterAlphabeticalScroll(){
-    	if((int)mPositionY >= 0 && (int)mPositionY < mAlbumCursor.getCount())
+    	if(mAlbumCursor != null &&
+    		(int)mPositionY >= 0 && 
+    		(int)mPositionY < mAlbumCursor.getCount())
     	{
 	    	mAlbumCursor.moveToPosition((int)mPositionY);
 	    	lastLetter = 
