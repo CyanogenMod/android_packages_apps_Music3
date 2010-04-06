@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -127,6 +128,23 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 //    	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
+    	/*
+    	 *	Is Mipmapping supported 
+    	 */
+    	String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+//      String[] extensionArray = extensions.split(" ");
+//      for(int i = 0; i<extensionArray.length; i++)
+//      	Log.i(TAG, extensionArray[i]);
+		  if(extensions.contains("generate_mipmap"))
+//			  ||
+//		  	Integer.valueOf(Build.VERSION.SDK) >= 7)
+		  {
+		  	mSupportMipmapGeneration = true;
+		  }
+		  else
+		  {
+		  	mSupportMipmapGeneration = false;
+		  }
     	
         /*
          * By default, OpenGL enables features that improve quality
@@ -683,7 +701,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	/** bind new texture */
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
     	
-        if(gl instanceof GL11) 
+        if(mSupportMipmapGeneration) 
         {
         	gl.glTexParameterf(
             		GL10.GL_TEXTURE_2D, 
@@ -1137,6 +1155,10 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mCenterInitialZ = 0;
     private float		MAX_CLICK_ANIMATION_STEPS = 25;
     private float		mClickAnimationStep = 0;
+    
+    // GL extensions
+    private boolean		mSupportMipmapGeneration;
+    
     
     /** 
      * optimization vars 

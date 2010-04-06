@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -141,6 +142,23 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 //    	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
+    	/*
+    	 *	Is Mipmapping supported 
+    	 */
+    	String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+//      String[] extensionArray = extensions.split(" ");
+//      for(int i = 0; i<extensionArray.length; i++)
+//      	Log.i(TAG, extensionArray[i]);
+		  if(extensions.contains("generate_mipmap"))
+//		  ||
+//	  		Integer.valueOf(Build.VERSION.SDK) >= 7)		  
+		  {
+		  	mSupportMipmapGeneration = true;
+		  }
+		  else
+		  {
+		  	mSupportMipmapGeneration = false;
+		  }
     	
         /*
          * By default, OpenGL enables features that improve quality
@@ -704,7 +722,30 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 
     	/** bind new texture */
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-    	        
+    	
+        if(mSupportMipmapGeneration) 
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+//            		GL10.GL_LINEAR);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_TRUE);
+        }
+        else
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+            		GL10.GL_LINEAR);
+        }
+        
         gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D, 
         		GL10.GL_TEXTURE_WRAP_S,
@@ -728,28 +769,6 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //        		GL10.GL_BLEND);
 //                GL10.GL_REPLACE);
         
-        if(gl instanceof GL11) 
-        {
-        	gl.glTexParameterf(
-            		GL10.GL_TEXTURE_2D, 
-            		GL10.GL_TEXTURE_MIN_FILTER,
-            		GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                    GL10.GL_NEAREST);
-//            		GL10.GL_LINEAR);
-        	gl.glTexParameterf(
-        			GL11.GL_TEXTURE_2D, 
-        			GL11.GL_GENERATE_MIPMAP, 
-        			GL11.GL_TRUE);
-        }
-        else
-        {
-        	gl.glTexParameterf(
-            		GL10.GL_TEXTURE_2D, 
-            		GL10.GL_TEXTURE_MIN_FILTER,
-//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                    GL10.GL_NEAREST);
-            		GL10.GL_LINEAR);
-        }
 //    	gl.glTexParameterf(
 //        		GL10.GL_TEXTURE_2D, 
 //        		GL10.GL_TEXTURE_MIN_FILTER,
@@ -1154,6 +1173,9 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     private float		MAX_CLICK_ANIMATION_STEPS = 25;
     private float		mClickAnimationStep = 0;
     private int			mClickedPosition;
+    
+ // GL extensions
+    private boolean		mSupportMipmapGeneration;
     
     /** 
      * optimization vars 

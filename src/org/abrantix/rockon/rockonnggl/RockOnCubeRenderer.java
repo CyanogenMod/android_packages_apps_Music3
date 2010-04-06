@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory.Options;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -152,6 +153,24 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 //    	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
+    	/*
+    	 *	Is Mipmapping supported 
+    	 */
+    	String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
+//      String[] extensionArray = extensions.split(" ");
+//      for(int i = 0; i<extensionArray.length; i++)
+//      	Log.i(TAG, extensionArray[i]);
+		  if(extensions.contains("generate_mipmap"))
+//			  ||
+//		  	Integer.valueOf(Build.VERSION.SDK) >= 7)
+		  {
+		  	mSupportMipmapGeneration = true;
+		  }
+		  else
+		  {
+		  	mSupportMipmapGeneration = false;
+		  }
+        	
     	
         /*
          * By default, OpenGL enables features that improve quality
@@ -789,6 +808,35 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
 
         gl.glTexParameterf(
+        		GL10.GL_TEXTURE_2D,
+                GL10.GL_TEXTURE_MAG_FILTER,
+//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
+        		GL10.GL_LINEAR);
+        
+        if(mSupportMipmapGeneration) 
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+//            		GL10.GL_LINEAR);
+        	gl.glTexParameterf(
+        			GL11.GL_TEXTURE_2D, 
+        			GL11.GL_GENERATE_MIPMAP, 
+        			GL11.GL_TRUE);
+        }
+        else
+        {
+        	gl.glTexParameterf(
+            		GL10.GL_TEXTURE_2D, 
+            		GL10.GL_TEXTURE_MIN_FILTER,
+//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
+//                    GL10.GL_NEAREST);
+            		GL10.GL_LINEAR);
+        }
+        
+        gl.glTexParameterf(
         		GL10.GL_TEXTURE_2D, 
         		GL10.GL_TEXTURE_WRAP_S,
                 GL10.GL_CLAMP_TO_EDGE);
@@ -817,37 +865,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         		GL10.GL_SRC_ALPHA, 
         		GL10.GL_ONE);
         
-        gl.glTexParameterf(
-        		GL10.GL_TEXTURE_2D,
-                GL10.GL_TEXTURE_MAG_FILTER,
-//        		GL10.GL_LINEAR_MIPMAP_LINEAR);
-        		GL10.GL_LINEAR);
-        if(gl instanceof GL11) 
-        {
-        	gl.glTexParameterf(
-            		GL10.GL_TEXTURE_2D, 
-            		GL10.GL_TEXTURE_MIN_FILTER,
-            		GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                    GL10.GL_NEAREST);
-//            		GL10.GL_LINEAR);
-        	gl.glTexParameterf(
-        			GL11.GL_TEXTURE_2D, 
-        			GL11.GL_GENERATE_MIPMAP, 
-        			GL11.GL_FALSE);
-        	gl.glTexParameterf(
-        			GL11.GL_TEXTURE_2D, 
-        			GL11.GL_GENERATE_MIPMAP, 
-        			GL11.GL_TRUE);
-        }
-        else
-        {
-        	gl.glTexParameterf(
-            		GL10.GL_TEXTURE_2D, 
-            		GL10.GL_TEXTURE_MIN_FILTER,
-//            		GL10.GL_LINEAR_MIPMAP_LINEAR);
-//                    GL10.GL_NEAREST);
-            		GL10.GL_LINEAR);
-        }
+
 
         if(bitmap != null)
         {
@@ -1369,6 +1387,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mEyeTargetX = 0.75f;
     private float		mEyeTargetY = 0.f;
     private float		mEyeTargetZ = -5.f;
+    
+    // GL Extensions support
+    private boolean		mSupportMipmapGeneration;	
     
     
     /** 
