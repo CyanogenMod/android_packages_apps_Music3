@@ -44,6 +44,10 @@ public abstract class RockOnRenderer{
 	
 	abstract public void clearCache();
     
+	abstract public void changeBrowseCat(int browseCat);
+	
+	abstract public int	 getBrowseCat();
+	
     abstract public void changePlaylist(int playlistId);
     
     abstract public	Cursor getAlbumCursor();
@@ -96,8 +100,8 @@ public abstract class RockOnRenderer{
     /** get the current position */
     abstract int getShownPosition(float x, float y);
     
-    /** get the current Album Id */
-    abstract int getShownAlbumId(float x, float y);
+    /** get the current Album/Artist/... Id */
+    abstract int getShownElementId(float x, float y);
     
     /** get the current Album Name */
     abstract String getShownAlbumName(float x, float y);
@@ -107,7 +111,11 @@ public abstract class RockOnRenderer{
     
     /** move navigator to the specified album Id */
     abstract int setCurrentByAlbumId(long albumId);
-//
+
+    /** move navigator to the specified artist Id */
+    abstract int setCurrentByArtistId(long artistId);
+
+    //
     public	float		mPositionX = 0.f;
     public	float		mTargetPositionX = 0.f;
     public	float		mPositionY = 0.f;

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -22,9 +23,12 @@ class PlaylistSelectedClickListener implements android.content.DialogInterface.O
 
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		Log.i(TAG, "Item "+which+" clicked!");
-		mPlaylistItemSelectedHandler.sendEmptyMessageDelayed(
-				Integer.parseInt(mPlaylistArray.get(which).get(Constants.PLAYLIST_ID_KEY)), 
+//		Log.i(TAG, "Item "+which+" clicked!");
+		Message msg = new Message();
+		msg.what = Integer.parseInt(mPlaylistArray.get(which).get(Constants.PLAYLIST_ID_KEY));
+		msg.obj = mPlaylistArray.get(which).get(Constants.PLAYLIST_NAME_KEY);
+		mPlaylistItemSelectedHandler.sendMessageDelayed(
+				msg, 
 				Constants.CLICK_ACTION_DELAY);
 		dialog.dismiss();
 	}

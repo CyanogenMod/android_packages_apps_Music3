@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<!--	BROWSING CATEGORIES-->
+	<string name="browse_cat_album">Alben</string>
+	<string name="browse_cat_artists">Künstler</string>
+	
+		<!--	GENERAL STUFF -->
+	<string name="album">Album</string>
+	<string name="albums">Alben</string>
+	
 	<!--	INTRO SCREEN-->
     <string name="intro_text_1">Rock</string>
     <string name="intro_text_2">On</string>
@@ -46,6 +54,9 @@
 	<string name="album_art_changed">Album-Cover geändert</string>
 	<string name="playlist_empty_toast">Fehler! Wiedergabeliste ist leer!</string>
 	<string name="playqueue_empty_toast">Liste ist leer!</string>
+	<string name="not_an_album_toast">Das ist ein Künstler nicht ein Album!</string>
+	<string name="playlist_queued_toast">Playlist Warteschlange</string>
+	<string name="generic_error_toast">Fehler!</string>
 	
 	<!-- 	SEARCH -->
 	<string name="search_hint">Titel oder Künstlername</string>

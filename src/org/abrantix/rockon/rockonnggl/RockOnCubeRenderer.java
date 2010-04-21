@@ -56,10 +56,16 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //        }
 //    }
 	
-    public RockOnCubeRenderer(Context context, Handler requestRenderHandler, int theme) {
+    public RockOnCubeRenderer(
+    		Context context, 
+    		Handler requestRenderHandler, 
+    		int theme,
+    		int browseCat) 
+    {
         mContext = context;
         mRequestRenderHandler = requestRenderHandler;
         mTheme = theme;
+        mBrowseCat = browseCat;
         
     	initNonGlVars(context, false);
     }
@@ -76,17 +82,30 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private void initNonGlVars(Context context, boolean force){
         
     	/** init album cursor **/
-    	if(mAlbumCursor == null || force){
+    	if(mCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
-    		mAlbumCursor = 
-    			cursorUtils.getAlbumListFromPlaylist(
-    				PreferenceManager.getDefaultSharedPreferences(mContext).
-    					getInt(
-    							Constants.prefkey_mPlaylistId,
-    							Constants.PLAYLIST_ALL));
-    		Log.i(TAG, "CREATED ABUM CURSOR");
-    		if(mAlbumCursor == null)
-    			Log.i(TAG, "ALBUM CURSOR IS NULL");
+    		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		{
+    			mCursor = 
+    				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
+    			// Let's add the audio id to the artist list so we can get art
+//    			double t = System.currentTimeMillis();
+    			if(mCursor != null && mCursor.getCount() >0)
+    			{
+    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
+    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
+    			}
+//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
+    		}
+    		else // ALBUM
+    		{
+	    		mCursor = 
+	    			cursorUtils.getAlbumListFromPlaylist(
+	    				PreferenceManager.getDefaultSharedPreferences(mContext).
+	    					getInt(
+	    							Constants.prefkey_mPlaylistId,
+	    							Constants.PLAYLIST_ALL));
+    		}
     	}
         
     	/** init dimensions */
@@ -94,18 +113,18 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	mBitmapHeight = Constants.ALBUM_ART_TEXTURE_SIZE;
         
     	/** albumNavUtils */
-    	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
+    	mNavItemUtils = new NavItemUtils(mBitmapWidth, mBitmapHeight, mContext);
         
 
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
-    		mAlbumNavItem[i] = new AlbumNavItem();
-        	mAlbumNavItem[i].index = -1;
-    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
+    		mNavItem[i] = new NavItem();
+        	mNavItem[i].index = -1;
+    		mNavItem[i].cover = Bitmap.createBitmap(
     				mBitmapWidth, 
     				mBitmapHeight, 
     				Bitmap.Config.RGB_565);
-    		mAlbumNavItem[i].label = Bitmap.createBitmap(
+    		mNavItem[i].label = Bitmap.createBitmap(
     				mBitmapWidth,
     				mBitmapHeight/4,
     				Bitmap.Config.ARGB_8888);
@@ -121,10 +140,21 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				mBitmapHeight, 
     				Bitmap.Config.ARGB_8888);
     	}
+        
+//        /**
+//         * debug
+//         */
+//        for(int i = 0; i < 50; i++)
+//        {
+//        	Log.i(TAG, "b: "+i);
+//        	b[i] = Bitmap.createBitmap(256, 256, Bitmap.Config.RGB_565);
+//        }
     }
 
+//    Bitmap[] b = new Bitmap[1000];
+
     public	Cursor getAlbumCursor(){
-    	return mAlbumCursor;
+    	return mCursor;
     }
     
     public int[] getConfigSpec() {
@@ -160,7 +190,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //      String[] extensionArray = extensions.split(" ");
 //      for(int i = 0; i<extensionArray.length; i++)
 //      	Log.i(TAG, extensionArray[i]);
-		  if(extensions.contains("generate_mipmap"))
+		  if(extensions != null && extensions.contains("generate_mipmap"))
 //			  ||
 //		  	Integer.valueOf(Build.VERSION.SDK) >= 7)
 		  {
@@ -320,7 +350,16 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	} 
     	
         /* update textures if needed -- whenever we cross one album */
-        texturesUpdated = updateTextures(gl);
+    	try
+    	{
+    		texturesUpdated = updateTextures(gl);
+    	}
+    	catch(IllegalArgumentException e)
+    	{
+    		e.printStackTrace();
+    		texturesUpdated = false;
+    		return;
+    	}
   
     	mRockOnCube.setHorizontalIndex((int) mPositionX, mPositionX);
     	mRockOnCube.setVerticalIndex((int) mPositionY, mPositionY);
@@ -333,6 +372,17 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+        /*
+         * Upon browsing category change we want to clear the screen
+         * until the changes have been applied
+         */
+        if(mIsChangingCat)
+        {
+//        	mIsChangingCat = false; // redundant
+//        	stopRender();
+        	return;
+        }
+        
         /*
          * Now we're ready to draw some 3D objects
          */
@@ -412,8 +462,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         
 //        gl.glDisable(GL10.GL_FOG);
         
-        GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
-
+    	GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, 0f, 0f, 0f, 0f, -1.0f, 0.0f);
+        
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         gl.glEnableClientState(GL10.GL_NORMAL_ARRAY); // LIGHTING
@@ -458,6 +508,19 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         
         /* draw cube */
     	mRockOnCube.draw(gl);
+//    	if(rotationAngleY != 0)
+//    	{
+//    		gl.glDisable(GL10.GL_BLEND);
+//    		gl.glRotatef(2.f, 1.f, 0.f, 0.f);
+//    		mRockOnCube.draw(gl);
+//    		gl.glRotatef(2.f, 1.f, 0.f, 0.f);
+//    		mRockOnCube.draw(gl);
+//    		gl.glRotatef(2.f, 1.f, 0.f, 0.f);
+//    		mRockOnCube.draw(gl);
+//    		gl.glRotatef(2.f, 1.f, 0.f, 0.f);
+//    		mRockOnCube.draw(gl);
+//    		gl.glEnable(GL10.GL_BLEND);  		
+//    	}
     	
     	/* draw label */
     	if(Math.abs(mPositionY - mTargetPositionY) < .5f &&
@@ -568,21 +631,21 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	this.renderNow();
     }
     
-    int		albumIndexTmp;
+    int		cursorIndexTmp;
     int		alphabetIndexTmp;
     int		lastInitial = -1;
     int		charTmp;
     boolean changed;
     private boolean updateTextures(GL10 gl){
     	changed = false;
-    	if(mAlbumCursor != null){
+    	if(mCursor != null){
 	    	/* Album Cover textures in vertical scrolling */
     		for(int i = 0; i < mCacheSize; i++){
-	    		albumIndexTmp = (int) (Math.floor((float) flooredPositionY / (float) mCacheSize) * mCacheSize + i);
-	    		if(albumIndexTmp - flooredPositionY > 2){
-	    			albumIndexTmp -= mCacheSize;
-	    		} else if (albumIndexTmp - flooredPositionY < -1){
-	    			albumIndexTmp += mCacheSize;
+	    		cursorIndexTmp = (int) (Math.floor((float) flooredPositionY / (float) mCacheSize) * mCacheSize + i);
+	    		if(cursorIndexTmp - flooredPositionY > 2){
+	    			cursorIndexTmp -= mCacheSize;
+	    		} else if (cursorIndexTmp - flooredPositionY < -1){
+	    			cursorIndexTmp += mCacheSize;
 	    		}
 	    		
 	//    		Log.i(TAG, 
@@ -590,7 +653,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //	    			" flooredPosition: "+flooredPosition+
 //	    			" mPosition: "+mPosition);
 	    		
-	    		if(setupAlbumTextures(gl, i, albumIndexTmp, mForceTextureUpdate))
+	    		if(setupAlbumTextures(gl, i, cursorIndexTmp, mForceTextureUpdate))
 	    			changed = true;
 	    	}
 	    	
@@ -604,24 +667,24 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    					/** 
 	    					 * FIXME: quick fix for bug, untested, unchecked
 	    					 */
-	    					if(flooredPositionY > mAlbumCursor.getCount() - 1)
+	    					if(flooredPositionY > mCursor.getCount() - 1)
 							{
-	    						mAlbumCursor.moveToLast();
+	    						mCursor.moveToLast();
 	    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
 							} 
 	    					else if(flooredPositionY < 0)
 	    					{
-	    						mAlbumCursor.moveToFirst();
+	    						mCursor.moveToFirst();
 	    						Log.i(TAG, "Renderer album cursor overflow XXX FIXME");
 	    					}
 	    					else
 							{
-								mAlbumCursor.moveToPosition(flooredPositionY);
+								mCursor.moveToPosition(flooredPositionY);
 							}
 	    					lastInitial = 
-	    						mAlbumCursor.
+	    						mCursor.
 	    							getString(
-	    									mAlbumCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
+	    									mCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
 	    							toLowerCase().
 	    								charAt(0);
 	    					if(lastInitial < 'a')
@@ -684,18 +747,18 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //			Constants.REASONABLE_ALBUM_ART_SIZE, 
 //			Bitmap.Config.RGB_565);
 //    
-    private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int albumIndex, boolean force){
+    private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int navIndex, boolean force){
     	/** texture needs update? */
-    	if(mAlbumNavItem[cacheIndex].index != albumIndex || force){
+    	if(mNavItem[cacheIndex].index != navIndex || force){
 	    	
 //    		Log.i(TAG, "albumIndexTmp: "+albumIndexTmp+" flooredPosition: "+flooredPosition+" mPosition: "+mPosition);
 
     		/** Update cache item */
-    		mAlbumNavItem[cacheIndex].index = albumIndex;
-    		if(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount())
+    		mNavItem[cacheIndex].index = navIndex;
+    		if(navIndex < 0 || navIndex >= mCursor.getCount())
     		{
-    			mAlbumNavItem[cacheIndex].albumName = "";
-    			mAlbumNavItem[cacheIndex].artistName = "";
+    			mNavItem[cacheIndex].albumName = "";
+    			mNavItem[cacheIndex].artistName = "";
 //    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
 //    					mAlbumNavItem[cacheIndex], 
 //    					mContext.getResources(), 
@@ -703,54 +766,96 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
 //    					mColorComponentBuffer, 
 //    					mTheme);
-    			if(!mAlbumNavItem[cacheIndex].cover.isRecycled())
-    				mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
+    			if(!mNavItem[cacheIndex].cover.isRecycled())
+    				mNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
     			// we cannot change the bitmap reference of the item
     			// we need to write to the existing reference
-    			if(!mAlbumNavItem[cacheIndex].label.isRecycled())
-    				mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+    			if(!mNavItem[cacheIndex].label.isRecycled())
+    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
     		} 
     		else 
     		{
-	    		if(!mAlbumNavItemUtils.fillAlbumInfo(
-	    				mAlbumCursor, 
-	    				mAlbumNavItem[cacheIndex], 
-	    				albumIndex))
-	    		{
-	    			mAlbumNavItem[cacheIndex].albumName = null;
-	    			mAlbumNavItem[cacheIndex].artistName = null;
-	    			mAlbumNavItem[cacheIndex].albumKey = null;
-	    		}
-	    		if(!mAlbumNavItemUtils.fillAlbumBitmap(
-	    				mAlbumNavItem[cacheIndex], 
-	    				mBitmapWidth, 
-	    				mBitmapHeight, 
-	    				mColorComponentBuffer,
-	    				mTheme))
-	    		{
-	    			mAlbumNavItemUtils.fillAlbumUnknownBitmap(
-	    					mAlbumNavItem[cacheIndex], 
-	    					mContext.getResources(), 
-	    					mAlbumNavItem[cacheIndex].cover.getWidth(), 
-	    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
-	    					mColorComponentBuffer, 
-	    					mTheme);	
-	    		}
-	    		if(!mAlbumNavItemUtils.fillAlbumLabel(
-	    				mAlbumNavItem[cacheIndex],
-	    				mBitmapWidth,
-	    				mBitmapHeight/4))
-	    		{
-	    			if(!mAlbumNavItem[cacheIndex].label.isRecycled())
-	    				mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-	    		}
+    			switch(mBrowseCat)
+    			{
+    			case Constants.BROWSECAT_ALBUM:
+    				if(!mNavItemUtils.fillAlbumInfo(
+		    				mCursor, 
+		    				mNavItem[cacheIndex], 
+		    				navIndex))
+		    		{
+		    			mNavItem[cacheIndex].albumName = null;
+		    			mNavItem[cacheIndex].artistName = null;
+		    			mNavItem[cacheIndex].albumKey = null;
+		    		}
+		    		if(!mNavItemUtils.fillAlbumBitmap(
+		    				mNavItem[cacheIndex], 
+		    				mBitmapWidth, 
+		    				mBitmapHeight, 
+		    				mColorComponentBuffer,
+		    				mTheme))
+		    		{
+		    			mNavItemUtils.fillAlbumUnknownBitmap(
+		    					mNavItem[cacheIndex], 
+		    					mContext.getResources(), 
+		    					mNavItem[cacheIndex].cover.getWidth(), 
+		    					mNavItem[cacheIndex].cover.getHeight(), 
+		    					mColorComponentBuffer, 
+		    					mTheme);	
+		    		}
+		    		if(!mNavItemUtils.fillAlbumLabel(
+		    				mNavItem[cacheIndex],
+		    				mBitmapWidth,
+		    				mBitmapHeight/4))
+		    		{
+		    			if(!mNavItem[cacheIndex].label.isRecycled())
+		    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+		    		}
+		    		break;
+    			case Constants.BROWSECAT_ARTIST:
+    				if(!mNavItemUtils.fillArtistInfo(
+		    				mCursor, 
+		    				mNavItem[cacheIndex],
+		    				mArtistAlbumHelper[navIndex],
+		    				navIndex))
+		    		{
+		    			mNavItem[cacheIndex].artistId = null;
+		    			mNavItem[cacheIndex].artistName = null;
+		    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
+		    			mNavItem[cacheIndex].nSongsFromArtist = 0;
+		    		}
+		    		if(!mNavItemUtils.fillArtistBitmap(
+		    				mNavItem[cacheIndex],
+		    				mArtistAlbumHelper[navIndex],
+		    				mBitmapWidth, 
+		    				mBitmapHeight, 
+		    				mColorComponentBuffer,
+		    				mTheme))
+		    		{
+		    			mNavItemUtils.fillAlbumUnknownBitmap(
+		    					mNavItem[cacheIndex], 
+		    					mContext.getResources(), 
+		    					mNavItem[cacheIndex].cover.getWidth(), 
+		    					mNavItem[cacheIndex].cover.getHeight(), 
+		    					mColorComponentBuffer, 
+		    					mTheme);	
+		    		}
+		    		if(!mNavItemUtils.fillArtistLabel(
+		    				mNavItem[cacheIndex],
+		    				mBitmapWidth,
+		    				mBitmapHeight/4))
+		    		{
+		    			if(!mNavItem[cacheIndex].label.isRecycled())
+		    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+		    		}
+		    		break;
+    			}
     		}
     		
 //    		Log.i(TAG, "cacheIndex: "+cacheIndex+"");
     		
 	    	/** bind new texture */
-    		bindTexture(gl, mAlbumNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
-    		bindTexture(gl, mAlbumNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
+    		bindTexture(gl, mNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
+    		bindTexture(gl, mNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
     		
     		return true;
     	} else  {
@@ -776,7 +881,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		} 
     		else 
     		{
-	    		if(!mAlbumNavItemUtils.fillAlphabetBitmap(
+	    		if(!mNavItemUtils.fillAlphabetBitmap(
 	    				mAlphabetNavItem[cacheIndex], 
 	    				mBitmapWidth, 
 	    				mBitmapHeight))
@@ -993,9 +1098,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
    		 * New Y pivot
    		 */
     	// avoid rotations from a very far away point 
-    	if(mAlbumCursor != null &&
-    		mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
-    		mPositionY = mAlbumCursor.getCount() - 1;
+    	if(mCursor != null &&
+    		mPositionY >= mCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT + 2)
+    		mPositionY = mCursor.getCount() - 1;
 
     	//		position += speedFactor * speed;
     	if(mTargetPositionY > mPositionY)
@@ -1022,7 +1127,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 					, updateFraction * -Constants.MAX_SCROLL);
 
 		/** are we outside the limits of the album list?*/
-    	if(mAlbumCursor != null){
+    	if(mCursor != null){
     		/** X checks */
     		if(lastInitial != -1 &&
     			lastInitial + mPositionX <= 'a' - 1 - Constants.MAX_POSITION_OVERSHOOT)
@@ -1037,8 +1142,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		/** Y checks */
     		if(mPositionY <= -Constants.MAX_POSITION_OVERSHOOT)
 	    		mTargetPositionY = 0;
-	    	else if(mPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
-	    		mTargetPositionY = mAlbumCursor.getCount() - 1;
+	    	else if(mPositionY >= mCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
+	    		mTargetPositionY = mCursor.getCount() - 1;
     	}
     	
 		
@@ -1054,22 +1159,22 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
      * @return
      */
     private int findAlbumPositionAfterAlphabeticalScroll(){
-    	if(mAlbumCursor != null &&
+    	if(mCursor != null &&
     		(int)mPositionY >= 0 && 
-    		(int)mPositionY < mAlbumCursor.getCount())
+    		(int)mPositionY < mCursor.getCount())
     	{
-	    	mAlbumCursor.moveToPosition((int)mPositionY);
+	    	mCursor.moveToPosition((int)mPositionY);
 	    	lastLetter = 
-	    		mAlbumCursor.getString(
-	    				mAlbumCursor.getColumnIndexOrThrow(
+	    		mCursor.getString(
+	    				mCursor.getColumnIndexOrThrow(
 	    						MediaStore.Audio.Albums.ARTIST)).
 	    				toLowerCase().charAt(0);
 	    	newLetter = (char) (lastLetter + mPositionX);
 	    	if(mPositionX > 0){
-	    		for(letterIdx = (int)mPositionY; letterIdx<mAlbumCursor.getCount(); letterIdx++){
-	    			mAlbumCursor.moveToPosition(letterIdx);
-	    			if(mAlbumCursor.getString(
-	    					mAlbumCursor.getColumnIndexOrThrow(
+	    		for(letterIdx = (int)mPositionY; letterIdx<mCursor.getCount(); letterIdx++){
+	    			mCursor.moveToPosition(letterIdx);
+	    			if(mCursor.getString(
+	    					mCursor.getColumnIndexOrThrow(
 	    							MediaStore.Audio.Albums.ARTIST)).
 	    					toLowerCase().charAt(0)
 	    					>= newLetter)
@@ -1079,9 +1184,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    		}
 	    	} else {
 	    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
-	    			mAlbumCursor.moveToPosition(letterIdx);
-	    			if(mAlbumCursor.getString(
-	    					mAlbumCursor.getColumnIndexOrThrow(
+	    			mCursor.moveToPosition(letterIdx);
+	    			if(mCursor.getString(
+	    					mCursor.getColumnIndexOrThrow(
 	    							MediaStore.Audio.Albums.ARTIST)).
 	    					toLowerCase().charAt(0)
 	    					<= newLetter)
@@ -1115,8 +1220,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 			/* make we dont exceed the cube limits */
 			if(mTargetPositionY <= -Constants.MAX_POSITION_OVERSHOOT)
 				mTargetPositionY = -Constants.MAX_POSITION_OVERSHOOT;
-			else if(mTargetPositionY >= mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
-				mTargetPositionY = mAlbumCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT;
+			else if(mTargetPositionY >= mCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = mCursor.getCount() - 1 + Constants.MAX_POSITION_OVERSHOOT;
 			/* update position */
 			mPositionY = mTargetPositionY;
     		return;
@@ -1155,6 +1260,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     						scrollSpeed/(mHeight*.75f)
     				);
     		}
+    		
+    		/* limit move to X covers */
+    		if(Math.abs(mTargetPositionY - mPositionY) > 10)
+    			mTargetPositionY = 
+    				mPositionY +
+    				Math.signum(scrollSpeed) * 10;
+    		
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == -1)
     			mTargetPositionY = -2;
@@ -1218,10 +1330,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /** get album count */
     public int	getAlbumCount(){
-    	if(mAlbumCursor == null)
+    	if(mCursor == null)
     		return -1;
     	else
-    		return mAlbumCursor.getCount();
+    		return mCursor.getCount();
     }
     
     /** get the current position */
@@ -1230,25 +1342,35 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** get the current Album Id */
-    int getShownAlbumId(float x, float y){
+    int getShownElementId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
-    		mAlbumCursor == null ||
+    		mCursor == null ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		(int) mPositionY > mAlbumCursor.getCount() - 1)
+    		(int) mPositionY > mCursor.getCount() - 1)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
     		return -1;
     	}
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
-    		int albumId = mAlbumCursor.getInt(
-    				mAlbumCursor.getColumnIndexOrThrow(
-    						MediaStore.Audio.Albums._ID));
-    		mAlbumCursor.moveToPosition(tmpIndex);
-    		return albumId;
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition((int) mPositionY);
+    		int id = -1;
+    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+    		{
+	    		id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Albums._ID));
+    		}
+    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		{
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Artists._ID));
+    		}
+    		mCursor.moveToPosition(tmpIndex);
+    		return id;
     	}
     }
     
@@ -1257,12 +1379,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
-    		String albumName = mAlbumCursor.getString(
-    				mAlbumCursor.getColumnIndexOrThrow(
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition((int) mPositionY);
+    		String albumName = mCursor.getString(
+    				mCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ALBUM));
-    		mAlbumCursor.moveToPosition(tmpIndex);
+    		mCursor.moveToPosition(tmpIndex);
     		return albumName;
     	}	
     }
@@ -1272,12 +1394,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition((int) mPositionY);
-    		String artistName = mAlbumCursor.getString(
-    				mAlbumCursor.getColumnIndexOrThrow(
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition((int) mPositionY);
+    		String artistName = mCursor.getString(
+    				mCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ARTIST));
-    		mAlbumCursor.moveToPosition(tmpIndex);
+    		mCursor.moveToPosition(tmpIndex);
     		return artistName;
     	}
     }
@@ -1287,12 +1409,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
     	if(albumId >= 0)
     	{
-	    	if(mAlbumCursor != null){
-		    	for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
+	    	if(mCursor != null){
+		    	for(int i = 0; i < mCursor.getCount()-1; i++){
 		    		try
 		    		{
-			    		mAlbumCursor.moveToPosition(i);
-			    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
+			    		mCursor.moveToPosition(i);
+			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
 			    			mTargetPositionY = i;
 			    			mPositionY = 
 			    				i - 
@@ -1321,17 +1443,85 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    /** move navigator to the specified artist Id */
+    int setCurrentByArtistId(long artistId)
+    {
+    	if(artistId >= 0)
+    	{
+	    	if(mCursor != null){
+		    	for(int i = 0; i < mCursor.getCount()-1; i++){
+		    		try
+		    		{
+			    		mCursor.moveToPosition(i);
+			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)) == artistId){
+			    			mTargetPositionY = i;
+			    			mPositionY = 
+			    				i - 
+			    				Math.signum(mTargetPositionY - mPositionY)
+			    				*
+			    				Math.min(
+			    					Math.abs(mTargetPositionY-mPositionY), 
+			    					5.5f);
+			    			// TODO: trigger rotation
+			    			this.renderNow();
+			    			return i;
+			    		}
+		    		}
+		    		catch(CursorIndexOutOfBoundsException e)
+		    		{
+		    			e.printStackTrace();
+		    			return -1;
+		    		}
+		    	}
+		    	return -1;
+	    	} else {
+	    		return -1;
+	    	}
+    	} else {
+    		return -1;
+    	}
+    }
+
+    
+    /**
+     * 
+     */
+    public void changeBrowseCat(int browseCat)
+    {
+    	if(browseCat != mBrowseCat)
+    	{
+    		mIsChangingCat = true;
+    		this.renderNow();
+    		mCursor.close();
+    		mBrowseCat = browseCat;
+    		initNonGlVars(mContext, true);
+    		mPositionY = -5.f;
+    		mIsChangingCat = false;
+    		System.gc();
+    		this.renderNow(); // also redundant
+    	}
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getBrowseCat()
+    {
+    	return mBrowseCat;	
+    }
+    
     /** 
      * Recycle cached bitmaps
      */
     public void clearCache()
     {
-    	for(int i=0; i<mAlbumNavItem.length; i++)
+    	for(int i=0; i<mNavItem.length; i++)
     	{
     		try
     		{
-    			mAlbumNavItem[i].cover.recycle();
-        		mAlbumNavItem[i].label.recycle();	
+    			mNavItem[i].cover.recycle();
+        		mNavItem[i].label.recycle();	
     		}
     		catch(Exception e)
     		{
@@ -1354,6 +1544,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
+    private int					mBrowseCat;
     private int					mTheme;
     private	int					mCacheSize = 4;
     private Context 			mContext;
@@ -1365,10 +1556,11 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int					mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean				mClickAnimation = false;
-    private	Cursor				mAlbumCursor = null;
+    private	Cursor				mCursor = null;
     private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
-    private AlbumNavItem[]		mAlbumNavItem = new AlbumNavItem[mCacheSize];
-    private AlbumNavItemUtils	mAlbumNavItemUtils;
+    private NavItem[]			mNavItem = new NavItem[mCacheSize];
+    private NavItemUtils		mNavItemUtils;
+    private ArtistAlbumHelper[]	mArtistAlbumHelper;
     private	int					mBitmapWidth;
     private int 				mBitmapHeight;
     private byte[]				mColorComponentBuffer;
@@ -1376,7 +1568,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private int					mHeight = 0;
     private int					mWidth = 0;
     private boolean				mIsRendering = false;
-
+    private boolean				mIsChangingCat = false;
+    
 //    public	float		mPositionX = 0.f;
 //    public	float		mTargetPositionX = 0.f;
 //    public	float		mPositionY = 0.f;
@@ -1388,8 +1581,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private float		mEyeTargetY = 0.f;
     private float		mEyeTargetZ = -5.f;
     
+    
     // GL Extensions support
-    private boolean		mSupportMipmapGeneration;	
+    private boolean		mSupportMipmapGeneration;
+    
+    // Fake 3D
+    private boolean		mRightEye = false;
     
     
     /** 

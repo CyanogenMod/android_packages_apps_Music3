@@ -121,10 +121,9 @@
 <!--    		android:paddingBottom="@dimen/button_large_padding"-->
     		
     </LinearLayout> 
-
     <!--    	android:layout_below="@id/player_controls_layout"-->
 <!--    	android:layout_above="@id/player_current_playing_layout"-->
-    
+
     <LinearLayout
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
@@ -138,6 +137,7 @@
 			android:layout_margin="0dp"
 			/>
 	</LinearLayout>
+
 
 	<ImageView
 		android:id="@+id/shading_top"
@@ -153,4 +153,19 @@
 		android:layout_above="@id/player_current_playing_layout"
 		android:src="@drawable/black_to_transparent_grad_90"/>
 		
+
+<!--    <org.abrantix.rockon.rockonnggl.AlbumArtistSwitcherDragView -->
+<!--		android:id="@+id/player_artist_album_drag_switcher"-->
+<!--	    android:layout_width="fill_parent"-->
+<!--	    android:layout_height="@dimen/button_default_height"-->
+<!--	    android:layout_above="@id/player_current_playing_layout"-->
+<!--    />-->
+    
+	<org.abrantix.rockon.rockonnggl.AlbumArtistSwitcherView 
+		android:id="@+id/player_artist_album_switcher"
+	    android:layout_width="fill_parent"
+	    android:layout_height="@dimen/button_default_double_height"
+	    android:layout_above="@id/player_current_playing_layout"
+    />    
+<!--	    android:layout_above="@id/player_artist_album_drag_switcher"-->
 </RelativeLayout>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<!--	BROWSING CATEGORIES-->
+	<string name="browse_cat_album">Альбомы</string>
+	<string name="browse_cat_artists">Исполнители</string>
+	
+	<!--	GENERAL STUFF -->
+	<string name="album">Альбом</string>
+	<string name="albums">Альбомы</string>
+	
+	
 <!-- INTRO SCREEN-->
     <string name="intro_text_1">Rock</string>
     <string name="intro_text_2">On</string>
@@ -47,6 +56,10 @@
 <string name="album_art_changed">Обложка изменена</string>
 <string name="playlist_empty_toast">Ошибка! Плейлист пуст.</string>
 <string name="playqueue_empty_toast">Плейлист пуст!</string>
+<string name="not_an_album_toast">К сожалению, это художник не альбом!</string>
+	<string name="playlist_queued_toast">очередь плейлист</string>
+	<string name="generic_error_toast">Ошибка!</string>
+
 
 <!-- SEARCH -->
 <string name="search_hint">Песня или Исполнитель</string>

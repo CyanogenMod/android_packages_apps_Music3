@@ -40,8 +40,6 @@ import android.util.Log;
 //			if(e.getClass().equals(OutOfMemoryError.class))
 //			{
 //				e.printStackTrace();
-//				((RockOnNextGenGL)context).finish();
-//				return;
 //			}
 			
             PackageManager manager = context.getPackageManager();

@@ -43,11 +43,16 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
 	
-    public RockOnBoringRenderer(Context context, Handler requestRenderHandler, int theme) 
+    public RockOnBoringRenderer(
+    		Context context, 
+    		Handler requestRenderHandler, 
+    		int theme,
+    		int browseCat) 
     {
         mContext = context;
         mRequestRenderHandler = requestRenderHandler;
         mTheme = theme;
+        mBrowseCat = browseCat;
         
         initCursorVars(context, false);
     }
@@ -64,14 +69,22 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     
     private void initCursorVars(Context context, boolean force){
     	/** init album cursor **/
-    	if(mAlbumCursor == null || force){
+    	if(mCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
-    		mAlbumCursor = 
-    			cursorUtils.getAlbumListFromPlaylist(
-    				PreferenceManager.getDefaultSharedPreferences(mContext).
-    					getInt(
-    							Constants.prefkey_mPlaylistId,
-    							Constants.PLAYLIST_ALL));
+       		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		{
+    			mCursor = 
+    				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
+    		}
+    		else // ALBUM
+    		{
+	    		mCursor = 
+	    			cursorUtils.getAlbumListFromPlaylist(
+	    				PreferenceManager.getDefaultSharedPreferences(mContext).
+	    					getInt(
+	    							Constants.prefkey_mPlaylistId,
+	    							Constants.PLAYLIST_ALL));
+    		}
     	}
     }
 
@@ -93,17 +106,17 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	mTextRatio = 4;
    	
     	/** albumNavUtils */
-    	mAlbumNavItemUtils = new AlbumNavItemUtils(mBitmapWidth, mBitmapHeight);
+    	mNavItemUtils = new NavItemUtils(mBitmapWidth, mBitmapHeight, mContext);
     	
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
-    		mAlbumNavItem[i] = new AlbumNavItem();
-        	mAlbumNavItem[i].index = -1;
+    		mNavItem[i] = new NavItem();
+        	mNavItem[i].index = -1;
 //    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
 //    				mBitmapWidth, 
 //    				mBitmapHeight, 
 //    				Bitmap.Config.RGB_565);
-    		mAlbumNavItem[i].label = Bitmap.createBitmap(
+    		mNavItem[i].label = Bitmap.createBitmap(
     				mBitmapWidth,
     				mBitmapHeight/mTextRatio,
     				Bitmap.Config.ARGB_8888);
@@ -113,7 +126,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     }
 
     public	Cursor getAlbumCursor(){
-    	return mAlbumCursor;
+    	return mCursor;
     }
     
     public int[] getConfigSpec() {
@@ -149,7 +162,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //      String[] extensionArray = extensions.split(" ");
 //      for(int i = 0; i<extensionArray.length; i++)
 //      	Log.i(TAG, extensionArray[i]);
-		  if(extensions.contains("generate_mipmap"))
+		  if(extensions != null && extensions.contains("generate_mipmap"))
 //		  ||
 //	  		Integer.valueOf(Build.VERSION.SDK) >= 7)		  
 		  {
@@ -247,6 +260,17 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+        /*
+         * Upon browsing category change we want to clear the screen
+         * until the changes have been applied
+         */
+        if(mIsChangingCat)
+        {
+//        	mIsChangingCat = false; // redundant
+//        	stopRender();
+        	return;
+        }
+        
         /*
          * Now we're ready to draw some 3D objects
          */
@@ -384,7 +408,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         {
         	gl.glLoadIdentity();
                 	     
-        	if(mAlbumNavItem[i].index != mClickedPosition)
+        	if(mNavItem[i].index != mClickedPosition)
         	{
         		GLU.gluLookAt(gl, mEyeX, mEyeY, mEyeZ, mCenterX, mCenterY, mCenterZ, 0f, -1.0f, 0.0f);
         	}
@@ -394,7 +418,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         	}
         	
         	// poor variable name -- dont mind it
-        	deltaToCenter = mAlbumNavItem[i].index - flooredPositionYTmp;
+        	deltaToCenter = mNavItem[i].index - flooredPositionYTmp;
         	// make it all positive
         	deltaToCenter += mCacheSize/2 - 1; // (-4) negative numbers go bad with integer divisions
         	
@@ -494,7 +518,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    		Math.max(
 	    			getPositionFromScreenCoordinates(x,y),
 	    			0),
-	    		mAlbumCursor.getCount()-1);
+	    		mCursor.getCount()-1);
     }
     
     /* optimization */
@@ -593,7 +617,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     boolean changed;
     private boolean updateTextures(GL10 gl){
     	changed = false;
-		if(mAlbumCursor != null){
+		if(mCursor != null){
 //			Log.i(TAG, " ++ updating textures");
 	    	/* Album Cover textures in vertical scrolling */
     		for(int i = 0; i < mCacheSize; i++){
@@ -639,19 +663,19 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     
     /* optimization */
     int 			cacheIdxTmp;
-    AlbumNavItem 	albumNavItemTmp;
+    NavItem 	albumNavItemTmp;
     boolean			reusedCached = false;
     /**
      * fills the albumNavItem structure with the cover bitmap, labels, etc
      * @param gl
      * @param cacheIndex
-     * @param albumIndex
+     * @param navIndex
      * @param force
      * @return
      */
-    private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int albumIndex, boolean force){
+    private boolean setupAlbumTextures(GL10 gl, int cacheIndex, int navIndex, boolean force){
     	/** texture needs update? */
-    	if(mAlbumNavItem[cacheIndex].index != albumIndex || force){
+    	if(mNavItem[cacheIndex].index != navIndex || force){
 //    		Log.i(TAG, "albumIndex: "+albumIndex+"/"+mAlbumCursor.getCount()+" flooredPositionY: "+flooredPositionY+" mPositionY: "+mPositionY);
     		
 //    		reusedCached = false;
@@ -672,42 +696,67 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    		if(!reusedCached)
 //    		{
 	    		/** Update cache item */
-	    		mAlbumNavItem[cacheIndex].index = albumIndex;
-	    		if(mAlbumCursor != null &&
-	    			(albumIndex < 0 || albumIndex >= mAlbumCursor.getCount()))
+	    		mNavItem[cacheIndex].index = navIndex;
+	    		if(mCursor != null &&
+	    			(navIndex < 0 || navIndex >= mCursor.getCount()))
 	    		{
 	//    			Log.i(TAG, "BM failed, index oob");
-	    			mAlbumNavItem[cacheIndex].albumName = "";
-	    			mAlbumNavItem[cacheIndex].artistName = "";
-	    			mAlbumNavItem[cacheIndex].cover = undefined;
-	    			mAlbumNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
-	    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+	    			mNavItem[cacheIndex].albumName = "";
+	    			mNavItem[cacheIndex].artistName = "";
+	    			mNavItem[cacheIndex].cover = undefined;
+	    			mNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
+	    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 	    		} 
 	    		else 
 	    		{
-		    		if(!mAlbumNavItemUtils.fillAlbumInfo(
-		    				mAlbumCursor, 
-		    				mAlbumNavItem[cacheIndex], 
-		    				albumIndex))
-		    		{
-	//	    			Log.i(TAG, "Info Failed");
-		    			mAlbumNavItem[cacheIndex].albumName = null;
-		    			mAlbumNavItem[cacheIndex].artistName = null;
-		    			mAlbumNavItem[cacheIndex].albumKey = null;
-		    		}
-		    		if(!mAlbumNavItemUtils.fillAlbumBoringLabel(
-		    				mAlbumNavItem[cacheIndex],
-		    				mAlbumNavItem[cacheIndex].label.getWidth(),
-		    				mAlbumNavItem[cacheIndex].label.getHeight()))
-		    		{
-		    			mAlbumNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-		    		}
+	    			switch(mBrowseCat)
+	    			{
+	    			case Constants.BROWSECAT_ALBUM:	
+				    	if(!mNavItemUtils.fillAlbumInfo(
+			    				mCursor, 
+			    				mNavItem[cacheIndex], 
+			    				navIndex))
+			    		{
+		//	    			Log.i(TAG, "Info Failed");
+			    			mNavItem[cacheIndex].albumName = null;
+			    			mNavItem[cacheIndex].artistName = null;
+			    			mNavItem[cacheIndex].albumKey = null;
+			    		}
+			    		if(!mNavItemUtils.fillAlbumBoringLabel(
+			    				mNavItem[cacheIndex],
+			    				mNavItem[cacheIndex].label.getWidth(),
+			    				mNavItem[cacheIndex].label.getHeight()))
+			    		{
+			    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    		}
+			    		break;
+	    			case Constants.BROWSECAT_ARTIST:
+	    				if(!mNavItemUtils.fillArtistInfo(
+			    				mCursor, 
+			    				mNavItem[cacheIndex],
+			    				null,
+			    				navIndex))
+			    		{
+			    			mNavItem[cacheIndex].artistId = null;
+			    			mNavItem[cacheIndex].artistName = null;
+			    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
+			    			mNavItem[cacheIndex].nSongsFromArtist = 0;
+			    		}
+			    		if(!mNavItemUtils.fillArtistBoringLabel(
+			    				mNavItem[cacheIndex],
+			    				mNavItem[cacheIndex].label.getWidth(),
+			    				mNavItem[cacheIndex].label.getHeight()))
+			    		{
+			    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    		}
+	    				break;
+	    			}
 	    		}
 //    		}
     		    		
 	    	/** bind new texture */
 //    		bindTexture(gl, mAlbumNavItem[cacheIndex].cover, mTextureId[cacheIndex]);
-    		bindTexture(gl, mAlbumNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
+    		bindTexture(gl, mNavItem[cacheIndex].label, mTextureLabelId[cacheIndex]);
     		
     		return true;
     	} else  {
@@ -872,12 +921,12 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 					, updateFraction * -Constants.MAX_SCROLL * 11111112.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
-    	if(mAlbumCursor != null){
+    	if(mCursor != null){
     		/** Y checks */
     		if(mPositionY <= 0)
-	    		mTargetPositionY = Math.min(1, (mAlbumCursor.getCount()-1));
-	    	else if(mPositionY >= (mAlbumCursor.getCount() - 1))
-	    		mTargetPositionY = (mAlbumCursor.getCount() - 1) - 1;
+	    		mTargetPositionY = Math.min(1, (mCursor.getCount()-1));
+	    	else if(mPositionY >= (mCursor.getCount() - 1))
+	    		mTargetPositionY = (mCursor.getCount() - 1) - 1;
 	    	
 //	    	/** are we done? */
 //	    	if(mTargetPositionY == (float)mPositionY){
@@ -915,8 +964,8 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 			/* make we dont exceed the cube limits */
 			if(mTargetPositionY <= -1 + Constants.MAX_POSITION_OVERSHOOT)
 				mTargetPositionY = -1 + Constants.MAX_POSITION_OVERSHOOT;
-			else if(mTargetPositionY >= (mAlbumCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT)
-				mTargetPositionY = (mAlbumCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT;
+			else if(mTargetPositionY >= (mCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT)
+				mTargetPositionY = (mCursor.getCount() - 1) - 1 + Constants.MAX_POSITION_OVERSHOOT;
 			
 			mPositionY = mTargetPositionY;
     		return;
@@ -981,10 +1030,10 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     
     /** get album count */
     public int	getAlbumCount(){
-    	if(mAlbumCursor == null)
+    	if(mCursor == null)
     		return -1;
     	else
-    		return mAlbumCursor.getCount();
+    		return mCursor.getCount();
     }
     
     /** get the current position */
@@ -995,23 +1044,23 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     /* optimization */
     int cursorIdxValidation;
     /** get the current Album Id */
-    int getShownAlbumId(float x, float y){
+    int getShownElementId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
-    		mAlbumCursor == null ||
+    		mCursor == null ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		getPositionFromScreenCoordinates(x, y) > mAlbumCursor.getCount() - 1)
+    		getPositionFromScreenCoordinates(x, y) > mCursor.getCount() - 1)
 //    		(int) mPositionY > mAlbumCursor.getCount() - 1)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
     		return -1;
     	}
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
+    		int tmpIndex = mCursor.getPosition();
     		
     		// validate idx -- bug report
-    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+    		mCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
 //    		cursorIdxValidation = getPositionFromScreenCoordinates(x, y);
 //    		if(cursorIdxValidation < 0)
 //    			mAlbumCursor.moveToFirst();
@@ -1020,11 +1069,17 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    		else
 //    			mAlbumCursor.moveToPosition(cursorIdxValidation);
 
-    		int albumId = mAlbumCursor.getInt(
-    				mAlbumCursor.getColumnIndexOrThrow(
-    						MediaStore.Audio.Albums._ID));
-    		mAlbumCursor.moveToPosition(tmpIndex);
-    		return albumId;
+    		int id = -1;
+    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+	    		id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Albums._ID));
+    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Artists._ID));
+    		mCursor.moveToPosition(tmpIndex);
+    		return id;
     	}
     }
     
@@ -1033,12 +1088,12 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
-    		String albumName = mAlbumCursor.getString(
-    				mAlbumCursor.getColumnIndexOrThrow(
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+    		String albumName = mCursor.getString(
+    				mCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ALBUM));
-    		mAlbumCursor.moveToPosition(tmpIndex);
+    		mCursor.moveToPosition(tmpIndex);
     		return albumName;
     	}	
     }
@@ -1048,12 +1103,12 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	if(mTargetPositionY != mPositionY)
     		return null;
     	else{
-    		int tmpIndex = mAlbumCursor.getPosition();
-    		mAlbumCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
-    		String artistName = mAlbumCursor.getString(
-    				mAlbumCursor.getColumnIndexOrThrow(
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+    		String artistName = mCursor.getString(
+    				mCursor.getColumnIndexOrThrow(
     						MediaStore.Audio.Albums.ARTIST));
-    		mAlbumCursor.moveToPosition(tmpIndex);
+    		mCursor.moveToPosition(tmpIndex);
     		return artistName;
     	}
     }
@@ -1065,10 +1120,10 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	{
 	    	try
 	    	{
-	    		if(mAlbumCursor != null){
-		    		for(int i = 0; i < mAlbumCursor.getCount()-1; i++){
-			    		mAlbumCursor.moveToPosition(i);
-			    		if(mAlbumCursor.getLong(mAlbumCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
+	    		if(mCursor != null){
+		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+			    		mCursor.moveToPosition(i);
+			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
 			    			mTargetPositionY = i;
 			    			mPositionY = 
 			    				mTargetPositionY - 
@@ -1097,17 +1152,87 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	}
     }
     
+    /**
+     * 
+     */
+    int setCurrentByArtistId(long artistId)
+    {
+    	if(artistId >= 0)
+    	{
+	    	try
+	    	{
+	    		if(mCursor != null){
+		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+			    		mCursor.moveToPosition(i);
+			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)) == artistId){
+			    			mTargetPositionY = i;
+			    			mPositionY = 
+			    				mTargetPositionY - 
+			    				Math.signum(mTargetPositionY - mPositionY)
+			    				*
+			    				Math.min(
+			    					Math.abs(mTargetPositionY-mPositionY), 
+			    					10.f);
+			    			// TODO: trigger rotation
+			    			this.renderNow();
+			    			return i;
+			    		}
+			    	}
+			    	return -1;
+		    	} else {
+		    		return -1;
+		    	}
+	    	}
+	    	catch(android.database.CursorIndexOutOfBoundsException e)
+	    	{
+	    		e.printStackTrace();
+	    		return -1;
+	    	}
+    	} else {
+    		return -1;
+    	}
+    }
+    
+    /**
+     * 
+     */
+    public void changeBrowseCat(int browseCat)
+    {
+    	if(browseCat != mBrowseCat)
+    	{
+    		mIsChangingCat = true;
+    		this.renderNow();
+    		mCursor.close();
+    		mBrowseCat = browseCat;
+    		initCursorVars(mContext, true);
+    		initCacheVars(true);
+    		mPositionY = -5.f;
+    		mIsChangingCat = false;
+    		System.gc();
+    		this.renderNow(); // also redundant
+    	}
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getBrowseCat()
+    {
+    	return mBrowseCat;	
+    }
+    
     /** 
      * Recycle cached bitmaps
      */
     public void clearCache()
     {
-    	for(int i=0; i<mAlbumNavItem.length; i++)
+    	for(int i=0; i<mNavItem.length; i++)
     	{
     		try
     		{
-	    		mAlbumNavItem[i].cover.recycle();
-	    		mAlbumNavItem[i].label.recycle();
+	    		mNavItem[i].cover.recycle();
+	    		mNavItem[i].label.recycle();
     		}
     		catch(Exception e)
     		{
@@ -1119,6 +1244,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     /**
      * Class members
      */
+    private int						mBrowseCat;
     private int 					mTheme;
     private	int						mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
     private Context 				mContext;
@@ -1129,16 +1255,17 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int						mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean					mClickAnimation = false;
-    private	Cursor					mAlbumCursor = null;
+    private	Cursor					mCursor = null;
 //    private AlphabetNavItem[]		mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
-    private AlbumNavItem[]			mAlbumNavItem = new AlbumNavItem[mCacheSize];
-    private AlbumNavItemUtils		mAlbumNavItemUtils;
+    private NavItem[]				mNavItem = new NavItem[mCacheSize];
+    private NavItemUtils			mNavItemUtils;
     private	int						mBitmapWidth;
     private int 					mBitmapHeight;
     private	boolean					mForceTextureUpdate = false;
     private int						mWidth = 0;
     private int						mHeight = 0;
     private int						mTextRatio;
+    private boolean					mIsChangingCat = false;
 
     private float[]		mEyeNormal = 
     {

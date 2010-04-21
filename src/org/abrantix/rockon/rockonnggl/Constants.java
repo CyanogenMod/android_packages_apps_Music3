@@ -12,9 +12,9 @@ public class Constants{
 	static final int STATE_FULLSCREEN = 1;
 	
 	/** Browse Categories **/
-	static final int BROWSECAT_ALBUM = 0;
-	static final int BROWSECAT_GENRE = 1;
-	static final int BROWSECAT_ARTIST = 2;
+	static final int BROWSECAT_ARTIST = 0;
+	static final int BROWSECAT_ALBUM = 1;
+	static final int BROWSECAT_GENRE = 2;
 	static final int BROWSECAT_PLAYLIST = 3;
 
 	/** Renderer Types */
@@ -45,6 +45,9 @@ public class Constants{
 	static final int PLAYLIST_GENRE_OFFSET = -100000;
 	static final int PLAYLIST_GENRE_RANGE = 5000;
 	
+	/** Specific Constants */
+	static final int NO_SPECIFIC_ARTIST = -1;
+	
 	/** and keys */
 	static final String	PLAYLIST_ID_KEY = "playlistId";
 	static final String PLAYLIST_NAME_KEY = "playlistName";
@@ -58,7 +61,18 @@ public class Constants{
 //		MediaStore.Audio.Albums.ALBUM_ID,
 		MediaStore.Audio.Albums.ALBUM,
 		MediaStore.Audio.Albums.ARTIST,
-		MediaStore.Audio.Albums.ALBUM_ART
+		MediaStore.Audio.Albums.ALBUM_ART,
+		MediaStore.Audio.Albums.LAST_YEAR
+	};
+	
+	/** Artist Cursor Projection */
+	static final String[] artistProjection = 
+	{
+		MediaStore.Audio.Artists._ID,
+		MediaStore.Audio.Artists.ARTIST_KEY,
+		MediaStore.Audio.Artists.ARTIST,
+		MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
+		MediaStore.Audio.Artists.NUMBER_OF_TRACKS
 	};
 	
 	/** Song Cursor Projection **/
@@ -129,7 +143,7 @@ public class Constants{
 	
 	/** Genre Alphabetical Sorting **/
 	static final String genreAlphabeticalSorting = 
-		MediaStore.Audio.Genres.NAME + " ASC";
+		MediaStore.Audio.Genres.NAME + " COLLATE NOCASE ASC";
 	
 	/** Playlist Members Alphabetical Album Sorting **/
 	static final String playlistMembersAlbumSorting = 
@@ -137,11 +151,17 @@ public class Constants{
 	
 	/** Playlist Alphabetical Sorting **/
 	static final String playlistAlphabeticalSorting = 
-		MediaStore.Audio.Playlists.NAME + " ASC";
+		MediaStore.Audio.Playlists.NAME + " COLLATE NOCASE ASC";
 	
 	/** Album Cursor Sorting **/
 	static final String albumAlphabeticalSortOrder = 
-		MediaStore.Audio.Albums.ARTIST + " ASC";
+		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
+		+ ", " + 
+		MediaStore.Audio.Albums.LAST_YEAR + " ASC";
+
+	/** Album Cursor Sorting **/
+	static final String artistAlphabeticalSortOrder = 
+		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
 	
 	/** Song List Sorting **/
 	static final String songListNumericalSorting = 
@@ -150,6 +170,9 @@ public class Constants{
 		MediaStore.Audio.Media.ALBUM + " ASC " + 
 		", "+
 		MediaStore.Audio.Media.TRACK + " ASC";
+	static final String songListPlaylistSorting = 
+		MediaStore.Audio.Playlists.Members.PLAY_ORDER + " ASC";
+
 	
 	/** song list adapter to/from */
 	static final int	albumSongListLayoutId = R.layout.songlist_dialog_item;
@@ -160,6 +183,17 @@ public class Constants{
 	static final int[]	albumSongListTo = {
 		R.id.songlist_item_song_name,
 		R.id.songlist_item_song_duration
+	};
+	
+	/** album list adapter to/from */
+	static final int	artistAlbumListLayoutId = R.layout.albumlist_dialog_item;
+	static final String[] artistAlbumListFrom = {
+		MediaStore.Audio.Albums.ALBUM,
+		MediaStore.Audio.Albums.LAST_YEAR
+	};
+	static final int[]	artistAlbumListTo = {
+		R.id.albumlist_item_album_name,
+		R.id.albumlist_item_album_year
 	};
 	
 	/** song list adapter for current playing lists */
@@ -212,6 +246,20 @@ public class Constants{
 	static final int ALBUM_NAV_CONTROLS_ID = 1;
 	static final int ALBUM_NAV_INFO_ID = 2;
 	
+	/** Album Artist Switcher stuff */
+	static final int 	SWITCHER_PERSIST_SWITCH_PERIOD = 750;
+	static final int 	SWITCHER_HIGH_PRESENCE_ALPHA = 192;
+	static final int 	SWITCHER_LOW_PRESENCE_ALPHA = 0;
+	static final float 	SWITCHER_PRESENCE_UPDATE_STEP = .1f; // increment to navigate between 0 and 1
+	static final float	SWITCHER_TEXT_RATIO = .66f;
+	static final float	SWITCHER_CAT_CIRCLE_RATIO = .05f;
+	static final float	SWITCHER_CAT_CIRCLE_SPACING = 1.f;
+	static final int	SWITCHER_CAT_ALBUM = BROWSECAT_ALBUM;
+	static final int	SWITCHER_CAT_ARTIST = BROWSECAT_ARTIST;
+	static final int	SWITCHER_CATEGORY_COUNT = 2; // ALBUMS + ARTIST 
+	static final int	SWITCHER_CAT_ALBUM_STRING_RES = R.string.browse_cat_album;
+	static final int	SWITCHER_CAT_ARTIST_STRING_RES = R.string.browse_cat_artists;
+	
 	/** UI general interaction parameters */
 	static final int CLICK_ACTION_DELAY = 250;
 //	static final int CLICK_ANIMATION_DURATION = 300;
@@ -228,8 +276,6 @@ public class Constants{
 	/** Art Download Parameters */
 	static final int	GET_INET_ART_TOO = 0;
 	static final int	GET_LOCAL_ART_ONLY = 1;
-	
-	
 	
 	/** Inter Process Variables */
 	// album fetching thread - ui
@@ -329,6 +375,7 @@ public class Constants{
 	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
+	static final String	prefkey_mBrowseCatMode = "mBrowseCatMode";
 	static final String	prefkey_mRendererMode = "mRendererMode";
 	static final String	prefkey_mTheme = "mTheme";
 	static final String	prefkey_mThemeProcessing = "mThemeProcessing";

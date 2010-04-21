@@ -2,7 +2,7 @@ package org.abrantix.rockon.rockonnggl;
 
 import android.graphics.Bitmap;
 
-public class AlbumNavItem{
+public class NavItem{
 	int		index;
 	Bitmap	cover;
 	Bitmap	label;
@@ -10,4 +10,8 @@ public class AlbumNavItem{
 	String	albumName;
 	String	albumKey;
 	String	albumId;
+	String	artistId;
+	int		nAlbumsFromArtist;
+//	String	nAlbumsFromArtistText;
+	int		nSongsFromArtist;
 }

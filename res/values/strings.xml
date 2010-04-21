@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<!--	BROWSING CATEGORIES-->
+	<string name="browse_cat_album">Albums</string>
+	<string name="browse_cat_artists">Artists</string>
+	
+	<!--	GENERAL STUFF -->
+	<string name="album">Album</string>
+	<string name="albums">Albums</string>
+	
+	
 	<!--	INTRO SCREEN-->
     <string name="intro_text_1">Rock</string>
     <string name="intro_text_2">On</string>
@@ -46,6 +55,9 @@
 	<string name="album_art_changed">Album art changed</string>
 	<string name="playlist_empty_toast">Error! Playlist is empty!</string>
 	<string name="playqueue_empty_toast">Queue is empty!</string>
+	<string name="not_an_album_toast">Sorry, this is an artist not an album!</string>
+	<string name="playlist_queued_toast">Playlist queued</string>
+	<string name="generic_error_toast">Error!</string>
 	
 	<!-- 	SEARCH -->
 	<string name="search_hint">Song Title or Artist Name</string>

@@ -26,7 +26,7 @@ class AutoCompleteFilterQueryProvider implements FilterQueryProvider{
 
 		/* cursor */
 		Cursor songsCursor = new CursorUtils(mContext.getApplicationContext()).
-		getSongsFromPlaylistWithConstraint(mPlaylistId, whereClause);
+		getSongsFromPlaylistWithConstraint(mPlaylistId, whereClause, false);
 		return songsCursor;
 	}
 }
