@@ -520,6 +520,11 @@ public class NavItemUtils{
     		e.printStackTrace();
     		return false;
     	}
+    	catch(IllegalStateException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
 
 	}
 	

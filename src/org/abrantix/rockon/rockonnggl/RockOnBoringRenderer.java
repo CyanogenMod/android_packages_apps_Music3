@@ -54,7 +54,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
         mTheme = theme;
         mBrowseCat = browseCat;
         
-        initCursorVars(context, false);
+        initCursorVars(context, mBrowseCat, false);
     }
     
     public void changePlaylist(int playlistId){
@@ -62,16 +62,16 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	mTargetPositionY = 0;
     	mPositionX = 0;
     	mTargetPositionX = 0;
-    	initCursorVars(mContext, true);
+    	initCursorVars(mContext, mBrowseCat, true);
     	initCacheVars(true);
     	this.triggerPositionUpdate();
     }
     
-    private void initCursorVars(Context context, boolean force){
+    private void initCursorVars(Context context, int browseCat, boolean force){
     	/** init album cursor **/
     	if(mCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
-       		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
+       		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			Cursor helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
@@ -1207,9 +1207,9 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     		mIsChangingCat = true;
     		this.renderNow();
     		mCursor.close();
-    		mBrowseCat = browseCat;
-    		initCursorVars(mContext, true);
+    		initCursorVars(mContext, browseCat, true);
     		initCacheVars(true);
+    		mBrowseCat = browseCat;
     		mPositionY = -5.f;
     		mIsChangingCat = false;
     		System.gc();

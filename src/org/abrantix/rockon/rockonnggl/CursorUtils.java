@@ -694,7 +694,16 @@ public class CursorUtils{
 				if(artistAlbumHelperArray[i] == null)
 					artistAlbumHelperArray[i] = new ArtistAlbumHelper();
 				artistAlbumHelperArray[i].artistId = artistCursor.getString(oArtistColumnIndex);
-				albumCursor = getAlbumListFromArtistId(artistCursor.getLong(oArtistColumnIndex));
+				try
+				{
+					// sometimes we obtain an artistId of -1;
+					albumCursor = getAlbumListFromArtistId(artistCursor.getLong(oArtistColumnIndex));
+				}
+				catch(IllegalStateException e)
+				{
+					e.printStackTrace();
+					albumCursor = null;
+				}
 				if(albumCursor != null)
 				{
 					if(albumCursor.getCount() > 0)
@@ -710,6 +719,10 @@ public class CursorUtils{
 						artistAlbumHelperArray[i].albumId = "";
 					}
 					albumCursor.close();
+				}
+				else
+				{
+					artistAlbumHelperArray[i].albumId = "";	
 				}
 			}
 			return true;

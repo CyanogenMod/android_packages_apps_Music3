@@ -68,7 +68,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         mTheme = theme;
         mBrowseCat = browseCat;
         
-    	initNonGlVars(context, false);
+    	initNonGlVars(context, mBrowseCat, false);
     }
     
     public void changePlaylist(int playlistId){
@@ -76,16 +76,16 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	mTargetPositionY = 0;
     	mPositionX = 0;
     	mTargetPositionX = 0;
-    	initNonGlVars(mContext, true);
+    	initNonGlVars(mContext, mBrowseCat, true);
     	this.triggerPositionUpdate();
     }
     
-    private void initNonGlVars(Context context, boolean force){
+    private void initNonGlVars(Context context, int browseCat, boolean force){
         
     	/** init album cursor **/
     	if(mCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
-    		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			/**
     			 * We use two cursor in order to avoid multi thread problems
@@ -1535,8 +1535,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		mIsChangingCat = true;
     		this.renderNow();
     		mCursor.close();
+    		initNonGlVars(mContext, browseCat, true);
+    		// can only change this after the GL vars have been set
     		mBrowseCat = browseCat;
-    		initNonGlVars(mContext, true);
     		mPositionY = -5.f;
     		mIsChangingCat = false;
     		System.gc();

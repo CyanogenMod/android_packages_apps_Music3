@@ -55,7 +55,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
         mTheme = theme;
         mBrowseCat = browseCat;
         
-    	initNonGlVars(context, false);
+    	initNonGlVars(context, mBrowseCat, false);
     }
     
     public void changePlaylist(int playlistId){
@@ -63,16 +63,16 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	mTargetPositionY = 0;
     	mPositionX = 0;
     	mTargetPositionX = 0;
-    	initNonGlVars(mContext, true);
+    	initNonGlVars(mContext, mBrowseCat, true);
     	this.triggerPositionUpdate();
     }
     
-    private void initNonGlVars(Context context, boolean force){
+    private void initNonGlVars(Context context, int browseCat, boolean force){
     	
     	/** init album cursor **/
     	if(mCursor == null || force){
     		CursorUtils cursorUtils = new CursorUtils(context);
-    		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			Cursor helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
@@ -687,7 +687,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 	    			mNavItem[cacheIndex].albumName = "";
 	    			mNavItem[cacheIndex].artistName = "";
 	    			mNavItem[cacheIndex].cover = undefined;
-	    			mNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
+	    			if(!mNavItem[cacheIndex].cover.isRecycled())
+	    				mNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
 	    		} 
 	    		else 
 	    		{
@@ -1108,6 +1109,11 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     			e.printStackTrace();
     			return -1;
     		}
+    		catch(CursorIndexOutOfBoundsException e)
+    		{
+    			e.printStackTrace();
+    			return -1;
+    		}
     	}
     }
     
@@ -1231,8 +1237,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		mIsChangingCat = true;
     		this.renderNow();
     		mCursor.close();
+    		initNonGlVars(mContext, browseCat, true);
     		mBrowseCat = browseCat;
-    		initNonGlVars(mContext, true);
     		mPositionY = -5.f;
     		mIsChangingCat = false;
     		System.gc();
