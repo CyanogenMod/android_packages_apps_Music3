@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.StaleDataException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -86,8 +87,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		CursorUtils cursorUtils = new CursorUtils(context);
     		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
     		{
-    			mCursor = 
+    			/**
+    			 * We use two cursor in order to avoid multi thread problems
+    			 * when changing browsing category
+    			 */
+    			Cursor helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
+    			mCursor = helperCursor;
     			// Let's add the audio id to the artist list so we can get art
 //    			double t = System.currentTimeMillis();
     			if(mCursor != null && mCursor.getCount() >0)
@@ -99,12 +105,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		}
     		else // ALBUM
     		{
-	    		mCursor = 
+    			Cursor helperCursor = 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
 	    							Constants.prefkey_mPlaylistId,
 	    							Constants.PLAYLIST_ALL));
+    			mCursor = helperCursor;
     		}
     	}
         
@@ -118,16 +125,27 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
-    		mNavItem[i] = new NavItem();
-        	mNavItem[i].index = -1;
-    		mNavItem[i].cover = Bitmap.createBitmap(
+    		NavItem n = new NavItem();
+        	n.index = -1;
+    		n.cover = Bitmap.createBitmap(
     				mBitmapWidth, 
     				mBitmapHeight, 
     				Bitmap.Config.RGB_565);
-    		mNavItem[i].label = Bitmap.createBitmap(
+    		n.label = Bitmap.createBitmap(
     				mBitmapWidth,
     				mBitmapHeight/4,
     				Bitmap.Config.ARGB_8888);
+    		mNavItem[i] = n;
+//    		mNavItem[i] = new NavItem();
+//        	mNavItem[i].index = -1;
+//    		mNavItem[i].cover = Bitmap.createBitmap(
+//    				mBitmapWidth, 
+//    				mBitmapHeight, 
+//    				Bitmap.Config.RGB_565);
+//    		mNavItem[i].label = Bitmap.createBitmap(
+//    				mBitmapWidth,
+//    				mBitmapHeight/4,
+//    				Bitmap.Config.ARGB_8888);
     	}
         mColorComponentBuffer = new byte[4*mBitmapWidth*mBitmapHeight];
     	
@@ -766,12 +784,20 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //    					mAlbumNavItem[cacheIndex].cover.getHeight(), 
 //    					mColorComponentBuffer, 
 //    					mTheme);
-    			if(!mNavItem[cacheIndex].cover.isRecycled())
-    				mNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
-    			// we cannot change the bitmap reference of the item
-    			// we need to write to the existing reference
-    			if(!mNavItem[cacheIndex].label.isRecycled())
-    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+    			try
+    			{
+	    			if(!mNavItem[cacheIndex].cover.isRecycled())
+	    				mNavItem[cacheIndex].cover.eraseColor(Color.argb(127, 122, 122, 0));
+	    			// we cannot change the bitmap reference of the item
+	    			// we need to write to the existing reference
+	    			if(!mNavItem[cacheIndex].label.isRecycled())
+	    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+    			}
+    			catch(NullPointerException e)
+    			{
+    				// cover and/or label are still being created
+    				e.printStackTrace();
+    			}
     		} 
     		else 
     		{
@@ -1163,42 +1189,58 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		(int)mPositionY >= 0 && 
     		(int)mPositionY < mCursor.getCount())
     	{
-	    	mCursor.moveToPosition((int)mPositionY);
-	    	lastLetter = 
-	    		mCursor.getString(
-	    				mCursor.getColumnIndexOrThrow(
-	    						MediaStore.Audio.Albums.ARTIST)).
-	    				toLowerCase().charAt(0);
-	    	newLetter = (char) (lastLetter + mPositionX);
-	    	if(mPositionX > 0){
-	    		for(letterIdx = (int)mPositionY; letterIdx<mCursor.getCount(); letterIdx++){
-	    			mCursor.moveToPosition(letterIdx);
-	    			if(mCursor.getString(
-	    					mCursor.getColumnIndexOrThrow(
-	    							MediaStore.Audio.Albums.ARTIST)).
-	    					toLowerCase().charAt(0)
-	    					>= newLetter)
-	    			{
-	    				break;
-	    			}
-	    		}
-	    	} else {
-	    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
-	    			mCursor.moveToPosition(letterIdx);
-	    			if(mCursor.getString(
-	    					mCursor.getColumnIndexOrThrow(
-	    							MediaStore.Audio.Albums.ARTIST)).
-	    					toLowerCase().charAt(0)
-	    					<= newLetter)
-	    			{
-	    				break;
-	    			}
-	    		}
+        	try
+        	{
+		    	mCursor.moveToPosition((int)mPositionY);
+		    	lastLetter = 
+		    		mCursor.getString(
+		    				mCursor.getColumnIndexOrThrow(
+		    						MediaStore.Audio.Albums.ARTIST)).
+		    				toLowerCase().charAt(0);
+		    	newLetter = (char) (lastLetter + mPositionX);
+		    	if(mPositionX > 0){
+		    		for(letterIdx = (int)mPositionY; letterIdx<mCursor.getCount(); letterIdx++){
+		    			mCursor.moveToPosition(letterIdx);
+		    			if(mCursor.getString(
+		    					mCursor.getColumnIndexOrThrow(
+		    							MediaStore.Audio.Albums.ARTIST)).
+		    					toLowerCase().charAt(0)
+		    					>= newLetter)
+		    			{
+		    				break;
+		    			}
+		    		}
+		    	} else {
+		    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
+		    			mCursor.moveToPosition(letterIdx);
+		    			if(mCursor.getString(
+		    					mCursor.getColumnIndexOrThrow(
+		    							MediaStore.Audio.Albums.ARTIST)).
+		    					toLowerCase().charAt(0)
+		    					<= newLetter)
+		    			{
+		    				break;
+		    			}
+		    		}
+		    	}
+		    	return letterIdx;
 	    	}
-	    	return letterIdx;
+	    	catch(StaleDataException e)
+	    	{
+	    		// cursor must be changing
+	    		e.printStackTrace();
+	    		return 'a';
+	    	}
+	    	catch(NullPointerException e)
+	    	{
+	    		// cursor must be changing
+	    		e.printStackTrace();
+	    		return 'a';
+	    	}
     	} else {
     		return 'a';
     	}
+
     }
     
     /** stop scroll on touch */

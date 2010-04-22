@@ -73,17 +73,19 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     		CursorUtils cursorUtils = new CursorUtils(context);
        		if (mBrowseCat == Constants.BROWSECAT_ARTIST)
     		{
-    			mCursor = 
+    			Cursor helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
+    			mCursor = helperCursor;
     		}
     		else // ALBUM
     		{
-	    		mCursor = 
+	    		Cursor helperCursor= 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
 	    							Constants.prefkey_mPlaylistId,
 	    							Constants.PLAYLIST_ALL));
+	    		mCursor = helperCursor;
     		}
     	}
     }
@@ -110,16 +112,18 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
-    		mNavItem[i] = new NavItem();
-        	mNavItem[i].index = -1;
+    		NavItem n;
+    		n = new NavItem();
+        	n.index = -1;
 //    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
 //    				mBitmapWidth, 
 //    				mBitmapHeight, 
 //    				Bitmap.Config.RGB_565);
-    		mNavItem[i].label = Bitmap.createBitmap(
+    		n.label = Bitmap.createBitmap(
     				mBitmapWidth,
     				mBitmapHeight/mTextRatio,
     				Bitmap.Config.ARGB_8888);
+    		mNavItem[i] = n;
     	}
 //    	mColorComponentBuffer = new byte[4*mBitmapWidth*(mBitmapHeight/4)];
     	

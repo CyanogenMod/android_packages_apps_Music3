@@ -121,6 +121,8 @@ public abstract class RockOnRenderer{
     public	float		mPositionY = 0.f;
     public	float		mTargetPositionY = -1.f;
     public	float		mRotationInitialPositionY = 0.f;
+    
+    public	boolean		mIsChangingCat = false;
 
     
 
