@@ -113,6 +113,8 @@ public class RockOnNextGenService extends Service {
     	RockOnNextGenAppWidgetProvider3x3.getInstance();
     private RockOnNextGenAppWidgetProvider4x4 mAppWidgetProvider4x4 = 
     	RockOnNextGenAppWidgetProvider4x4.getInstance();
+    private RockOnNextGenAppWidgetProvider4x1 mAppWidgetProvider4x1 = 
+    	RockOnNextGenAppWidgetProvider4x1.getInstance();
     
     // interval after which we stop the service when idle
     private static final int IDLE_DELAY = 60000; 
@@ -230,7 +232,9 @@ public class RockOnNextGenService extends Service {
                 if(mAppWidgetProvider3x3 != null)
                 	mAppWidgetProvider3x3.performUpdate(RockOnNextGenService.this, appWidgetIds);
                 if(mAppWidgetProvider4x4 != null)
-                	mAppWidgetProvider4x4.performUpdate(RockOnNextGenService.this, appWidgetIds);                
+                	mAppWidgetProvider4x4.performUpdate(RockOnNextGenService.this, appWidgetIds);
+                if(mAppWidgetProvider4x1 != null)
+                	mAppWidgetProvider4x1.performUpdate(RockOnNextGenService.this, appWidgetIds);  
             }
         }
     };
@@ -807,6 +811,8 @@ public class RockOnNextGenService extends Service {
         	mAppWidgetProvider3x3.notifyChange(this, what);
         if(mAppWidgetProvider4x4 != null)
         	mAppWidgetProvider4x4.notifyChange(this, what);
+        if(mAppWidgetProvider4x1 != null)
+        	mAppWidgetProvider4x1.notifyChange(this, what);
         
     }
     

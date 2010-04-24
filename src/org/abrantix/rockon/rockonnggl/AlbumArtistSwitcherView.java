@@ -28,6 +28,7 @@ public class AlbumArtistSwitcherView extends View
 	float	mPosition = 1; // ARTIST = 0 ALBUM = 1
 	float	mTargetPresence = 0;
 	float	mPresence = 0;
+	float	mCurrentLockPosition;
 	
 	/**
 	 * GLOBALS
@@ -122,6 +123,7 @@ public class AlbumArtistSwitcherView extends View
 		}
 		else
 		{
+			mCurrentLockPosition = Math.round(mPosition);
 			mFadeOutHandler.removeCallbacksAndMessages(null);
 			mTargetPresence = 1.f;
 		}
@@ -146,7 +148,10 @@ public class AlbumArtistSwitcherView extends View
 	
 	private void snapPosition()
 	{
-		mTargetPosition = Math.round(mPosition);
+		if(Math.abs(mPosition-mCurrentLockPosition) > Constants.SWITCHER_MOVEMENT_REQUIRED_TO_SWITCH)
+			mTargetPosition = mCurrentLockPosition + Math.signum(mPosition-mCurrentLockPosition);
+		// Let's just make sure that this is a round number
+		mTargetPosition = Math.round(mTargetPosition);
 //		if(mTargetPosition < 0)
 //			mTargetPosition = 0;
 //		else if(mTargetPosition > Constants.SWITCHER_CATEGORY_COUNT - 1)

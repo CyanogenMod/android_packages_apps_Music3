@@ -1528,7 +1528,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * 
      */
-    public void changeBrowseCat(int browseCat)
+    synchronized public void changeBrowseCat(int browseCat)
     {
     	if(browseCat != mBrowseCat)
     	{

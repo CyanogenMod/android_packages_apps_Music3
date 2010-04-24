@@ -98,11 +98,11 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
     private void pushUpdate(Context context, int[] appWidgetIds, RemoteViews views) {
         // Update specific list of appWidgetIds if given, otherwise default to all
         final AppWidgetManager gm = AppWidgetManager.getInstance(context);
-        if (appWidgetIds != null) {
-            gm.updateAppWidget(appWidgetIds, views);
-        } else {
+//        if (appWidgetIds != null) {
+//            gm.updateAppWidget(appWidgetIds, views);
+//        } else {
             gm.updateAppWidget(THIS_APPWIDGET, views);
-        }
+//        }
     }
     
     /**
@@ -293,16 +293,16 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.control_shuffle, pendingIntent);
         
         /* TOGGLE REPEAT */
-//        if(shuffleMode == Constants.REPEAT_NONE)
-//        	intent = new Intent(Constants.REPEAT_CURRENT_ACTION);
-//        else
-//        	intent = new Intent(Constants.REPEAT_NONE_ACTION);
-//        intent.setComponent(serviceName);
-//        pendingIntent = PendingIntent.getService(
-//        		context,
-//                0 /* no requestCode */, 
-//                intent, 
-//                0 /* no flags */);
-//        views.setOnClickPendingIntent(R.id.control_repeat, pendingIntent);
+        if(repeatMode == Constants.REPEAT_NONE)
+        	intent = new Intent(Constants.REPEAT_CURRENT_ACTION);
+        else
+        	intent = new Intent(Constants.REPEAT_NONE_ACTION);
+        intent.setComponent(serviceName);
+        pendingIntent = PendingIntent.getService(
+        		context,
+                0 /* no requestCode */, 
+                intent, 
+                0 /* no flags */);
+        views.setOnClickPendingIntent(R.id.control_repeat, pendingIntent);
     }
 }

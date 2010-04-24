@@ -249,6 +249,7 @@ public class Constants{
 	/** Album Artist Switcher stuff */
 	static final int 	SWITCHER_PERSIST_SWITCH_PERIOD = 750;
 	static final int 	SWITCHER_HIGH_PRESENCE_ALPHA = 192;
+	static final float 	SWITCHER_MOVEMENT_REQUIRED_TO_SWITCH = .25f;
 	static final int 	SWITCHER_LOW_PRESENCE_ALPHA = 0;
 	static final float 	SWITCHER_PRESENCE_UPDATE_STEP = .1f; // increment to navigate between 0 and 1
 	static final float	SWITCHER_TEXT_RATIO = .66f;
@@ -341,6 +342,7 @@ public class Constants{
     static final String WIDGET_COMPONENT = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider";
     static final String WIDGET_COMPONENT_3x3 = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider3x3";
     static final String WIDGET_COMPONENT_4x4 = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x4";
+    static final String WIDGET_COMPONENT_4x1 = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x1";
     
     // Activity request codes
     static final int PREFERENCE_ACTIVITY_REQUEST_CODE = 0;

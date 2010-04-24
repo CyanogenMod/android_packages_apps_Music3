@@ -137,6 +137,9 @@
 	<string name="manual_albumart_resolution_loading">loading...</string>
 	<string name="manual_albumart_resolution_unavailable">unavailable</string>
 	
+	<!--	WIDGET STRINGS	-->
+	<string name="widget_app_start">Start ³</string>
+	
 	<!--	BUG REPORTS	-->
 	<string name="bug_report_intro_part_one">Sorry!\n\nRockOn v</string>
 	<string name="bug_report_intro_part_two">crashed! Please send this mail, so that we can analyze/fix the issue.\n</string>

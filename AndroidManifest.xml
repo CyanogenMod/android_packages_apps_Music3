@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.abrantix.rockon.rockonnggl"
-      android:versionName="1.0.43" android:versionCode="44">
+      android:versionName="1.0.44" android:versionCode="45">
     <application 
     		android:icon="@drawable/icon_dice" 
     		android:label="@string/app_name">
@@ -73,6 +73,16 @@
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_4x4"/>
+		</receiver>
+		
+		<!--	WIDGET	4x1 -->
+		<receiver 
+			android:name="RockOnNextGenAppWidgetProvider4x1"
+			android:label="³ Classic">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_4x1"/>
 		</receiver>
 
     </application>

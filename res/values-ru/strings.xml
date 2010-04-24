@@ -139,6 +139,9 @@
 <string name="manual_albumart_resolution_loading">загрузка...</string>
 <string name="manual_albumart_resolution_unavailable">недоступно</string>
 
+<!--	WIDGET STRINGS	-->
+<string name="widget_app_start">Начало ³</string>
+	
 <!-- BUG REPORTS -->
 <string name="bug_report_intro_part_one">Извините!\n\nRockOn v</string>
 <string name="bug_report_intro_part_two">самоубился! Отправьте этот отчет, чтобы мы могли/исправить ошибку.\n</string>

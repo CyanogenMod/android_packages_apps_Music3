@@ -136,6 +136,10 @@
 	<string name="manual_albumart_resolution_loading">Lade...</string>
 	<string name="manual_albumart_resolution_unavailable">Nicht verfügbar</string>
 	
+	
+	<!--	WIDGET STRINGS	-->
+	<string name="widget_app_start">Offen ³</string>
+	
 	<!--	BUG REPORTS	-->
 	<string name="bug_report_intro_part_one">Tut uns sehr leid!\n\nRockOn v</string>
 	<string name="bug_report_intro_part_two">ist abgestürzt! Bitte senden Sie diese Mail, damit wir das Problem analysieren/beheben können.\n</string>

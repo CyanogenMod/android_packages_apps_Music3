@@ -1,10 +1,8 @@
 /*
- * adapted from the stock music app
+ * Adapted from the Android open source Music app
  */
 
 package org.abrantix.rockon.rockonnggl;
-
-import org.abrantix.rockon.rockonnggl.R;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -13,10 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -24,28 +19,25 @@ import android.widget.RemoteViews;
  * Simple widget to show currently playing album art along
  * with play/pause and next track buttons.  
  */
-public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
-    static final String TAG = "RockOnNextGenAppWidgetProvider";
+public class RockOnNextGenAppWidgetProvider4x1 extends AppWidgetProvider {
+    static final String TAG = "RockOnNextGenAppWidgetProvider4x1";
     
     public static final String CMDAPPWIDGETUPDATE = "appwidgetupdate";
     
     static final ComponentName THIS_APPWIDGET =
         new ComponentName(
         		Constants.WIDGET_COMPONENT_PACKAGE,
-                Constants.WIDGET_COMPONENT);
+                Constants.WIDGET_COMPONENT_4x1);
     
-    private static RockOnNextGenAppWidgetProvider sInstance;
+    private static RockOnNextGenAppWidgetProvider4x1 sInstance;
     
-    static synchronized RockOnNextGenAppWidgetProvider getInstance() {
+    static synchronized RockOnNextGenAppWidgetProvider4x1 getInstance() {
         if (sInstance == null) {
-            sInstance = new RockOnNextGenAppWidgetProvider();
+            sInstance = new RockOnNextGenAppWidgetProvider4x1();
         }
         return sInstance;
     }
 
-    private Bitmap	albumCover = null;
-    private Bitmap	albumCoverTmp = null;
-    
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         defaultAppWidget(context, appWidgetIds);
@@ -54,20 +46,10 @@ public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
         // wrap around with an immediate update.
         Intent updateIntent = new Intent(Constants.SERVICECMD);
         updateIntent.putExtra(Constants.CMDNAME,
-                RockOnNextGenAppWidgetProvider.CMDAPPWIDGETUPDATE);
+        		RockOnNextGenAppWidgetProvider4x1.CMDAPPWIDGETUPDATE);
         updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         updateIntent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
         context.sendBroadcast(updateIntent);
-        
-        // Create our bitmap cache
-        albumCover = Bitmap.createBitmap(
-        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-        		Config.RGB_565);
-//        albumCover = Bitmap.createBitmap(
-//        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-//        		Constants.ALBUM_ART_TEXTURE_SIZE, 
-//        		Config.RGB_565);
     }
     
     /**
@@ -76,22 +58,13 @@ public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
      */
     private void defaultAppWidget(Context context, int[] appWidgetIds) {
         final Resources res = context.getResources();
-        final RemoteViews views = 
-        	new RemoteViews(
-        			context.getPackageName(), 
-        			R.layout.album_appwidget);
+        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.album_appwidget_4x1);
         
-//        views.setViewVisibility(R.id.title, View.GONE);
-//        views.setTextViewText(R.id.artist, res.getText(R.string.emptyplaylist));
+        views.setViewVisibility(R.id.title, View.GONE);
+        views.setTextViewText(R.id.artist, res.getText(R.string.widget_app_start));
 
-        linkButtons(
-        		context, 
-        		views, 
-        		false /* not playing */);
-        pushUpdate(
-        		context, 
-        		appWidgetIds, 
-        		views);
+        linkButtons(context, views, false /* not playing */);
+        pushUpdate(context, appWidgetIds, views);
     }
     
     private void pushUpdate(Context context, int[] appWidgetIds, RemoteViews views) {
@@ -131,55 +104,42 @@ public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
      */
     void performUpdate(RockOnNextGenService service, int[] appWidgetIds) {
         final Resources res = service.getResources();
-        final RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.album_appwidget);
+        final RemoteViews views = new RemoteViews(service.getPackageName(), R.layout.album_appwidget_4x1);
         
-        /* Set the right album cover */
-        Bitmap wickedCover = 
-        	WidgetCoverUtils.getWidgetCoverBitmap(
-				String.valueOf(service.getAlbumId()),
-				String.valueOf(service.getArtistName()),
-				String.valueOf(service.getTrackName()),
-				Constants.REASONABLE_ALBUM_ART_SIZE,
-				Constants.REASONABLE_ALBUM_ART_SIZE);
-        if(wickedCover != null){
-        	views.setImageViewBitmap(
-        			R.id.widget_album_cover, 
-        			wickedCover);
-        }
+        CharSequence titleName = service.getTrackName();
+        CharSequence artistName = service.getArtistName();
+        CharSequence errorState = null;
         
-//        CharSequence titleName = service.getTrackName();
-//        CharSequence artistName = service.getArtistName();
-//        CharSequence errorState = null;
-        
-//        // Format title string with track number, or show SD card message
-//        String status = Environment.getExternalStorageState();
+        // Format title string with track number, or show SD card message
+        String status = Environment.getExternalStorageState();
 //        if (status.equals(Environment.MEDIA_SHARED) ||
 //                status.equals(Environment.MEDIA_UNMOUNTED)) {
 //            errorState = res.getText(R.string.sdcard_busy_title);
 //        } else if (status.equals(Environment.MEDIA_REMOVED)) {
 //            errorState = res.getText(R.string.sdcard_missing_title);
-//        } else if (titleName == null) {
-//            errorState = res.getText(R.string.emptyplaylist);
-//        }
-//        
-//        if (errorState != null) {
-//            // Show error state to user
-//            views.setViewVisibility(R.id.title, View.GONE);
-//            views.setTextViewText(R.id.artist, errorState);
-//            
-//        } else {
-//            // No error, so show normal titles
-//            views.setViewVisibility(R.id.title, View.VISIBLE);
-//            views.setTextViewText(R.id.title, titleName);
-//            views.setTextViewText(R.id.artist, artistName);
-//        }
+//        } else
+        	if (titleName == null) {
+            errorState = res.getText(R.string.widget_app_start);
+        }
+        
+        if (errorState != null) {
+            // Show error state to user
+            views.setViewVisibility(R.id.title, View.GONE);
+            views.setTextViewText(R.id.artist, errorState);
+            
+        } else {
+            // No error, so show normal titles
+            views.setViewVisibility(R.id.title, View.VISIBLE);
+            views.setTextViewText(R.id.title, titleName);
+            views.setTextViewText(R.id.artist, artistName);
+        }
         
         // Set correct drawable for pause state
         final boolean playing = service.isPlaying();
         if (playing) {
-            views.setImageViewResource(R.id.control_play, R.drawable.pause_selector);
+            views.setImageViewResource(R.id.control_play, R.drawable.ic_appwidget_music_pause);
         } else {
-            views.setImageViewResource(R.id.control_play, R.drawable.play_selector);
+            views.setImageViewResource(R.id.control_play, R.drawable.ic_appwidget_music_play);
         }
 
         // Link actions buttons to intents
@@ -192,7 +152,7 @@ public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
      * Link up various button actions using {@link PendingIntents}.
      * 
      * @param playerActive True if player is active in background, which means
-     *            widget click will launch {@link MediaPlaybackActivity},
+     *            widget click will launch {@link MediaPlaybackActivityStarter},
      *            otherwise we launch {@link MusicBrowserActivity}.
      */
     private void linkButtons(Context context, RemoteViews views, boolean playerActive) {
@@ -202,46 +162,32 @@ public class RockOnNextGenAppWidgetProvider extends AppWidgetProvider {
         
         final ComponentName serviceName = new ComponentName(context, RockOnNextGenService.class);
         
-        /* TAP ALBUM COVER = OPEN APP */
-        if (playerActive) {
-            intent = new Intent(context, RockOnNextGenGL.class);
-            pendingIntent = PendingIntent.getActivity(
-            		context,
-                    0 /* no requestCode */, 
-                    intent, 
-                    0 /* no flags */);
-            views.setOnClickPendingIntent(R.id.widget_album_cover, pendingIntent);
-        } else {
-        	/* code is duplicated for now but we might 
-        	 * want to change this in the future 
-        	 */
-            intent = new Intent(context, RockOnNextGenGL.class);
-            pendingIntent = PendingIntent.getActivity(
-            		context,
-                    0 /* no requestCode */, 
-                    intent, 
-                    0 /* no flags */);
-            views.setOnClickPendingIntent(R.id.widget_album_cover, pendingIntent);
-        }
+//        if (playerActive) {
+//            intent = new Intent(context, MediaPlaybackActivityStarter.class);
+//            pendingIntent = PendingIntent.getActivity(context,
+//                    0 /* no requestCode */, intent, 0 /* no flags */);
+//            views.setOnClickPendingIntent(R.id.album_appwidget, pendingIntent);
+//        } else {
+//            intent = new Intent(context, MusicBrowserActivity.class);
+//            pendingIntent = PendingIntent.getActivity(context,
+//                    0 /* no requestCode */, intent, 0 /* no flags */);
+//            views.setOnClickPendingIntent(R.id.album_appwidget, pendingIntent);
+//        }
+        intent = new Intent(context, RockOnNextGenGL.class);
+        pendingIntent = PendingIntent.getActivity(context,
+                0 /* no requestCode */, intent, 0 /* no flags */);
+        views.setOnClickPendingIntent(R.id.album_appwidget, pendingIntent);
         
-        /* PLAY/PAUSE */
         intent = new Intent(Constants.TOGGLEPAUSE_ACTION);
         intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(
-        		context,
-                0 /* no requestCode */, 
-                intent, 
-                0 /* no flags */);
+        pendingIntent = PendingIntent.getService(context,
+                0 /* no requestCode */, intent, 0 /* no flags */);
         views.setOnClickPendingIntent(R.id.control_play, pendingIntent);
         
-        /* NEXT */
         intent = new Intent(Constants.NEXT_ACTION);
         intent.setComponent(serviceName);
-        pendingIntent = PendingIntent.getService(
-        		context,
-                0 /* no requestCode */, 
-                intent, 
-                0 /* no flags */);
+        pendingIntent = PendingIntent.getService(context,
+                0 /* no requestCode */, intent, 0 /* no flags */);
         views.setOnClickPendingIntent(R.id.control_next, pendingIntent);
     }
 }
