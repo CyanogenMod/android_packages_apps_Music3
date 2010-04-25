@@ -913,11 +913,13 @@ public class RockOnNextGenService extends Service {
         for (int i = tailsize ; i > 0 ; i--) {
             mPlayList[position + i + addlen] = mPlayList[position + i]; 
             // TODO: need to update history??????????
+            Log.i(TAG, "tailsize i: "+i);
         }
         
         // copy list into playlist
         for (int i = 0; i < addlen; i++) {
             mPlayList[position + i] = list[i];
+            Log.i(TAG, "Adding song: "+list[i]+" to playlist position: "+(position+i));
         }
         mPlayListLen += addlen;
     }
@@ -1798,8 +1800,33 @@ public class RockOnNextGenService extends Service {
             } else if (mPlayPos > last) {
                 mPlayPos -= (last - first + 1);
             }
+            
+            /** 
+        	 * ROCKONNGGL Change
+        	 * Remove the tracks being removed from history 
+        	 */
+            for(int i = first; i<= last; i++)
+            {
+            	mHistory.removeElement(Integer.valueOf(i));
+            }
+            /** END */
+            
+            /**
+             * move back the remaining of the queue that is not being deleted
+             */
             int num = mPlayListLen - last - 1;
-            for (int i = 0; i < num; i++) {
+            for (int i = 0; i < num; i++) 
+            {
+            	/** 
+            	 * ROCKONNGGL Change
+            	 * Remove (and update) also these tracks from history 
+            	 */
+            	mHistory.removeElement(Integer.valueOf((int)(first + i)));
+            	mHistory.set(
+            			mHistory.indexOf(Integer.valueOf(last + 1 + i)), 
+            			Integer.valueOf(first+i));
+            	/** END */
+            	
                 mPlayList[first + i] = mPlayList[last + 1 + i];
             }
             mPlayListLen -= last - first + 1;
