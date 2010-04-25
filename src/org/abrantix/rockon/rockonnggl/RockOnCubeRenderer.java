@@ -656,7 +656,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     boolean changed;
     private boolean updateTextures(GL10 gl){
     	changed = false;
-    	if(mCursor != null){
+    	if(mCursor != null && !mCursor.isClosed())
+    	{
 	    	/* Album Cover textures in vertical scrolling */
     		for(int i = 0; i < mCacheSize; i++){
 	    		cursorIndexTmp = (int) (Math.floor((float) flooredPositionY / (float) mCacheSize) * mCacheSize + i);
@@ -838,42 +839,47 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 		    		}
 		    		break;
     			case Constants.BROWSECAT_ARTIST:
-    				if(!mNavItemUtils.fillArtistInfo(
-		    				mCursor, 
-		    				mNavItem[cacheIndex],
-		    				mArtistAlbumHelper[navIndex],
-		    				navIndex))
-		    		{
-		    			mNavItem[cacheIndex].artistId = null;
-		    			mNavItem[cacheIndex].artistName = null;
-		    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
-		    			mNavItem[cacheIndex].nSongsFromArtist = 0;
-		    		}
-		    		if(!mNavItemUtils.fillArtistBitmap(
-		    				mNavItem[cacheIndex],
-		    				mArtistAlbumHelper[navIndex],
-		    				mBitmapWidth, 
-		    				mBitmapHeight, 
-		    				mColorComponentBuffer,
-		    				mTheme))
-		    		{
-		    			mNavItemUtils.fillAlbumUnknownBitmap(
-		    					mNavItem[cacheIndex], 
-		    					mContext.getResources(), 
-		    					mNavItem[cacheIndex].cover.getWidth(), 
-		    					mNavItem[cacheIndex].cover.getHeight(), 
-		    					mColorComponentBuffer, 
-		    					mTheme);	
-		    		}
-		    		if(!mNavItemUtils.fillArtistLabel(
-		    				mNavItem[cacheIndex],
-		    				mBitmapWidth,
-		    				mBitmapHeight/4))
-		    		{
-		    			if(!mNavItem[cacheIndex].label.isRecycled())
-		    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-		    		}
-		    		break;
+    				if(navIndex < mArtistAlbumHelper.length)
+    				{
+	    				if(!mNavItemUtils.fillArtistInfo(
+			    				mCursor, 
+			    				mNavItem[cacheIndex],
+			    				mArtistAlbumHelper[navIndex],
+			    				navIndex))
+			    		{
+			    			mNavItem[cacheIndex].artistId = null;
+			    			mNavItem[cacheIndex].artistName = null;
+			    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
+			    			mNavItem[cacheIndex].nSongsFromArtist = 0;
+			    		}
+			    		if(!mNavItemUtils.fillArtistBitmap(
+			    				mNavItem[cacheIndex],
+			    				mArtistAlbumHelper[navIndex],
+			    				mBitmapWidth, 
+			    				mBitmapHeight, 
+			    				mColorComponentBuffer,
+			    				mTheme))
+			    		{
+			    			mNavItemUtils.fillAlbumUnknownBitmap(
+			    					mNavItem[cacheIndex], 
+			    					mContext.getResources(), 
+			    					mNavItem[cacheIndex].cover.getWidth(), 
+			    					mNavItem[cacheIndex].cover.getHeight(), 
+			    					mColorComponentBuffer, 
+			    					mTheme);	
+			    		}
+			    		if(!mNavItemUtils.fillArtistLabel(
+			    				mNavItem[cacheIndex],
+			    				mBitmapWidth,
+			    				mBitmapHeight/4))
+			    		{
+			    			if(!mNavItem[cacheIndex].label.isRecycled())
+			    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    		}
+    				} else {
+    					mNavItem[cacheIndex].index = -1;
+    				}
+    				break;
     			}
     		}
     		
@@ -1047,6 +1053,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				100) // 100 ms is the biggest 'jump' we allow
     		*
     		.001;
+    	
+    	/** save state **/
+		pTimestamp = System.currentTimeMillis();
+	
     	/** are we starting a movement -- yes? forget about the past */
     	if(updateFraction > 0 && updateFraction < .05f)
 	    	updateFraction = 
@@ -1108,9 +1118,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //    	Log.i(TAG, "mTargetPosition: "+(mTargetPositionX % 1));
     	
 
-		/** save state **/
-		pTimestamp = System.currentTimeMillis();
-	
     	/** optimization calculation*/
 		flooredPositionX = (int) Math.floor(mPositionX);
 		flooredPositionY = (int) Math.floor(mPositionY);
@@ -1387,6 +1394,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     int getShownElementId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mCursor == null ||
+    		mCursor.isClosed() ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */

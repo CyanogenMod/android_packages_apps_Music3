@@ -1051,6 +1051,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     int getShownElementId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mCursor == null ||
+    		mCursor.isClosed() ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
@@ -1200,7 +1201,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     /**
      * 
      */
-    public void changeBrowseCat(int browseCat)
+    synchronized public void changeBrowseCat(int browseCat)
     {
     	if(browseCat != mBrowseCat)
     	{

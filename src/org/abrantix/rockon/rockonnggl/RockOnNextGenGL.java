@@ -452,11 +452,11 @@ public class RockOnNextGenGL extends Activity {
     		// create adapter
     		ArrayList<Playlist> playlistArray = new ArrayList<Playlist>();
     		
-    		// all + 
-    		playlistArray.add(
-    				new Playlist(
-    						Constants.PLAYLIST_ALL, 
-    						getString(R.string.playlist_all_title)));
+//    		// all + 
+//    		playlistArray.add(
+//    				new Playlist(
+//    						Constants.PLAYLIST_ALL, 
+//    						getString(R.string.playlist_all_title)));
     		
 //    		// recent +
 //    		playlistArray.add(
@@ -894,6 +894,7 @@ public class RockOnNextGenGL extends Activity {
 							Toast.LENGTH_SHORT).
 						show();
 				} else {
+					mService.removeTracks(0, mService.getQueue().length -1);
 					mService.enqueue(list, msg.arg2);
 				}
 			} catch(Exception e){
@@ -2100,7 +2101,11 @@ public class RockOnNextGenGL extends Activity {
 				}
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ARTIST)
 				{
-					Toast.makeText(getApplicationContext(), R.string.not_an_album_toast, Toast.LENGTH_SHORT);
+					Toast.makeText(
+							getApplicationContext(), 
+							R.string.not_an_album_toast, 
+							Toast.LENGTH_SHORT)
+						.show();
 				}
 			}
 			
@@ -2220,14 +2225,17 @@ public class RockOnNextGenGL extends Activity {
 		public void handleMessage(Message msg){
 			try{
 				long[] list = {msg.arg1};
-				mService.enqueue(list, msg.arg2);
-				if(msg.arg2 == Constants.LAST){
+				if(msg.arg2 == Constants.LAST)
+				{
+					mService.enqueue(list, msg.arg2);
 					Toast.makeText(
 							getApplicationContext(), 
 							R.string.song_added_to_playlist, 
 							Toast.LENGTH_SHORT).
 						show();
 				} else {
+					mService.removeTracks(0, mService.getQueue().length-1);
+					mService.enqueue(list, msg.arg2);
 					setPauseButton();
 					setCurrentSongLabels(
 							mService.getTrackName(),
@@ -2375,8 +2383,12 @@ public class RockOnNextGenGL extends Activity {
 					}
 					try{
 						if(mService != null)
+						{
+							if(msg.arg1 == Constants.NOW)
+								mService.removeTracks(0, mService.getQueue().length-1);
 							mService.enqueue(songVector, msg.arg1);
-					}catch(Exception e){
+						}
+					}catch(RemoteException e){
 						e.printStackTrace();
 					}
 				}

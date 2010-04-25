@@ -601,7 +601,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     boolean changed;
     private boolean updateTextures(GL10 gl){
     	changed = false;
-		if(mCursor != null){
+		if(mCursor != null && !mCursor.isClosed())
+		{
 //			Log.i(TAG, " ++ updating textures");
 	    	/* Album Cover textures in vertical scrolling */
     		for(int i = 0; i < mCacheSize; i++){
@@ -730,41 +731,46 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			    		}
 			    		break;
 	    			case Constants.BROWSECAT_ARTIST:
-	    				if(!mNavItemUtils.fillArtistInfo(
-			    				mCursor, 
-			    				mNavItem[cacheIndex],
-			    				mArtistAlbumHelper[navIndex],
-			    				navIndex))
-			    		{
-			    			mNavItem[cacheIndex].artistId = null;
-			    			mNavItem[cacheIndex].artistName = null;
-			    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
-			    			mNavItem[cacheIndex].nSongsFromArtist = 0;
-			    		}
-			    		if(!mNavItemUtils.fillArtistBitmap(
-			    				mNavItem[cacheIndex],
-			    				mArtistAlbumHelper[navIndex],
-			    				mBitmapWidth, 
-			    				mBitmapHeight, 
-			    				mColorComponentBuffer,
-			    				mTheme))
-			    		{
-			    			mNavItemUtils.fillAlbumUnknownBitmap(
-			    					mNavItem[cacheIndex], 
-			    					mContext.getResources(), 
-			    					mNavItem[cacheIndex].cover.getWidth(), 
-			    					mNavItem[cacheIndex].cover.getHeight(), 
-			    					mColorComponentBuffer, 
-			    					mTheme);	
-			    		}
-//			    		if(!mNavItemUtils.fillArtistLabel(
-//			    				mNavItem[cacheIndex],
-//			    				mBitmapWidth,
-//			    				mBitmapHeight/4))
-//			    		{
-//			    			if(!mNavItem[cacheIndex].label.isRecycled())
-//			    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
-//			    		}
+	    				if(navIndex < mArtistAlbumHelper.length)
+	    				{
+		    				if(!mNavItemUtils.fillArtistInfo(
+				    				mCursor, 
+				    				mNavItem[cacheIndex],
+				    				mArtistAlbumHelper[navIndex],
+				    				navIndex))
+				    		{
+				    			mNavItem[cacheIndex].artistId = null;
+				    			mNavItem[cacheIndex].artistName = null;
+				    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
+				    			mNavItem[cacheIndex].nSongsFromArtist = 0;
+				    		}
+				    		if(!mNavItemUtils.fillArtistBitmap(
+				    				mNavItem[cacheIndex],
+				    				mArtistAlbumHelper[navIndex],
+				    				mBitmapWidth, 
+				    				mBitmapHeight, 
+				    				mColorComponentBuffer,
+				    				mTheme))
+				    		{
+				    			mNavItemUtils.fillAlbumUnknownBitmap(
+				    					mNavItem[cacheIndex], 
+				    					mContext.getResources(), 
+				    					mNavItem[cacheIndex].cover.getWidth(), 
+				    					mNavItem[cacheIndex].cover.getHeight(), 
+				    					mColorComponentBuffer, 
+				    					mTheme);	
+				    		}
+	//			    		if(!mNavItemUtils.fillArtistLabel(
+	//			    				mNavItem[cacheIndex],
+	//			    				mBitmapWidth,
+	//			    				mBitmapHeight/4))
+	//			    		{
+	//			    			if(!mNavItem[cacheIndex].label.isRecycled())
+	//			    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+	//			    		}
+	    				} else {
+	    		    		mNavItem[cacheIndex].index = -1;
+	    				}
 	    				break;
 	    			}
 	    		}
@@ -1076,6 +1082,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     synchronized int getShownElementId(float x, float y){
     	if(mTargetPositionY != mPositionY ||
     		mCursor == null ||
+    		mCursor.isClosed() ||
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
@@ -1230,7 +1237,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * 
      */
-    public void changeBrowseCat(int browseCat)
+    synchronized public void changeBrowseCat(int browseCat)
     {
     	if(browseCat != mBrowseCat)
     	{
