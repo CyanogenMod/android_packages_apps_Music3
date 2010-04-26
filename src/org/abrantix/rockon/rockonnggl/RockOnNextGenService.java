@@ -895,9 +895,9 @@ public class RockOnNextGenService extends Service {
     // insert the list of songs at the specified position in the playlist
     private void addToPlayList(long [] list, int position) 
     {
-    	Log.i(TAG, "===============================");
-    	Log.i(TAG, "list.length: "+list.length+" position: "+position);
-    	Log.i(TAG, "mPlaylistLen: "+mPlayListLen+" mPlaylist.length: "+mPlayList.length);
+//    	Log.i(TAG, "===============================");
+//    	Log.i(TAG, "list.length: "+list.length+" position: "+position);
+//    	Log.i(TAG, "mPlaylistLen: "+mPlayListLen+" mPlaylist.length: "+mPlayList.length);
         int addlen = list.length;
         if (position < 0) { // overwrite
             mPlayListLen = 0;
@@ -913,13 +913,11 @@ public class RockOnNextGenService extends Service {
         for (int i = tailsize ; i > 0 ; i--) {
             mPlayList[position + i + addlen] = mPlayList[position + i]; 
             // TODO: need to update history??????????
-            Log.i(TAG, "tailsize i: "+i);
         }
         
         // copy list into playlist
         for (int i = 0; i < addlen; i++) {
             mPlayList[position + i] = list[i];
-            Log.i(TAG, "Adding song: "+list[i]+" to playlist position: "+(position+i));
         }
         mPlayListLen += addlen;
     }
