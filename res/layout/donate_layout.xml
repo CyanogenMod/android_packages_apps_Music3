@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	>
+	
+	<!--	DONATE INTRO	-->
+	<LinearLayout
+		android:id="@+id/donate_intro"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="24dp"
+		android:layout_marginLeft="6dp"
+		android:layout_marginRight="6dp"
+		android:orientation="vertical"
+		>
+		<TextView
+			android:id="@+id/donate_title"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_marginBottom="6dp"
+			android:text="@string/donate_title"
+			android:textSize="36dp"
+			android:textStyle="bold"
+			android:textColor="#fff"
+			/>
+		<TextView
+			android:id="@+id/donate_msg"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/donate_msg"
+			android:textSize="18dp"
+			/>
+<!--			android:textColor="#fff"-->
+
+	</LinearLayout>
+
+	<!--	DONATE OPTIONS	-->
+	<LinearLayout
+		android:id="@+id/donate_options"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="24dp"
+		android:layout_below="@id/donate_intro"
+		android:orientation="vertical"
+		>
+		<ImageView
+			android:id="@+id/donate_paypal"
+			android:layout_width="fill_parent"
+			android:layout_height="@dimen/donate_button_height"
+			android:layout_marginBottom="12dp"
+			android:src="@drawable/logo_paypal"
+			/>
+		
+		<ImageView
+			android:id="@+id/donate_market"
+			android:layout_width="fill_parent"
+			android:layout_height="@dimen/donate_button_height"
+			android:src="@drawable/logo_market"
+			/>
+		
+	</LinearLayout>
+	
+		<!--	GO BACK TO ^3	-->
+	<LinearLayout
+		android:id="@+id/donate_go_back_layout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/donate_options"
+		android:layout_marginTop="12dp"
+		android:layout_marginBottom="12dp"
+		android:gravity="center"
+		android:orientation="horizontal"
+		>
+		<TextView
+			android:id="@+id/donate_go_back"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/donate_back_to_app"
+			android:textSize="36dp"
+			/>
+<!--		android:textColor="#fff"-->
+			
+		<ImageView
+			android:id="@+id/donate_go_back_icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="6dp"
+			android:src="@drawable/icon_dice"
+			/>
+		
+	</LinearLayout>
+	
+</RelativeLayout>

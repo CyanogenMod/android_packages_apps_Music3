@@ -45,4 +45,9 @@
     <string name="preference_scrobble_value_dont">no</string>
     <string name="preference_scrobble_value_sls">sls</string>
     <string name="preference_scrobble_value_sd">sd</string>
+    
+   	<!--	DONATE    -->
+    <string name="preference_key_donate">donate</string>
+    <string name="preference_title_donate">дарить</string>
+    
 </resources>

@@ -67,6 +67,9 @@
 	<string name="clear_playlist_dialog_option">Clear</string>
 	<string name="create_playlist_dialog_option">Save</string>
 	
+	<!--	SONG LISTS MORE RESULTS -->
+	<string name="song_list_more_results">songs...</string>
+	
 	<!--	CREATE PLAYLIST DIALOG -->
 	<string name="create_playlist_dialog_title">Choose Playlist Name</string>
 	<string name="create_playlist_dialog_save_option">Save</string>
@@ -92,6 +95,7 @@
 	<string name="view_mode_cube">³</string>
 	<string name="view_mode_wall">Wall</string>
 	<string name="view_mode_boring">Boring</string>
+	<string name="view_mode_morph">Morph Flow</string>
 	
 	<!-- 	THEMES DIALOG -->
 	<string name="theme_normal">Normal</string>
@@ -136,6 +140,12 @@
 	<string name="manual_albumart_source_internet">internet</string>
 	<string name="manual_albumart_resolution_loading">loading...</string>
 	<string name="manual_albumart_resolution_unavailable">unavailable</string>
+	
+	<!--	DONATE MSG	-->
+	<string name="donate_title">Donate</string>
+	<string name="donate_msg">³ is a free, open source music player written entirely on my spare time. If you do like it, please consider donating to support further development of ³. You can do so using one of the following options:</string>
+	<string name="donate_using">Donate through</string>
+	<string name="donate_back_to_app">Go back to</string>
 	
 	<!--	WIDGET STRINGS	-->
 	<string name="widget_app_start">Start ³</string>

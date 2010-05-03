@@ -35,6 +35,16 @@
     <string name="preference_title_embedded_album_art">Immer ID3-Cover verwenden</string>
     <string name="preference_summary_embedded_album_art">Verwendet auch bei geringer Auflösung das eingebettete Album-Cover.</string>
 
+	<!-- CLEAR ALBUM ART    -->
+	<string name="preference_clear_album_art_key">clearAlbumArtKey</string>
+	<string name="preference_clear_album_art_title">Album-Cover löschen</string>
+	<string name="preference_clear_album_art_summary">Löscht alle Album-Cover, z.B. wenn bei Alben/Künster falsche Album-Cover geladen wurden.</string>
+	<string name="preference_clear_album_art_dialog_title">Album-Cover löschen</string>
+	<string name="preference_clear_album_art_dialog_message">Löscht alle Album-Cover, z.B. wenn bei Alben/Künster falsche Album-Cover geladen wurden. Dies löscht den Inhalt des Verzeichnisses /sdcard/albumthumbs/RockOnNg. Danach bitte die Menüfunktion 'Cover abrufen' ausführen.</string>
+	<string name="preference_clear_album_art_dialog_positive_text">Mach es!</string>
+	<string name="preference_clear_album_art_dialog_negative_text">Nein... die Album-Cover sind in Ordnung.</string>
+
+
     <!--    SCROBBLING -->
     <string name="preference_scrobble_list_key">scrobbling</string>
     <string name="preference_scrobble_list_title">Last.fm Scrobbler</string>
@@ -46,4 +56,8 @@
     <string name="preference_scrobble_value_dont">no</string>
     <string name="preference_scrobble_value_sls">sls</string>
     <string name="preference_scrobble_value_sd">sd</string>
+    
+   	<!--	DONATE    -->
+    <string name="preference_key_donate">donate</string>
+    <string name="preference_title_donate">Donate</string>
 </resources>

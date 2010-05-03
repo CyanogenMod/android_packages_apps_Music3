@@ -23,6 +23,7 @@
 		<item>@string/view_mode_cube</item>
 		<item>@string/view_mode_wall</item>
 		<item>@string/view_mode_boring</item>
+		<item>@string/view_mode_morph</item>
 	</string-array>
 	
 	<!--	THEMES	-->

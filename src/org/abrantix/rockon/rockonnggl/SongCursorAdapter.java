@@ -47,12 +47,16 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
     public int					mSongInitialPosition;
     private String[]			mFrom;
     private int[]				mTo;
+    private int					mResultLimit;
+    private int					mExtraResults;
     
     public SongCursorAdapter(Context context, 
     							int layout, 
     							Cursor c,
     							String[] from,
     							int[] to,
+    							int	limit,	
+    							int	extraResults,
     							Handler clickHandler) 
     {
         super(context, layout, c, from, to);
@@ -61,6 +65,8 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
         this.mFrom = from;
         this.mTo = to;
         this.mSongInitialPosition = c.getPosition();
+        this.mResultLimit = limit;
+        this.mExtraResults = extraResults;
         this.mSongItemSelectedHandler = clickHandler;
     }
 
@@ -77,37 +83,61 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
     	view.setOnClickListener(mSongListSongClick);
     	view.setOnLongClickListener(mSongListSongLongClick);
     	
-    	for(int i=0; i<mFrom.length; i++){
-    		TextView textField = (TextView)
-    			view.findViewById(mTo[i]);
-    		if(mFrom[i] == MediaStore.Audio.Media.DURATION){
-    	    	try{
-    	    		double duration = new Double (
-    	    				cursor.getString(
-    	    						cursor.getColumnIndex(
-    	    								mFrom[i])));
-    		    	double minutes = Math.floor(duration / 1000 / 60);
-    		    	double seconds = duration / 1000 % 60;
-    		    	if(seconds > 10)
-    		    		textField.
-    		    			setText(
-    		    					String.valueOf((int)minutes)+
-    		    					":"+
-    		    					String.valueOf((int)seconds));
-    		    	else
-    		    		textField.
-    		    			setText(
-    		    					String.valueOf((int)minutes)+
-    		    					":0"+
-    		    					String.valueOf((int)seconds));
-    	    	} catch (Exception e){
-    	    		e.printStackTrace();
-    	    		textField.setText("-:--");
-    	    	}
-    		} else {
-    	    	textField.setText(cursor.getString(
-    					cursor.getColumnIndex(
-    							mFrom[i])));
+    	if(cursor.getPosition() < mResultLimit)
+    	{
+    		view.setClickable(true);
+	    	for(int i=0; i<mFrom.length; i++){
+	    		TextView textField = (TextView)
+	    			view.findViewById(mTo[i]);
+	    		if(mFrom[i] == MediaStore.Audio.Media.DURATION){
+	    	    	try{
+	    	    		double duration = new Double (
+	    	    				cursor.getString(
+	    	    						cursor.getColumnIndex(
+	    	    								mFrom[i])));
+	    		    	double minutes = Math.floor(duration / 1000 / 60);
+	    		    	double seconds = duration / 1000 % 60;
+	    		    	if(seconds > 10)
+	    		    		textField.
+	    		    			setText(
+	    		    					String.valueOf((int)minutes)+
+	    		    					":"+
+	    		    					String.valueOf((int)seconds));
+	    		    	else
+	    		    		textField.
+	    		    			setText(
+	    		    					String.valueOf((int)minutes)+
+	    		    					":0"+
+	    		    					String.valueOf((int)seconds));
+	    	    	} catch (Exception e){
+	    	    		e.printStackTrace();
+	    	    		textField.setText("-:--");
+	    	    	}
+	    		} else {
+	    	    	textField.setText(cursor.getString(
+	    					cursor.getColumnIndex(
+	    							mFrom[i])));
+	    		}
+	    	}
+    	}
+    	else
+    	{
+    		view.setClickable(false);
+    		for(int i=0; i<mFrom.length; i++)
+    		{
+    			switch(i)
+    			{
+    			case 0:
+	    			((TextView)view.findViewById(mTo[0])).setText(
+	    					"+ " + mExtraResults + " " + mContext.getString(R.string.song_list_more_results));
+	    			break;
+    			case 1:
+    				((TextView)view.findViewById(mTo[1])).setText("");
+    				break;
+    			case 2:
+    				((TextView)view.findViewById(mTo[2])).setText("");
+    				break;
+    			}
     		}
     	}
     }
@@ -122,19 +152,22 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 				 */
 				int position = ((ListView) songLayout.getParent()).
 						getPositionForView(songLayout);
-				mSongCursor.moveToPosition(position);
-				int songId = (int) 
-					ContentProviderUnifier.
-						getAudioIdFromUnknownCursor(mSongCursor);
-				Message msg = new Message();
-				msg.arg1 = songId;
-				msg.arg2 = Constants.NOW;
-				mSongItemSelectedHandler.sendMessageDelayed(
-						msg, 
-						Constants.CLICK_ACTION_DELAY);
-				mDialogInterface.dismiss();
-				
-//				Log.i(TAG, "Song "+position+" clicked - ADAPTER");
+				if(position < mResultLimit)
+				{
+					mSongCursor.moveToPosition(position);
+					int songId = (int) 
+						ContentProviderUnifier.
+							getAudioIdFromUnknownCursor(mSongCursor);
+					Message msg = new Message();
+					msg.arg1 = songId;
+					msg.arg2 = Constants.NOW;
+					mSongItemSelectedHandler.sendMessageDelayed(
+							msg, 
+							Constants.CLICK_ACTION_DELAY);
+					mDialogInterface.dismiss();
+					
+	//				Log.i(TAG, "Song "+position+" clicked - ADAPTER");
+				}
 			}
 			catch(NullPointerException e)
 			{
@@ -149,26 +182,26 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 			/* Check song position */
 			int position = ((ListView) songLayout.getParent()).
 					getPositionForView(songLayout);
-			mSongCursor.moveToPosition(position);
-			int songId = (int)
-				ContentProviderUnifier.
-					getAudioIdFromUnknownCursor(mSongCursor);
-//				mSongCursor.getInt(
-//					mSongCursor.getColumnIndexOrThrow(
-//							MediaStore.Audio.Media._ID));
-			/* tell the handler to put it in the end of the list */
-			Message msg = new Message();
-			msg.arg1 = songId;
-			msg.arg2 = Constants.LAST;
-			mSongItemSelectedHandler.sendMessageDelayed(
-					msg, 
-					Constants.CLICK_ACTION_DELAY);
-			mDialogInterface.dismiss();
-//				((Filex) context).
-//								songListView.getPositionForView(songTextView);
-			
-			Log.i(TAG, "Song "+position+" LONG clicked - ADAPTER");
-			
+			if(position < mResultLimit)
+			{
+				mSongCursor.moveToPosition(position);
+				int songId = (int)
+					ContentProviderUnifier.
+						getAudioIdFromUnknownCursor(mSongCursor);
+	//				mSongCursor.getInt(
+	//					mSongCursor.getColumnIndexOrThrow(
+	//							MediaStore.Audio.Media._ID));
+				/* tell the handler to put it in the end of the list */
+				Message msg = new Message();
+				msg.arg1 = songId;
+				msg.arg2 = Constants.LAST;
+				mSongItemSelectedHandler.sendMessageDelayed(
+						msg, 
+						Constants.CLICK_ACTION_DELAY);
+				mDialogInterface.dismiss();
+				
+	//			Log.i(TAG, "Song "+position+" LONG clicked - ADAPTER");
+			}
 			return true;
 		}
     };

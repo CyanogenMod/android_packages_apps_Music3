@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.os.Handler;
@@ -55,15 +56,35 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
     	Log.i(TAG, intent.getAction());
     	
-    	/* are we using headset buttons? */
+    	/**
+    	 *  are we using headset buttons? 
+    	 */
     	if(!PreferenceManager.getDefaultSharedPreferences(context).
     			getBoolean(
     					context.getString(
     							R.string.preference_key_use_headset_buttons), 
     					true))
+    	{
     		return;
+    	}
+    	
+    	/**
+    	 * Ignore if a call is in progress or the phone is ringing
+    	 */
+    	if(((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE)).getCallState()
+    			== TelephonyManager.CALL_STATE_RINGING 
+    			||
+    		((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE)).getCallState()
+    			== TelephonyManager.CALL_STATE_OFFHOOK)
+    	{
+    		return;
+    	}
     
-    	/* yes we are, do our stuff */
+    	/**
+    	 *  So the user has chosen to use the headset in ^3 
+    	 *  and no call is active or incoming
+    	 *   - do our magic 
+    	 */
         String intentAction = intent.getAction();
         if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intentAction)) {
             Intent i = new Intent(context, RockOnNextGenService.class);

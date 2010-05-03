@@ -69,6 +69,9 @@
 <string name="clear_playlist_dialog_option">Очистить</string>
 <string name="create_playlist_dialog_option">Сохранить</string>
 
+	<!--	SONG LISTS MORE RESULTS -->
+	<string name="song_list_more_results">песни...</string>
+
 <!-- CREATE PLAYLIST DIALOG -->
 <string name="create_playlist_dialog_title">Плейлист</string>
 <string name="create_playlist_dialog_save_option">Сохранить</string>
@@ -94,6 +97,7 @@
 <string name="view_mode_cube">³ Куб</string>
 <string name="view_mode_wall">Плитка</string>
 <string name="view_mode_boring">Список</string>
+<string name="view_mode_morph">Morph Flow</string>
 
 <!-- THEMES DIALOG -->
 <string name="theme_normal">Стандартная</string>

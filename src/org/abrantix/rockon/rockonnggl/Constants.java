@@ -21,6 +21,7 @@ public class Constants{
 	static final int RENDERER_CUBE = 0;
 	static final int RENDERER_WALL = 1;
 	static final int RENDERER_BORING = 2;
+	static final int RENDERER_MORPH = 3;
 	
 	/** Theme Types */
 	static final int THEME_NORMAL = 100; // these should not coincide with the Renderer modes
@@ -161,6 +162,7 @@ public class Constants{
 
 	/** Album Cursor Sorting **/
 	static final String artistAlphabeticalSortOrder = 
+//		MediaStore.Audio.Artists.ARTIST_KEY + " COLLATE NOCASE ASC";
 		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
 	
 	/** Song List Sorting **/
@@ -376,6 +378,11 @@ public class Constants{
 	static final String ROCKON_SMALL_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/small/";
 	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";
 	
+	/** Donation Parameters */
+	static final int	DONATION_INITIAL_INTERVAL = 12;
+	static final int	DONATION_STANDARD_INTERVAL = 60;
+	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 1000;
+	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mBrowseCatMode = "mBrowseCatMode";
 	static final String	prefkey_mRendererMode = "mRendererMode";
@@ -393,6 +400,9 @@ public class Constants{
 	static final String prefkey_mPlaylistId = "mPlaylistId";
 	static final String prefkey_mFullscreen = "mFullScreen"; // duplicated in resources... FIXME
 	static final String prefkey_mControlsOnBottom = "mControlsOnBottom"; // duplicated in resources... FIXME
+	static final String prefkey_mAppCreateCount = "mAppCreateCount";
+	static final String prefkey_mAppCreateCountForDonation = "mAppCreateCountForDonation";
+	static final String prefkey_mAppHasDonated = "mAppHasDonated";
 	
 	
 }

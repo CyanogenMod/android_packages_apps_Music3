@@ -145,6 +145,7 @@
 		android:layout_height="@dimen/navigator_shading_height"
 		android:layout_below="@id/player_controls_layout"
 		android:src="@drawable/black_to_transparent_grad_minus_90"/>
+
 		
 	<ImageView
 		android:id="@+id/shading_bottom"

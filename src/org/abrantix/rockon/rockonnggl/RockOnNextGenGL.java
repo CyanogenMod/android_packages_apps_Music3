@@ -32,6 +32,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.MergeCursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.inputmethodservice.InputMethodService;
 import android.net.Uri;
@@ -57,6 +58,7 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -72,6 +74,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class RockOnNextGenGL extends Activity {
@@ -165,8 +168,6 @@ public class RockOnNextGenGL extends Activity {
         	showFullScreen();
         	break;
         }
-        
-
     }
     
     /** OnStart */
@@ -180,6 +181,11 @@ public class RockOnNextGenGL extends Activity {
 	    	// trigger update album to the current playing
 	    	mSetNavigatorCurrent.sendEmptyMessageDelayed(0, Constants.SCROLLING_RESET_TIMEOUT-2);
     	}
+    	
+        /**
+         * Donation
+         */
+        showDonation();
     }
     
     /** OnResume */
@@ -452,7 +458,7 @@ public class RockOnNextGenGL extends Activity {
     		// create adapter
     		ArrayList<Playlist> playlistArray = new ArrayList<Playlist>();
     		
-//    		// all + 
+    		// all + 
 //    		playlistArray.add(
 //    				new Playlist(
 //    						Constants.PLAYLIST_ALL, 
@@ -530,6 +536,39 @@ public class RockOnNextGenGL extends Activity {
     	return true;
     }
     
+    private void showDonation()
+    {
+    	int appCreateCount = 
+    		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    			getInt(Constants.prefkey_mAppCreateCount, 1);
+    	appCreateCount++;
+    	
+    	int appCreateCountForDonation = 
+    		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    			getInt(Constants.prefkey_mAppCreateCountForDonation, Constants.DONATION_INITIAL_INTERVAL);
+    	
+		Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+
+    	if(appCreateCount >= appCreateCountForDonation)
+    	{    		
+    		boolean hasDonated = 
+    			PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    				getBoolean(Constants.prefkey_mAppHasDonated, false);
+    		
+    		if(hasDonated)
+    			appCreateCountForDonation += Constants.DONATION_AFTER_HAVING_DONATED_INTERVAL;
+    		else
+    			appCreateCountForDonation += Constants.DONATION_STANDARD_INTERVAL;
+    		editor.putInt(Constants.prefkey_mAppCreateCountForDonation, appCreateCountForDonation);
+    		
+	    	Intent i = new Intent(this, DonateActivity.class);
+	        startActivity(i);
+    	}
+    	
+    	editor.putInt(Constants.prefkey_mAppCreateCount, appCreateCount);
+    	editor.commit();
+    }
+    
     /**
      * ask the user if he wants to install the new app or not
      */
@@ -603,9 +642,18 @@ public class RockOnNextGenGL extends Activity {
 					// reload views
 					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_BORING);
 				}
+				else if(rendererArray[which].equals(getString(R.string.view_mode_morph)))
+				{
+					// save in preferences
+					Editor edit = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+					edit.putInt(Constants.prefkey_mRendererMode, Constants.RENDERER_MORPH);
+					edit.commit();
+					// reload views
+					mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_MORPH);
+				}
 			}
 		};
-	
+			
 		private DialogInterface.OnClickListener mThemeChoiceDialogClick = 
 			new DialogInterface.OnClickListener() {
 				
@@ -846,6 +894,8 @@ public class RockOnNextGenGL extends Activity {
 						songCursor, 
 						Constants.queueSongListFrom, 
 						Constants.queueSongListTo,
+						10000000, // will never reach the limit -- only useful in play queue
+						0, // no extra results
 						mPlayListItemSelectedHandler);
 			dialogBuilder.setAdapter(
 						songCursorAdapter,
@@ -1001,7 +1051,7 @@ public class RockOnNextGenGL extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data)  {
     	switch(requestCode){
     	case Constants.PREFERENCE_ACTIVITY_REQUEST_CODE:
-    		Log.i(TAG, "Back from preference activity");
+//    		Log.i(TAG, "Back from preference activity");
     		// reload preferences :P
     		/* in case the user changed to full screen */
     		// TODO: reload app -- creaty dummy act that starts the main activity and finish this one
@@ -1226,7 +1276,14 @@ public class RockOnNextGenGL extends Activity {
      */
     private void showIntro(){
     	setContentView(R.layout.intro);
-    	mPassIntroHandler.sendEmptyMessageDelayed(0, 2000);
+    	((IntroView)findViewById(R.id.intro_view)).
+    		setIntroBitmap(
+    				BitmapFactory.decodeResource(
+    						getResources(), 
+    						R.drawable.logo_intro));
+    	((IntroView)findViewById(R.id.intro_view)).
+    		setDoneHandler(mPassIntroHandler);
+//    	mPassIntroHandler.sendEmptyMessageDelayed(0, 2000);
     }
     
     /**
@@ -1337,6 +1394,15 @@ public class RockOnNextGenGL extends Activity {
 	   		mGlSurfaceView.setRenderer(rockOnBoringRenderer);
 	   		mRockOnRenderer = (RockOnRenderer) rockOnBoringRenderer;	
 	        break;
+        case Constants.RENDERER_MORPH:
+        	RockOnMorphRenderer rockOnRopeRenderer = new RockOnMorphRenderer(
+	        		getApplicationContext(),
+	        		mRequestRenderHandler,
+	        		mTheme,
+	        		mBrowseCatMode);
+	   		mGlSurfaceView.setRenderer(rockOnRopeRenderer);
+	   		mRockOnRenderer = (RockOnRenderer) rockOnRopeRenderer;	
+	        break;
         }
     	
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -1393,7 +1459,9 @@ public class RockOnNextGenGL extends Activity {
     	/** get our autocomplete stuff */
     	setupAutoCompleteSearch(mPlaylistId);
     	((AutoCompleteTextView)findViewById(R.id.search_textview)).
-    			setOnItemClickListener(mSongSearchClickListener);
+			setOnItemClickListener(mSongSearchClickListener);
+//    	((AutoCompleteTextView)findViewById(R.id.search_textview)).
+//    		setOnLongClickListener(mSongSearchLongClickListener);
     	findViewById(R.id.search_textview).requestFocus();
     	((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).
     		showSoftInput(
@@ -1892,11 +1960,16 @@ public class RockOnNextGenGL extends Activity {
 		public void handleMessage(Message msg){
 			try{
 				/* song list cursor */
+				final int RESULT_LIMIT = 50; // need to limit this to avoid memory exhaustion in MergeCursor
 				CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
+				long[] outstandingQueue = mService.getOutstandingQueue();
 				Cursor		songCursor = 
 					cursorUtils.getSongListCursorFromSongList(
-						mService.getOutstandingQueue(),
-						0); // TODO: read the actual playlist ID
+						outstandingQueue,
+						0,
+						RESULT_LIMIT); // show at most 50 songs in the queue 
+				
+				// TODO: read the actual playlist ID
 
 				if(songCursor != null){
 					startManagingCursor(songCursor);
@@ -1913,6 +1986,8 @@ public class RockOnNextGenGL extends Activity {
 								songCursor, 
 								Constants.queueSongListFrom, 
 								Constants.queueSongListTo,
+								50, // show at most 50 results
+								outstandingQueue.length - RESULT_LIMIT,
 								mPlayQueueItemSelectedHandler);
 					dialogBuilder.setAdapter(
 	 						songCursorAdapter,
@@ -2153,6 +2228,8 @@ public class RockOnNextGenGL extends Activity {
 						songCursor, 
 						Constants.albumSongListFrom, 
 						Constants.albumSongListTo,
+						1000000, // will never reach limit -- only useful in play queue
+						0, // no extra results
 						mSongItemSelectedHandler);
 			dialogBuilder.setAdapter(
 						songCursorAdapter,
@@ -2714,9 +2791,7 @@ public class RockOnNextGenGL extends Activity {
 			long trackId = 
 				ContentProviderUnifier.
 					getAudioIdFromUnknownCursor(songCursor); 
-//				songCursor.getLong(
-//					songCursor.getColumnIndexOrThrow(
-//							MediaStore.Audio.Media._ID));
+
 			hideSearch();
 			Message msg = new Message();
 			msg.arg1 = (int) trackId;

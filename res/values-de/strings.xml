@@ -66,6 +66,9 @@
 	<string name="clear_playlist_dialog_option">Leeren</string>
 	<string name="create_playlist_dialog_option">Speichern</string>
 	
+	<!--	SONG LISTS MORE RESULTS -->
+	<string name="song_list_more_results">Lieder...</string>
+	
 	<!--	CREATE PLAYLIST DIALOG -->
 	<string name="create_playlist_dialog_title">Name der Wiedergabeliste</string>
 	<string name="create_playlist_dialog_save_option">Speichern</string>
@@ -91,6 +94,7 @@
 	<string name="view_mode_cube">³</string>
 	<string name="view_mode_wall">Wand</string>
 	<string name="view_mode_boring">Einfach</string>
+	<string name="view_mode_morph">Morph Flow</string>
 	
 	<!-- 	THEMES DIALOG -->
 	<string name="theme_normal">Normal</string>
@@ -136,9 +140,14 @@
 	<string name="manual_albumart_resolution_loading">Lade...</string>
 	<string name="manual_albumart_resolution_unavailable">Nicht verfügbar</string>
 	
-	
+	<!-- DONATE MSG -->
+	<string name="donate_title">Donate</string>
+	<string name="donate_msg">³ ist ein freier, Open-Source Musicplayer, der komplett in meiner Freizeit geschrieben wurde. Wenn es Dir gefällt, und Du die weitere Entwicklung von ³ unterstützen möchtest, denke über eine Spende nach.</string>
+	<string name="donate_using">Spenden mit</string>
+	<string name="donate_back_to_app">Zurück zu</string>
+
 	<!--	WIDGET STRINGS	-->
-	<string name="widget_app_start">Offen ³</string>
+	<string name="widget_app_start">³ öffnen</string>
 	
 	<!--	BUG REPORTS	-->
 	<string name="bug_report_intro_part_one">Tut uns sehr leid!\n\nRockOn v</string>

@@ -4,10 +4,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <ImageView
+    <org.abrantix.rockon.rockonnggl.IntroView
+    	android:id="@+id/intro_view"
     	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
-    	android:src="#f000"
-    	android:scaleType="centerCrop"/>
+    	android:layout_height="fill_parent"/>
+    	
+<!--    	    <ImageView-->
+<!--    	android:layout_width="fill_parent"-->
+<!--    	android:layout_height="fill_parent"-->
+<!--    	android:src="#f000"-->
+<!--    	android:scaleType="centerCrop"/>-->
 <!--    	android:src="@drawable/b320x480"-->
 </RelativeLayout>

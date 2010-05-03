@@ -409,12 +409,13 @@ public class CursorUtils{
 	 * @param position
 	 * @return
 	 */
-	Cursor	getSongListCursorFromSongList(long[] list, int position){
+	Cursor	getSongListCursorFromSongList(long[] list, int position, int limit){
 		if(list != null && list.length > 0)
 		{
-			Cursor[]	cursor = new Cursor[list.length-position];
+			Cursor[]	cursor = 
+				new Cursor[Math.min(list.length-position, position + limit + 1)];
 			String	constraint;
-			for(int i = position; i < list.length; i++){
+			for(int i = position; i < Math.min(list.length, position + limit + 1) ; i++){
 				Log.i(TAG, ""+list[i]);
 	//			if(i != position)
 	//				constraint += " OR ";
@@ -422,7 +423,8 @@ public class CursorUtils{
 					MediaStore.Audio.Media._ID+
 					"="+
 					String.valueOf(list[i]);
-				cursor[i-position] = ctx.getContentResolver().query(
+				cursor[i-position] = 
+					ctx.getContentResolver().query(
 						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
 						Constants.songProjection, 
 						constraint, 

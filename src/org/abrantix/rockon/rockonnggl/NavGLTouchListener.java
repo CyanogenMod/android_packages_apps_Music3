@@ -224,8 +224,10 @@ public class NavGLTouchListener implements OnTouchListener{
 				 * INERTIAL VERTICAL MOVE
 				 */
 				if(mScrollingY){
+					mScrollingSpeed *= .25f + (.75f * Math.abs(event.getY() - mDownY) / v.getHeight() * (v.getHeight()/360.f));
 					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_VERTICAL);
 				} else if(mScrollingX){
+					mScrollingSpeed *= .25f + (.75f * Math.abs(event.getX() - mDownX) / v.getWidth());
 					mRenderer.inertialScrollOnTouchEnd(mScrollingSpeed, Constants.SCROLL_MODE_HORIZONTAL);
 				}
 				

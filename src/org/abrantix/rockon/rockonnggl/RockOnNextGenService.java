@@ -1593,7 +1593,7 @@ public class RockOnNextGenService extends Service {
                 	if (mRepeatMode == Constants.REPEAT_NONE) {
                        	// continuous play not shuffle
 //                    	if(true){
-                    		CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
+                    	CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
                     	long audioId = cursorUtils.getNextPrevAudioId(
                     				Constants.FIND_NEXT,
                     				this.getAudioId(), 
@@ -1617,6 +1617,10 @@ public class RockOnNextGenService extends Service {
                     			// lets add the id to the current queue
 //                    			if(mPlayPos <= mPlayListLen )
 //                    			{
+                    				/** XXX - bug report fix */
+                    				if(mPlayPos >= mPlayListLen)
+                    					mPlayPos = mPlayListLen-1;
+                    				/** XXX */
 	                    			ensurePlayListCapacity(mPlayListLen+1);
 	                    			mPlayList[mPlayPos+1] = audioId;
 	                    			mPlayListLen++;

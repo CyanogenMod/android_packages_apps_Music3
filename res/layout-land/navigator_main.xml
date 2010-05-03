@@ -57,6 +57,12 @@
 				android:layout_alignParentLeft="true"
 				android:src="@drawable/black_to_transparent_grad_0"/>
 				
+			<org.abrantix.rockon.rockonnggl.AlbumArtistSwitcherView 
+				android:id="@+id/player_artist_album_switcher"
+			    android:layout_width="fill_parent"
+			    android:layout_height="@dimen/button_default_double_height"
+			    android:layout_alignParentBottom="true"
+		    	/>    
 		</RelativeLayout>
 	    
 	    <LinearLayout

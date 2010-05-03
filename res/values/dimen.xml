@@ -12,6 +12,9 @@
 	<dimen name="navigator_shading_height">8dp</dimen>
     <dimen name="navigator_shading_width">8dp</dimen>
     
+	<!--	DONATE BUTTONS    -->
+    <dimen name="donate_button_height">64dp</dimen>
+    
 	<!--	ALBUM ART CHOOSER GRID    -->
     <dimen name="album_art_dimension">150dp</dimen>
     
