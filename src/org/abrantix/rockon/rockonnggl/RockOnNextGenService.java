@@ -1824,9 +1824,16 @@ public class RockOnNextGenService extends Service {
             	 * Remove (and update) also these tracks from history 
             	 */
             	mHistory.removeElement(Integer.valueOf((int)(first + i)));
-            	mHistory.set(
+            	try
+            	{
+            		mHistory.set(
             			mHistory.indexOf(Integer.valueOf(last + 1 + i)), 
             			Integer.valueOf(first+i));
+            	}
+            	catch(ArrayIndexOutOfBoundsException e)
+            	{
+//            		e.printStackTrace();
+            	}
             	/** END */
             	
                 mPlayList[first + i] = mPlayList[last + 1 + i];
