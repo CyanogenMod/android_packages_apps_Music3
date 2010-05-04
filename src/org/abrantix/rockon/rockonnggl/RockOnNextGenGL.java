@@ -1419,6 +1419,14 @@ public class RockOnNextGenGL extends Activity {
         }
     }
     
+//    Handler mKillAppAndRestartPlaybackHandler = new Handler()
+//    {
+//    	public void handleMessage(Message msg)
+//    	{
+//    		Log.i(TAG, "handling kill process message");
+//    	}
+//    };
+    
     /**
      * handler for updating the surface view
      */

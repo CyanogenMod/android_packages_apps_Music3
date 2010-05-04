@@ -12,6 +12,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.sax.StartElementListener;
 import android.util.Log;
 
 	class RockOnNextGenDefaultExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -40,6 +43,26 @@ import android.util.Log;
 //			if(e.getClass().equals(OutOfMemoryError.class))
 //			{
 //				e.printStackTrace();
+//				
+//				new Thread(){
+//					public void run()
+//					{
+//						Intent i = new Intent(context, RockOnNextGenService.class);
+//						i.setAction(Constants.SERVICECMD);
+//			            i.putExtra(Constants.CMDNAME, Constants.CMDSAVE);
+//			            context.startService(i);
+//					}
+//				}.start();
+//				
+////	            try {
+////					Thread.sleep(30000);
+////				} catch (InterruptedException e1) {
+////					e1.printStackTrace();
+////				}
+//	            
+////				Log.i(TAG, "ahahah killing the stuff");
+////	            android.os.Process.killProcess(android.os.Process.myPid());
+//	            return;
 //			}
 			
             PackageManager manager = context.getPackageManager();

@@ -41,19 +41,34 @@ public class ClearAlbumArtDialogPreference extends DialogPreference{
 	{
 		File f = new File(Constants.ROCKON_ALBUM_ART_PATH);
 		File[] fileList = f.listFiles();
-		for(int i=0; i<fileList.length; i++)
+		try
 		{
-			if(fileList[i].getAbsolutePath() != Constants.ROCKON_SMALL_ALBUM_ART_PATH)
-				fileList[i].delete();
-			Log.i(TAG, fileList[i].getAbsolutePath());
+			for(int i=0; i<fileList.length; i++)
+			{
+				if(fileList[i].getAbsolutePath() != Constants.ROCKON_SMALL_ALBUM_ART_PATH)
+					fileList[i].delete();
+//				Log.i(TAG, fileList[i].getAbsolutePath());
+			}
 		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace();
+		}
+		
 		
 		f = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH);
 		fileList = f.listFiles();
-		for(int i=0; i<fileList.length; i++)
+		try
 		{
-			fileList[i].delete();
-			Log.i(TAG, fileList[i].getAbsolutePath());
+			for(int i=0; i<fileList.length; i++)
+			{
+				fileList[i].delete();
+//				Log.i(TAG, fileList[i].getAbsolutePath());
+			}
+		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace();
 		}
 	}
 

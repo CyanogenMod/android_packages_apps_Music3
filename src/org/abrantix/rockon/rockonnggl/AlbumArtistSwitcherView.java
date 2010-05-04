@@ -12,8 +12,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 
 public class AlbumArtistSwitcherView extends View
@@ -29,6 +31,7 @@ public class AlbumArtistSwitcherView extends View
 	float	mTargetPresence = 0;
 	float	mPresence = 0;
 	float	mCurrentLockPosition;
+	float	mElementDensityPixels;
 	
 	/**
 	 * GLOBALS
@@ -165,7 +168,15 @@ public class AlbumArtistSwitcherView extends View
 	 */
 	public AlbumArtistSwitcherView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
+		
+		mElementDensityPixels = context.getResources().getDimension(R.dimen.button_default_width);
+		
+		// not needed - comes already converted to the screen density
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
+//		mElementDensityPixels = mElementDensityPixels;
+//		Log.i(TAG, ":"+mElementDensityPixels);
+//		Log.i(TAG, ":"+metrics.density);
 		
 		initNonGraphicVars(context);
 	}
@@ -566,29 +577,63 @@ public class AlbumArtistSwitcherView extends View
 	 */
 	private void drawStateIndicator(Canvas canvas, int alpha, float presence)
 	{
-		if(Constants.SWITCHER_CATEGORY_COUNT  % 2 == 0)
+		for(int k=0; k<2; k++)
 		{
-			oCategoryIndicationPosition = mWidth * .5f;
-			oCategoryIndicationPosition -= 
-				// each circle
-				Constants.SWITCHER_CATEGORY_COUNT/2 * (mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f
-				+
-				// space between circles
-				(Constants.SWITCHER_CATEGORY_COUNT/2 - 1) *  (mHeight*.5f) * 
-					(2.f * Constants.SWITCHER_CAT_CIRCLE_RATIO * Constants.SWITCHER_CAT_CIRCLE_SPACING)
-				+
-				// half spacing
-				(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * 
-					Constants.SWITCHER_CAT_CIRCLE_SPACING * .5f;
-		}
-		else
-		{
-			// TODO: same old thing but different
-		}
-		
-		for(int i=0; i<Constants.SWITCHER_CATEGORY_COUNT; i++)
-		{	
-			/** All states */
+			if(Constants.SWITCHER_CATEGORY_COUNT  % 2 == 0)
+			{
+				if(k == 0)
+				{
+					oCategoryIndicationPosition = mElementDensityPixels * .5f;
+				}
+				else
+				{
+					oCategoryIndicationPosition = mWidth - mElementDensityPixels * .5f;
+				}
+//				oCategoryIndicationPosition = mWidth * .5f;
+				oCategoryIndicationPosition -= 
+					// each circle
+					Constants.SWITCHER_CATEGORY_COUNT/2 * (mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f
+					+
+					// space between circles
+					(Constants.SWITCHER_CATEGORY_COUNT/2 - 1) *  (mHeight*.5f) * 
+						(2.f * Constants.SWITCHER_CAT_CIRCLE_RATIO * Constants.SWITCHER_CAT_CIRCLE_SPACING)
+					+
+					// half spacing
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * 
+						Constants.SWITCHER_CAT_CIRCLE_SPACING * .5f;
+			}
+			else
+			{
+				// TODO: same old thing but different
+			}
+			
+			for(int i=0; i<Constants.SWITCHER_CATEGORY_COUNT; i++)
+			{	
+				/** All states */
+				canvas.drawCircle(
+						oCategoryIndicationPosition
+						+
+						// each circle
+						(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * i
+						+
+						// each space between circle
+						(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO * 2.f) * 
+							Constants.SWITCHER_CAT_CIRCLE_SPACING * i
+						+
+						// center offset
+						(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
+						
+						mHeight*.85f, // cy 
+						(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
+						mCategoryIndicatorPaint);
+			}
+	
+			/** Highlight of current position */
+			float i;
+			if(mPosition%Constants.SWITCHER_CATEGORY_COUNT > Constants.SWITCHER_CATEGORY_COUNT - 1)
+				i = (float) (1.f + (Math.floor(mPosition)-mPosition));
+			else
+				i = (float) (Math.floor(mPosition)%Constants.SWITCHER_CATEGORY_COUNT + (mPosition - Math.floor(mPosition)));
 			canvas.drawCircle(
 					oCategoryIndicationPosition
 					+
@@ -603,31 +648,8 @@ public class AlbumArtistSwitcherView extends View
 					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
 					
 					mHeight*.85f, // cy 
-					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 1.28f, 
 					mCategoryIndicatorPaint);
 		}
-
-		/** Highlight of current position */
-		float i;
-		if(mPosition%Constants.SWITCHER_CATEGORY_COUNT > Constants.SWITCHER_CATEGORY_COUNT - 1)
-			i = (float) (1.f + (Math.floor(mPosition)-mPosition));
-		else
-			i = (float) (Math.floor(mPosition)%Constants.SWITCHER_CATEGORY_COUNT + (mPosition - Math.floor(mPosition)));
-		canvas.drawCircle(
-				oCategoryIndicationPosition
-				+
-				// each circle
-				(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * i
-				+
-				// each space between circle
-				(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO * 2.f) * 
-					Constants.SWITCHER_CAT_CIRCLE_SPACING * i
-				+
-				// center offset
-				(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
-				
-				mHeight*.85f, // cy 
-				(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 1.28f, 
-				mCategoryIndicatorPaint);
 	}
 }

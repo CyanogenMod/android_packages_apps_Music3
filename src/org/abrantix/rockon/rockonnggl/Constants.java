@@ -319,6 +319,10 @@ public class Constants{
     static final String CMDPAUSE = "pause";
     static final String CMDPREVIOUS = "previous";
     static final String CMDNEXT = "next";
+    
+    static final String CMDSAVE = "save";
+    static final String CMDRESTART = "restart";
+    
 
     static final String TOGGLEPAUSE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.togglepause";
     static final String PAUSE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.pause";

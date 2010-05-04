@@ -17,6 +17,7 @@ import javax.microedition.khronos.opengles.GL11;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.StaleDataException;
@@ -162,10 +163,24 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //        /**
 //         * debug
 //         */
-//        for(int i = 0; i < 50; i++)
+//        try
 //        {
-//        	Log.i(TAG, "b: "+i);
-//        	b[i] = Bitmap.createBitmap(256, 256, Bitmap.Config.RGB_565);
+//	        for(int i = 0; i < 50; i++)
+//	        {
+//	        	Log.i(TAG, "b: "+i);
+//	        	b[i] = Bitmap.createBitmap(256, 256, Bitmap.Config.RGB_565);
+//	        }
+//        }
+//        catch(OutOfMemoryError err)
+//        {
+//        	err.printStackTrace();
+//			
+//        	Intent i = new Intent(context, RockOnNextGenService.class);
+//			i.setAction(Constants.SERVICECMD);
+//            i.putExtra(Constants.CMDNAME, Constants.CMDSAVE);
+//            context.startService(i);
+//            
+////        	android.os.Process.killProcess(android.os.Process.myPid());
 //        }
     }
 

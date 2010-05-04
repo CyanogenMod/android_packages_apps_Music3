@@ -43,6 +43,11 @@ public class SwitcherViewTouchListener implements OnTouchListener{
 				 */
 				if(event.getY() < v.getHeight()/1.66f)
 					return false;
+				/**
+				 * and only on the sides
+				 */
+				if(event.getX() > v.getWidth() * .2f && event.getX() < v.getWidth() * .8f)
+					return false;
 				
 				mDownX = event.getX();
 				mDownY = event.getY();
