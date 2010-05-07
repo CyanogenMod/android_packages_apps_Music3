@@ -8,7 +8,6 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import org.abrantix.rockon.rockonnggl.IRockOnNextGenService;
 import org.abrantix.rockon.rockonnggl.R;
 
 import android.app.Activity;
@@ -120,8 +119,11 @@ public class RockOnNextGenGL extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+                        
         /* set up our default exception handler */
-        mDefaultExceptionHandler = new RockOnNextGenDefaultExceptionHandler(RockOnNextGenGL.this);
+        mDefaultExceptionHandler = 
+        	new RockOnNextGenDefaultExceptionHandler(
+        			RockOnNextGenGL.this);
         
         setupWindow();
         
@@ -1056,6 +1058,42 @@ public class RockOnNextGenGL extends Activity {
     		/* in case the user changed to full screen */
     		// TODO: reload app -- creaty dummy act that starts the main activity and finish this one
     		mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
+    		
+    		/**
+    		 * Verify if we need to (un)register the Lock Screen
+    		 */
+    		if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+    				getBoolean(getString(R.string.preference_key_lock_screen), false))
+    		{
+    			try
+    			{
+    				mService.registerScreenOnReceiver();
+    			}
+    			catch(RemoteException e)
+    			{
+    				e.printStackTrace();
+    			}
+    			catch(NullPointerException e)
+    			{
+    				e.printStackTrace();
+    			}
+    		}
+    		else
+    		{
+    			try
+    			{
+    				mService.unregisterScreenOnReceiver();
+    			}
+    			catch(RemoteException e)
+    			{
+    				e.printStackTrace();
+    			}
+    			catch(NullPointerException e)
+    			{
+    				e.printStackTrace();
+    			}
+    		}
+    		
     		break;
     	case Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE:
     		try
@@ -2686,7 +2724,8 @@ public class RockOnNextGenGL extends Activity {
 			String	songName,
 			String	artistName,
 			long	songDuration,
-			long	trackProgress){
+			long	trackProgress)
+	{
 		mTrackName = songName;
 		mArtistName = artistName;
 		mTrackDuration = songDuration;

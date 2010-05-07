@@ -23,13 +23,14 @@ import android.util.Log;
 		private final String TAG = "RockOnNextGenDefaultExceptionHandler";
 		private Context context;
 	
-		RockOnNextGenDefaultExceptionHandler(Context context) {
+		RockOnNextGenDefaultExceptionHandler(Context context) 
+		{
 //			Log.d(TAG, "Default Exception Handler=" + Thread.getDefaultUncaughtExceptionHandler());
 			oldDefaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 			
 			Thread.setDefaultUncaughtExceptionHandler(this);
 			
-			this.context = context; 
+			this.context = context;
 		}
 
 		public void destroy(){
@@ -38,32 +39,12 @@ import android.util.Log;
 		}
 		
 		public void uncaughtException(Thread t, Throwable e) {
-//			Log.e("RockOn", "Caught the following exception: ", e);
-
-//			if(e.getClass().equals(OutOfMemoryError.class))
-//			{
-//				e.printStackTrace();
-//				
-//				new Thread(){
-//					public void run()
-//					{
-//						Intent i = new Intent(context, RockOnNextGenService.class);
-//						i.setAction(Constants.SERVICECMD);
-//			            i.putExtra(Constants.CMDNAME, Constants.CMDSAVE);
-//			            context.startService(i);
-//					}
-//				}.start();
-//				
-////	            try {
-////					Thread.sleep(30000);
-////				} catch (InterruptedException e1) {
-////					e1.printStackTrace();
-////				}
-//	            
-////				Log.i(TAG, "ahahah killing the stuff");
-////	            android.os.Process.killProcess(android.os.Process.myPid());
-//	            return;
-//			}
+			if(e.getClass().equals(OutOfMemoryError.class))
+			{
+				android.os.Process.killProcess(android.os.Process.myPid());						
+				
+				return;
+			}
 			
             PackageManager manager = context.getPackageManager();
             PackageInfo info;

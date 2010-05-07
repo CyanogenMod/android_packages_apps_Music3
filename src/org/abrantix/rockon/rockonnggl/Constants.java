@@ -384,7 +384,7 @@ public class Constants{
 	
 	/** Donation Parameters */
 	static final int	DONATION_INITIAL_INTERVAL = 12;
-	static final int	DONATION_STANDARD_INTERVAL = 60;
+	static final int	DONATION_STANDARD_INTERVAL = 30;
 	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 1000;
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml

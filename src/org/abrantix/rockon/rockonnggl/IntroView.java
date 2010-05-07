@@ -109,9 +109,9 @@ public class IntroView extends View{
 		
 		Paint 	mFaderPaint = new Paint();
 		int		mAlpha = 0;
-		final	int FADE_IN_DURATION = 750; // ms
-		final	int FADE_OUT_DURATION = 750; // ms
-		final	int SHOW_DURATION = 2400; // ms
+		final	int FADE_IN_DURATION = 500; // ms
+		final	int FADE_OUT_DURATION = 500; // ms
+		final	int SHOW_DURATION = 1500; // ms
 		
 		double	mLastStepTime = 0;
 		double	mShowStartTime = 0;

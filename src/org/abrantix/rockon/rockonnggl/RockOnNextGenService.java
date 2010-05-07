@@ -116,6 +116,8 @@ public class RockOnNextGenService extends Service {
     private RockOnNextGenAppWidgetProvider4x1 mAppWidgetProvider4x1 = 
     	RockOnNextGenAppWidgetProvider4x1.getInstance();
     
+    private ScreenOnIntentReceiver mScreenOnReceiver;
+    
     // interval after which we stop the service when idle
     private static final int IDLE_DELAY = 60000; 
 
@@ -254,6 +256,7 @@ public class RockOnNextGenService extends Service {
 //        mCardId = FileUtils.getFatVolumeId(Environment.getExternalStorageDirectory().getPath());
         
         registerExternalStorageListener();
+        registerScreenOnReceiver();
 
         // Needs to be done in this thread, since otherwise ApplicationContext.getPowerManager() crashes.
         mPlayer = new MultiPlayer();
@@ -313,6 +316,9 @@ public class RockOnNextGenService extends Service {
             unregisterReceiver(mUnmountReceiver);
             mUnmountReceiver = null;
         }
+        
+        unregisterScreenOnReceiver();
+       
         mWakeLock.release();
         super.onDestroy();
     }
@@ -2234,6 +2240,56 @@ public class RockOnNextGenService extends Service {
     }
 
     /**
+     * 
+     */
+    public void registerScreenOnReceiver()
+    {
+    	/**
+    	 *  are we using the lockscreen? 
+    	 */
+    	if(!PreferenceManager.getDefaultSharedPreferences(this).
+    			getBoolean(
+    					getString(
+    							R.string.preference_key_lock_screen), 
+    					true))
+    	{
+    		return;
+    	}
+    	
+    	/**
+    	 * We are, register the receiver
+    	 */
+    	if(mScreenOnReceiver == null)
+    		mScreenOnReceiver = new ScreenOnIntentReceiver();
+    	
+    	registerReceiver(
+    			mScreenOnReceiver,
+    			new IntentFilter("android.intent.action.SCREEN_ON"));
+    }
+    
+    public void unregisterScreenOnReceiver()
+    {
+        try
+        {
+	        if(mScreenOnReceiver != null)
+	        	unregisterReceiver(mScreenOnReceiver);
+        }
+        catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Save state before the app crashes
+     * 	so we can restart gracefully upon restart
+     */
+    public void prepareForCrash()
+    {
+    	Log.i(TAG, "Yep, service too...");
+    }
+    
+    /**
      * Provides a unified interface for dealing with midi files and
      * other media files.
      */
@@ -2525,6 +2581,20 @@ public class RockOnNextGenService extends Service {
 
 		public void setPlaylistId(int playlistId) throws RemoteException {
 			mService.get().setPlaylistId(playlistId);
+		}
+		
+		public void prepareForCrash() throws RemoteException {
+			mService.get().prepareForCrash();
+		}
+
+		@Override
+		public void registerScreenOnReceiver() throws RemoteException {
+			mService.get().registerScreenOnReceiver();
+		}
+		
+		@Override
+		public void unregisterScreenOnReceiver() throws RemoteException {
+			mService.get().unregisterScreenOnReceiver();
 		}
 
     }

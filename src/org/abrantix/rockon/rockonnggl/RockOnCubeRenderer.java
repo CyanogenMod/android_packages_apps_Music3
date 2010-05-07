@@ -1309,7 +1309,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				Math.round(
     						mPositionY
     						+
-    						0.5f * Math.signum(scrollSpeed/(mHeight*.75f)) // needs to be .5f because of the rounding...
+    						0.5f * Math.signum(scrollSpeed/(mHeight*.5f)) // needs to be .5f because of the rounding...
     				);
     		} 
     		/* full speed ahead */
@@ -1321,7 +1321,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     						+
     						Constants.SCROLL_SPEED_BOOST
     						*
-    						scrollSpeed/(mHeight*.75f)
+    						scrollSpeed/(mHeight*.5f)
     				);
     		}
     		

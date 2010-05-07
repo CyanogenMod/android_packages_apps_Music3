@@ -40,7 +40,7 @@
 	<string name="preference_clear_album_art_title">Album-Cover löschen</string>
 	<string name="preference_clear_album_art_summary">Löscht alle Album-Cover, z.B. wenn bei Alben/Künster falsche Album-Cover geladen wurden.</string>
 	<string name="preference_clear_album_art_dialog_title">Album-Cover löschen</string>
-	<string name="preference_clear_album_art_dialog_message">Löscht alle Album-Cover, z.B. wenn bei Alben/Künster falsche Album-Cover geladen wurden. Dies löscht den Inhalt des Verzeichnisses /sdcard/albumthumbs/RockOnNg. Danach bitte die Menüfunktion 'Cover abrufen' ausführen.</string>
+	<string name="preference_clear_album_art_dialog_message">Löscht alle Album-Cover, z.B. wenn bei Alben/Künster falsche Album-Cover geladen wurden. Dies löscht den Inhalt des Verzeichnisses /sdcard/albumthumbs/RockOnNg. Danach bitte die Menüfunktion \'Cover abrufen\' ausführen.</string>
 	<string name="preference_clear_album_art_dialog_positive_text">Mach es!</string>
 	<string name="preference_clear_album_art_dialog_negative_text">Nein... die Album-Cover sind in Ordnung.</string>
 

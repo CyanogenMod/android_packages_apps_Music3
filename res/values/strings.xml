@@ -119,7 +119,7 @@
 	<!--    EARTHQUAKE DIALOG -->
 	<string name="earthquake_dialog_title">Earthquake Theme</string>
 	<string name="earthquake_dialog_message">
-		Earthquake requires some processing of your current album art. But this one is fast don't worry (10 secs for 100 albums).
+		Earthquake requires some processing of your current album art. But this one is fast don\'t worry (10 secs for 100 albums).
 	</string>
 	<string name="earthquake_dialog_yes">Do it!</string>
 	<string name="earthquake_dialog_no">It seems like trouble. Out!</string>

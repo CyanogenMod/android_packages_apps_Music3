@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.abrantix.rockon.rockonnggl"
-      android:versionName="1.0.49" android:versionCode="50">
+      android:versionName="1.0.51" android:versionCode="52">
     <application 
     		android:icon="@drawable/icon_dice" 
     		android:label="@string/app_name">
@@ -16,7 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-<!--				<action android:name="@string/main_activity_intent"/>-->
 				<action android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenGL"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
@@ -39,10 +38,26 @@
 			android:label="@string/app_name"	
             android:launchMode="singleTask"/>
         
+        <!--	LOCK SCREEN ACTIVITY	-->
+		<activity
+			android:theme="@android:style/Theme.Wallpaper"
+			android:windowNoTitle="true"
+			android:screenOrientation="portrait"
+			android:name="LockScreen"
+			android:label="@string/app_name"	
+            android:launchMode="singleTop"
+            android:taskAffinity="org.abrantix.rockon.none"
+            android:excludeFromRecents="true">
+       		android:process="org.abrantix.rockon.rockonnggl.lockscreenprocess">
+		</activity>
+            
+<!--        android:theme="@android:style/Theme.Translucent"-->
+			
 		<!--	SERVICE	-->
         <service 
         		android:name="RockOnNextGenService" 
-        		android:exported="true"/>
+        		android:exported="true"
+        		android:process="org.abrantix.rockon.rockonnggl.serviceprocess"/>
         
 		<!-- 	MEDIA BUTTON RECEIVER	-->
     	<receiver android:name="MediaButtonIntentReceiver">
@@ -52,6 +67,14 @@
 				<action	android:name="android.media.AUDIO_BECOMING_NOISY"/>
 			</intent-filter>
 		</receiver>
+		
+		<!--	DOES NOT WORK, NEEDS TO BE A REGISTERED RECEIVER	-->
+		<!--	SCREEN ON RECEIVER		-->
+<!--		<receiver android:name=".ScreenOnIntentReceiver">-->
+<!--			<intent-filter>-->
+<!--				<action android:name="android.intent.action.SCREEN_ON"/>-->
+<!--			</intent-filter>-->
+<!--		</receiver>-->
 		
 		<!--	WIDGET	-->
 		<receiver 
@@ -112,5 +135,9 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
 
 	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+	<uses-permission android:name="android.permission.DISABLE_KEYGUARD"></uses-permission>
+	
 	<!--<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>-->
+
+
 </manifest> 

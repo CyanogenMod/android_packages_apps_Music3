@@ -42,5 +42,10 @@ interface IRockOnNextGenService
     void setRockOnRepeatMode(int repeatmode);
     int getRockOnRepeatMode();
     int getMediaMountedCount();
+    
+    void registerScreenOnReceiver();
+    void unregisterScreenOnReceiver();
+    void prepareForCrash();
+    
 }
 

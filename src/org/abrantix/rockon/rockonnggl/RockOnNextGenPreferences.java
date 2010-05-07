@@ -53,6 +53,14 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_use_headset_buttons))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
 		
+		/* Lock Screen */
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
+			setChecked(
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+					getBoolean(getString(R.string.preference_key_lock_screen), false));
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
+			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+		
 		/* Full screen */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_full_screen))).
 			setChecked(

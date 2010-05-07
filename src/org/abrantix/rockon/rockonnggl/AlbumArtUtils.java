@@ -161,18 +161,18 @@ public class AlbumArtUtils{
 			        
 			        /* correct aspect ratio */
 			        if((float)(netBitmap.getWidth())/(float)(netBitmap.getHeight()) > 1.1f){
-			        	try
-			        	{
+//			        	try
+//			        	{
 			        		return Bitmap.createBitmap(
 			        				netBitmap, 
 				        			netBitmap.getWidth() - netBitmap.getHeight(), 
 				        			0, 
 				        			netBitmap.getHeight(), 
 				        			netBitmap.getHeight());
-			        	} catch(OutOfMemoryError err) {
-			        		err.printStackTrace();
-			        		return null;
-			        	}
+//			        	} catch(OutOfMemoryError err) {
+//			        		err.printStackTrace();
+//			        		return null;
+//			        	}
 			        		
 			        } else {
 			        	return netBitmap;
@@ -224,7 +224,7 @@ public class AlbumArtUtils{
 					file.createNewFile();
 				FileOutputStream fileOutStream = new FileOutputStream(file);
 				// TODO: decimation algorithm
-				try{
+//				try{
 					Bitmap	smallBitmap = Bitmap.createScaledBitmap(
 							bitmap, 
 							Constants.ALBUM_ART_TEXTURE_SIZE, 
@@ -236,10 +236,10 @@ public class AlbumArtUtils{
 				    smallBitmapPostProc.copyPixelsToBuffer(bitmapBuffer);
 				    fileOutStream.write(bitmapBuffer.array());
 				    return true;
-				}catch(OutOfMemoryError err){
-					err.printStackTrace();
-					return false;
-				}
+//				}catch(OutOfMemoryError err){
+//					err.printStackTrace();
+//					return false;
+//				}
 			} else {
 				return false;
 			}
@@ -373,11 +373,11 @@ public class AlbumArtUtils{
 				return outputBitmap;
 			}
 		} 
-		catch(OutOfMemoryError err) 
-		{
-			err.printStackTrace();
-			return outputBitmap;
-		} 
+//		catch(OutOfMemoryError err) 
+//		{
+//			err.printStackTrace();
+//			return outputBitmap;
+//		} 
 		catch (IOException e) 
 		{
 			e.printStackTrace();
