@@ -42,7 +42,11 @@ import android.util.Log;
 			if(e.getClass().equals(OutOfMemoryError.class))
 			{
 				android.os.Process.killProcess(android.os.Process.myPid());						
-				
+				return;
+			}
+			if(e.getMessage().contains("eglMakeCurrent failed"))
+			{
+				android.os.Process.killProcess(android.os.Process.myPid());						
 				return;
 			}
 			

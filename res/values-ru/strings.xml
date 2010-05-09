@@ -44,10 +44,10 @@
 
 <!-- DOWNLOAD CONCERTS APP MESSAGES-->
 <string name="concert_app_install_dialog_title">Установка Concerts³</string>
-<string name="concert_app_install_dialog_message">Для отслеживания концертов требуется установить приложение Concerts³. Установить сейчас?</string>
+<string name="concert_app_install_dialog_message">Для поиска расписания концертов требуется установить приложение Concerts³. Установить сейчас?</string>
 <string name="concert_app_install_dialog_ok">Да</string>
 <string name="concert_app_install_dialog_cancel">Нет</string>
-<string name="concert_app_install_no_market_app_msg">Ой! Не найдено приложение, установленное из Маркета.</string>
+<string name="concert_app_install_no_market_app_msg">Ой! Приложение Маркет не найдено.</string>
 
 
 <!-- TOASTER MESSAGES -->
@@ -77,6 +77,13 @@
 <string name="create_playlist_dialog_save_option">Сохранить</string>
 <string name="create_playlist_dialog_text_hint">Введите название</string>
 
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	DELETE PLAYLIST DIALOG	-->
+	<string name="playlist_delete_confirm_title">Delete playlist</string>
+	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
+	<string name="playlist_delete_positive_button">Yes!</string>
+	<string name="playlist_delete_negative_button">No.</string>
+
 <!-- CREATE PLAYLIST TOASTER -->
 <string name="create_playlist_toaster_added_part_1">песни добавлены в плейлист</string>
 <string name="create_playlist_toaster_failed">Невозможно создать плейлист!</string>
@@ -86,6 +93,11 @@
 <string name="album_song_list_play_all">Воспроизвести всё</string>
 <string name="album_song_list_queue_all">Добавить всё</string>
 
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_add_to_queue">Add to queue</string>
+	<string name="playlist_option_delete">Delete</string>
+	
 <!-- PLAYLIST DIALOG -->
 <string name="playlist_dialog_title">Выберите плейлист</string>
 <string name="playlist_dialog_cancel">Отмена</string>
@@ -107,7 +119,7 @@
 <!-- THEME PROCESSING MESSAGES -->
 <string name="art_processing_progress_title">Обработка обложек</string>
 <string name="art_processing_cancel">Отмена</string>
-<string name="art_processing_go_background">Фоновый режиме</string>
+<string name="art_processing_go_background">Фоновый режим</string>
 <string name="art_processing_progress_initial_message">Поиск обложек...</string>
 
 <!--    HALF TONE DIALOG -->
@@ -143,6 +155,16 @@
 <string name="manual_albumart_resolution_loading">загрузка...</string>
 <string name="manual_albumart_resolution_unavailable">недоступно</string>
 
+<!--	DONATE MSG	-->
+	<string name="donate_title">Помочь разработчику</string>
+	<string name="donate_msg">Â³ Плеер - это бесплатный (с открытым кодом) аудиоплеер, разрабатываемый только в свободное время. Если Вы хотите поддержать его дальнейшее развитие, пожалуйста помогите разработчику.</string>
+	<string name="donate_using">Оплатить через</string>
+	<string name="donate_back_to_app">Вернуться</string>
+	
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	UNLOCK SCREEN	-->
+	<string name="unlock_screen">Unlock</string>
+	
 <!--	WIDGET STRINGS	-->
 <string name="widget_app_start">Начало ³</string>
 	

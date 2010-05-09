@@ -44,4 +44,11 @@
         <item>@string/preference_scrobble_value_sls</item>
         <item>@string/preference_scrobble_value_sd</item>
     </string-array>
+    
+	<!--	PLAYLIST OPTIONS    -->
+    <string-array name="playlist_options">
+        <item>@string/playlist_option_add_to_queue</item>
+        <item>@string/playlist_option_delete</item>
+    </string-array>
+    
 </resources>

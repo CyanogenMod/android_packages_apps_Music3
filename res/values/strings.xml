@@ -58,6 +58,7 @@
 	<string name="not_an_album_toast">Sorry, this is an artist not an album!</string>
 	<string name="playlist_queued_toast">Playlist queued</string>
 	<string name="generic_error_toast">Error!</string>
+	<string name="playlist_deleted_toast">Playlist deleted!</string>
 	
 	<!-- 	SEARCH -->
 	<string name="search_hint">Song Title or Artist Name</string>
@@ -75,14 +76,26 @@
 	<string name="create_playlist_dialog_save_option">Save</string>
 	<string name="create_playlist_dialog_text_hint">Type playlist name...</string>
 	
+	<!--	DELETE PLAYLIST DIALOG	-->
+	<string name="playlist_delete_confirm_title">Delete playlist</string>
+	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
+	<string name="playlist_delete_positive_button">Yes!</string>
+	<string name="playlist_delete_negative_button">No.</string>
+	
 	<!--	CREATE PLAYLIST TOASTER	-->
-	<string name="create_playlist_toaster_added_part_1">songs added to playlist</string>
+	<string name="create_playlist_toaster_added_part_1">Songs added to playlist</string>
 	<string name="create_playlist_toaster_failed">Failed to create playlist!</string>
 	<string name="create_playlist_toaster_name_required">Playlist name is required...</string>
+	
+	<!--	-->
 	
 	<!--	ALBUM SONG LIST DIALOG -->
 	<string name="album_song_list_play_all">Play all</string>
 	<string name="album_song_list_queue_all">Queue all</string>
+	
+	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_add_to_queue">Add to queue</string>
+	<string name="playlist_option_delete">Delete</string>
 	
 	<!--	PLAYLIST DIALOG		-->
 	<string name="playlist_dialog_title">Choose playlist</string>
@@ -146,6 +159,9 @@
 	<string name="donate_msg">³ is a free, open source music player written entirely on my spare time. If you do like it, please consider donating to support further development of ³. You can do so using one of the following options:</string>
 	<string name="donate_using">Donate through</string>
 	<string name="donate_back_to_app">Go back to</string>
+	
+	<!--	UNLOCK SCREEN	-->
+	<string name="unlock_screen">Unlock</string>
 	
 	<!--	WIDGET STRINGS	-->
 	<string name="widget_app_start">Start ³</string>

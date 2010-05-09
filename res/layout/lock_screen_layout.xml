@@ -114,6 +114,19 @@
 		</LinearLayout>
 			
 	</LinearLayout>
+	
+	<TextView
+		android:id="@+id/lock_screen_unlock_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:textSize="64dp"
+		android:textColor="#fff"
+		android:layout_marginRight="-4dp"
+		android:layout_marginBottom="-16dp"
+		android:text="@string/unlock_screen"
+		/>
 <!--				UNLOCK BUTTON		-->
 <!--		<Button-->
 <!--			android:id="@+id/unlock_in_lock_screen"-->

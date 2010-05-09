@@ -3,6 +3,7 @@ package org.abrantix.rockon.rockonnggl;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
+import android.app.KeyguardManager.OnKeyguardExitResult;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,9 @@ import android.content.ServiceConnection;
 import android.inputmethodservice.Keyboard.Key;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,16 +33,15 @@ public class LockScreen extends Activity{
 
 	KeyguardLock 	keyGuardLock;
 	boolean			mUnlocked = false;
+	boolean			mExplicitUnlock = false;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//		Log.i(TAG, "CREATE");
+		Log.i(TAG, "CREATE");
 		
-        keyGuardLock = 
-    		((KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE)).
-    			newKeyguardLock(TAG);
-        
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setupWindow();
 	}
 	
@@ -47,19 +49,30 @@ public class LockScreen extends Activity{
 	public void onStart()
 	{
 		super.onStart();
-//		Log.i(TAG, "START");
+		Log.i(TAG, "START");
+	}
+	
+	@Override
+	public void onRestart()
+	{
+		super.onStart();
+		Log.i(TAG, "RESTART");
 	}
 	
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-//		Log.i(TAG, "RESUME");
+		Log.i(TAG, "RESUME");
         
-		if(mService != null)
-			unlockPhone();
-		else
-			lockPhone();
+        keyGuardLock = 
+    		((KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE)).
+    			newKeyguardLock(TAG);
+		
+//		if(mService != null)
+//			unlockPhone();
+//		else
+//			lockPhone();
 
         if(mService == null)
         	connectToService();
@@ -67,11 +80,15 @@ public class LockScreen extends Activity{
         try
         {
 	        if(mService != null && mService.isPlaying())
-	        	showLockScreen();
+	        {
+	    		setupWindow();
+	    		unlockPhone();	    			
+	    		showLockScreen();
+	        }
 	        else if(mService != null && !mService.isPlaying())
 	        {
-	        	lockPhone();
-	        	finish();
+	    		lockPhone();
+	    		finish();
 	        }
         }
         catch(RemoteException e)
@@ -85,24 +102,29 @@ public class LockScreen extends Activity{
 	public void onPause()
 	{
 		super.onPause();
-//		Log.i(TAG, "PAUSE");
+		Log.i(TAG, "PAUSE");
 
-//		lockPhone();
+//		else
+			lockPhone();
+		
 //		finish();
+			
+		if(mExplicitUnlock)
+			mExplicitUnlock = false;
 	}
 	
 	@Override
 	public void onStop()
 	{
 		super.onStop();
-//		Log.i(TAG, "STOP");
+		Log.i(TAG, "STOP");
 	}
 	
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-//		Log.i(TAG, "DESTROY");
+		Log.i(TAG, "DESTROY");
 			
 		try
 		{
@@ -118,8 +140,8 @@ public class LockScreen extends Activity{
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:
-			lockPhone();
-			break;
+//			lockPhone();
+			return true;
 //		case KeyEvent.KEYCODE_HOME:
 //			lockPhone();
 //			finish();
@@ -150,9 +172,25 @@ public class LockScreen extends Activity{
 	}
 	
 	public void setupWindow()
-	{
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	{		
+		/**
+		 * 2.0 only
+		 */
+		if(Integer.parseInt(Build.VERSION.SDK) >= 5) // 5
+		{
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+//                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON); 
+		}
 		
+		/**
+		 * 1.5+ 
+		 * http://www.anddev.org/viewtopic.php?p=32367
+		 * http://code.google.com/p/mylockforandroid/source/browse/trunk/myLockcupcake/src/i4nc4mp/myLock/cupcake/ManageKeyguard.java?spec=svn282&r=282
+		 */
+        
 //    	/**
 //    	 *  Blur&Dim the BG
 //    	 */
@@ -181,24 +219,76 @@ public class LockScreen extends Activity{
 	}
 	
 	public void lockPhone()
-	{
-//		Log.i(TAG, "Locking phone!");
-		if(Integer.valueOf(Build.VERSION.SDK) >= 7 || mUnlocked)
+	{   
+		Log.i(TAG, "Locking phone!");
+		Log.i(TAG, "Keyguard is: " + ((KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode());
+		if(Integer.valueOf(Build.VERSION.SDK) < 5)
 		{
-	    	keyGuardLock.reenableKeyguard();
-			mUnlocked = false;
+			Log.i(TAG, "mUnlocked: "+mUnlocked);
+			Log.i(TAG, "mExplicitUnlock: "+mExplicitUnlock);
+			if(!mExplicitUnlock && mUnlocked)
+			{
+//				if(!((KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode())
+					keyGuardLock.reenableKeyguard();
+			}
+
+			mUnlocked= false;
+			mLockHandler.sendEmptyMessageDelayed(0, 50);
 		}
 
 	}
+	
+	/**
+	 * 
+	 */
+	Handler mLockHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			  if (((KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE)).
+					  inKeyguardRestrictedInputMode())
+			  {
+				    Log.v(TAG,"--Trying to exit keyguard securely");
+				    ((KeyguardManager)getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE)).
+				    	exitKeyguardSecurely(
+				    			new OnKeyguardExitResult() 
+							    {
+							      public void onKeyguardExitResult(boolean success) 
+							      {
+							        keyGuardLock.reenableKeyguard();
+							        //this call ensures the keyguard comes back at screen off
+							        //without this call, all future disable calls will be blocked
+							        //for not following the lockscreen rules
+							        //in other words reenable immediately restores a paused lockscreen
+							        //but only queues restore for next screen off if a secure exit has been done already
+							        if (success) {
+							          Log.v(TAG,"--Keyguard exited securely");
+//							          callback.LaunchOnKeyguardExitSuccess();
+							        } else {
+							          Log.v(TAG,"--Keyguard exit failed");
+							        }
+							      }
+							    }
+				    		);
+			  } else {
+//				    callback.LaunchOnKeyguardExitSuccess();
+			  }
+		}
+	};
 	
 	public void unlockPhone()
 	{
     	/**
     	 * Unlock Phone
     	 */
-//		Log.i(TAG, "Unlocking phone");
-		keyGuardLock.disableKeyguard();
-		mUnlocked = true;
+		Log.i(TAG, "Unlocking phone");
+		Log.i(TAG, "Keyguard is: " + ((KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode());
+		if(Integer.valueOf(Build.VERSION.SDK) < 5)
+		{	
+			keyGuardLock.disableKeyguard();
+			mUnlocked = true;
+		}
 	}
 	
 	public void showLockScreen()
@@ -214,6 +304,7 @@ public class LockScreen extends Activity{
 		findViewById(R.id.control_play_lock).setOnClickListener(mLockClickListener);
 		findViewById(R.id.control_prev_lock).setOnClickListener(mLockClickListener);
 		findViewById(R.id.lock_screen_main).setOnClickListener(mLockClickListener);
+		findViewById(R.id.lock_screen_unlock_button).setOnClickListener(mLockClickListener);
 	}
 	
 	private void updateFields()
@@ -268,7 +359,13 @@ public class LockScreen extends Activity{
 			}
 			else if(v.getId() == R.id.lock_screen_main)
 			{
-				lockPhone();
+//				lockPhone();
+//				finish();
+			}
+			else if(v.getId() == R.id.lock_screen_unlock_button)
+			{
+//				unlockPhone();
+				mExplicitUnlock = true;
 				finish();
 			}
 		}

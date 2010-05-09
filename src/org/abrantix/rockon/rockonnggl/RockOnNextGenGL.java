@@ -3,6 +3,7 @@ package org.abrantix.rockon.rockonnggl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -517,26 +518,61 @@ public class RockOnNextGenGL extends Activity {
 	    		genreCursor.close();
     		}
 
-    		
+//    		SimpleAdapter playlistSimpleAdapter = new SimpleAdapter(
+//			getApplicationContext(), 
+//			playlistArray, 
+//			android.R.layout.select_dialog_item, 
+//			new String[]{
+//				Constants.PLAYLIST_NAME_KEY
+//				},
+//			new int[]{
+//				android.R.id.text1
+//				});	
     		// create adapter
-    		SimpleAdapter playlistSimpleAdapter = new SimpleAdapter(
+    		PlaylistArrayAdapter playlistAdapter = new PlaylistArrayAdapter(
     				getApplicationContext(), 
-    				playlistArray, 
     				android.R.layout.select_dialog_item, 
+    				playlistArray, 
     				new String[]{
     					Constants.PLAYLIST_NAME_KEY
     					},
     				new int[]{
     					android.R.id.text1
-    					});
+    					},
+    				10000,
+    				0,
+    				mPlaylistClickHandler);
     		mPlaylistDialog.setAdapter(
-    				playlistSimpleAdapter,
-    				new PlaylistSelectedClickListener(mPlaylistSelectedHandler, playlistArray));
-    		mPlaylistDialog.show();
+    				playlistAdapter,
+    				null);
+//    				new PlaylistSelectedClickListener(mPlaylistSelectedHandler, playlistArray));
+    		playlistAdapter.setDialogInterface(mPlaylistDialog.show());
     	}
     	/* other options... */
     	return true;
     }
+    
+    /**
+     * 
+     */
+    Handler mPlaylistClickHandler = new Handler()
+    {
+    	@Override
+    	public void handleMessage(Message msg)
+    	{
+    		switch(msg.what)
+    		{
+    		case Constants.SINGLE_CLICK:
+    			// show song list from playlist
+        		showSongPlaylistDialog(msg.arg1, (String)msg.obj);
+    			break;
+    		case Constants.LONG_CLICK:
+    			// show playlist options dialog
+    			showPlaylistOptionsDialog(msg.arg1, (String)msg.obj);
+    			break;
+    		}
+    	}
+    };
     
     private void showDonation()
     {
@@ -561,14 +597,20 @@ public class RockOnNextGenGL extends Activity {
     			appCreateCountForDonation += Constants.DONATION_AFTER_HAVING_DONATED_INTERVAL;
     		else
     			appCreateCountForDonation += Constants.DONATION_STANDARD_INTERVAL;
+
+        	editor.putInt(Constants.prefkey_mAppCreateCount, appCreateCount);
     		editor.putInt(Constants.prefkey_mAppCreateCountForDonation, appCreateCountForDonation);
     		
+        	editor.commit();
+        	
 	    	Intent i = new Intent(this, DonateActivity.class);
 	        startActivity(i);
     	}
-    	
-    	editor.putInt(Constants.prefkey_mAppCreateCount, appCreateCount);
-    	editor.commit();
+    	else
+    	{
+        	editor.putInt(Constants.prefkey_mAppCreateCount, appCreateCount);
+        	editor.commit();
+    	}
     }
     
     /**
@@ -809,65 +851,6 @@ public class RockOnNextGenGL extends Activity {
 			}
 		}
 	};
-	
-    private Handler mPlaylistSelectedHandler = new Handler(){
-    	public void handleMessage(Message msg){
-    		Log.i(TAG, "showingSongList");
-    		showSongPlaylistDialog(msg.what, (String)msg.obj);
-    		
-    	}
-//    		int playlistId = msg.what;
-////    		Log.i(TAG, "New Playlist Id: "+playlistId);
-//    		CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
-//    		// reget the album cursor
-//    		Cursor albumCursor = cursorUtils.getAlbumListFromPlaylist(playlistId);
-//    		if(albumCursor != null && albumCursor.getCount() > 0){
-    			// Debug
-//	    		for(int i=0; i<albumCursor.getCount(); i++){
-//	    			albumCursor.moveToPosition(i);
-//	    			Log.i(
-//	    					TAG, 
-//	    					albumCursor.getString(
-//	    							albumCursor.getColumnIndexOrThrow(
-//	    									MediaStore.Audio.Albums.ALBUM)));
-//	    		}
-//	    		try{
-//		    		// inform service of new playlist
-//	    			// 	usually also stops the playback
-//	    			mService.setPlaylistId(playlistId);
-//	    			// put the playlist in the sharedPrefs
-//		    		setAndSavePlaylist(playlistId);
-//		    		// wait until this becomes global
-//		    		Thread.sleep(300);
-//		    		// update the cube
-//		    		mRockOnRenderer.changePlaylist(playlistId);
-//		    		mRockOnCubeRenderer.changePlaylist(playlistId);
-	    			
-//	    			/** Show new playlist dialog */
-//	    			sdfsfsdf
-//	    			/** wait for interaction */
-	    			
-//		    		// update the playing state
-//		    		updateCurrentPlayerStateButtonsFromServiceHandler.sendEmptyMessage(0);
-//		    		// FIXEM: XXX _ KIND OF A HACK_ 
-//		    		setCurrentSongLabels("", "", -1, 0);
-//	    		} catch(Exception e){
-//	    			e.printStackTrace();
-//	    		}
-	    		// clean up play queue -- setPlaylistId already does this...
-	    		// refresh cube state
-	    		// TODO: stop playing if it is playing??
-//	    	} else {
-//        		// show Playlist Empty notification
-//        		Toast.
-//        			makeText(
-//        				getApplicationContext(), 
-//        				R.string.playlist_empty_toast, 
-//        				Toast.LENGTH_LONG).
-//        			show();
-//        	}
-//    	} 
-    };
     
     /**
      * 
@@ -928,10 +911,205 @@ public class RockOnNextGenGL extends Activity {
 					R.string.playlist_empty_toast, 
 					Toast.LENGTH_LONG).
 				show();
+			/**
+			 * it is an empty genre... delete it
+			 */
+			if(playlistIsGenre(playlistId))
+				deletePlaylistOrGenre(playlistId);
 		}
     }
     
+    /**
+     * 
+     * @param playlistId
+     * @param playlistName
+     */
+    public void showPlaylistOptionsDialog(int playlistId, String playlistName)
+    {
+    	// show a new dialog with Add to Queue, Delete
+    	AlertDialog.Builder playlistOptsDBuilder = new AlertDialog.Builder(RockOnNextGenGL.this);
+    	playlistOptsDBuilder.setTitle(playlistName);
+    	playlistOptsDBuilder.setAdapter(
+    			new ArrayAdapter<String>(
+    					getApplicationContext(), 
+    					android.R.layout.select_dialog_item, 
+    					android.R.id.text1, 
+    					getResources().getStringArray(R.array.playlist_options)), 
+    			new PlaylistOptionClickListener(
+    					playlistId, 
+    					mPlaylistOptionSelectedHandler));
+    	playlistOptsDBuilder.show();
+    }
+    
+    /**
+     * 
+     */
+    Handler mPlaylistOptionSelectedHandler = new Handler()
+    {
+    	@Override
+    	public void handleMessage(Message msg)
+    	{
+    		String playlistOption = getResources().getStringArray(R.array.playlist_options)[msg.what];
+    		if(playlistOption.equals(getString(R.string.playlist_option_add_to_queue)))
+    		{
+    			// add all playlist song to queue
+    			queueAllSongsFromPlaylist(msg.arg1);
+ 
+    		}
+    		else if(playlistOption.equals(getString(R.string.playlist_option_delete)))
+    		{
+    			// show confirmation dialog
+    			AlertDialog.Builder deletePlaylistConfirmationDialog = 
+    				new AlertDialog.Builder(RockOnNextGenGL.this);
+    			deletePlaylistConfirmationDialog.setTitle(
+    					R.string.playlist_delete_confirm_title);
+    			deletePlaylistConfirmationDialog.setMessage(
+    					R.string.playlist_delete_message);
+    			final int playlistId = msg.arg1;
+    			deletePlaylistConfirmationDialog.setPositiveButton(
+    					R.string.playlist_delete_positive_button, 
+    					new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+				    			deletePlaylistOrGenre(playlistId);								
+							}
+						});
+    			deletePlaylistConfirmationDialog.setNegativeButton(
+    					R.string.playlist_delete_negative_button, 
+    					null);
+    			deletePlaylistConfirmationDialog.show();
+    		}	
+    	}
+    };
+    
+    /**
+     * 
+     * @param playlistId
+     */
+    private void queueAllSongsFromPlaylist(int playlistId)
+    {
+			CursorUtils cUtils = new CursorUtils(getApplicationContext());
+			Cursor cursor = cUtils.getAllSongsFromPlaylist(playlistId);
+			if(cursor != null && cursor.getCount() > 0)
+			{
+				long[] songVector = new long[cursor.getCount()];
+				for(int i = 0; i<cursor.getCount(); i++){
+					cursor.moveToPosition(i);
+					// The _ID field has a different meaning in playlist content providers
+					//		-- if it is a playlist we need to fetch the AUDIO_ID field
+					songVector[i] = 
+						ContentProviderUnifier.
+							getAudioIdFromUnknownCursor(cursor);
+//					Log.i(TAG, "i: "+i+"id: "+songVector[i]);
+				}   
+				try{
+					if(mService != null)
+						{
+							mService.enqueue(songVector, Constants.LAST);
+						}
+				}catch(Exception e){
+					e.printStackTrace();
+					Toast.makeText(
+							getApplicationContext(), 
+							R.string.generic_error_toast, 
+							Toast.LENGTH_SHORT)
+						.show();
+				}
+			}
+			else
+			{
+				Toast.makeText(
+					getApplicationContext(), 
+					R.string.playlist_empty_toast, 
+					Toast.LENGTH_SHORT)
+				.show();
+				/**
+				 * it is an empty genre... delete it
+				 */
+				if(playlistIsGenre(playlistId))
+					deletePlaylistOrGenre(playlistId);
+			}
+			System.gc();
+    }
+    
+    /**
+     * 
+     * @param playlistId
+     * @return
+     */
+    private boolean playlistIsGenre(int playlistId)
+    {
+    	if(playlistId < Constants.PLAYLIST_GENRE_OFFSET &&
+    			playlistId > Constants.PLAYLIST_GENRE_OFFSET - Constants.PLAYLIST_GENRE_RANGE)
+    	{
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    }
+    
+    /**
+     * 
+     * @param playlistId
+     * @return
+     */
+    private int playlistIdToGenreId(int playlistId)
+    {
+    	return -(playlistId - Constants.PLAYLIST_GENRE_OFFSET);
+    }
+    
+    /**
+     * 
+     * @param playlistId
+     */
+    private void deletePlaylistOrGenre(int playlistId)
+    {
+    	CursorUtils cUtils = new CursorUtils(getApplicationContext());
+    	boolean success = false;
+    	/**
+    	 * GENRE playlists
+    	 */
+    	if(playlistIsGenre(playlistId))
+    	{
+    		if(cUtils.deleteGenre(playlistIdToGenreId(playlistId)))
+        		success = true;
+    	}
+    	/**
+    	 * 'standard' playlists
+    	 */
+    	else
+    	{
+        	if(cUtils.deletePlaylist(playlistId))
+        		success = true;
+    	}
     	
+    	/**
+    	 * UI feedback
+    	 */
+    	if(success)
+		{
+			Toast.makeText(
+					getApplicationContext(), 
+					R.string.playlist_deleted_toast, 
+					Toast.LENGTH_SHORT)
+				.show();
+		}
+    	else
+    	{
+			Toast.makeText(
+					getApplicationContext(), 
+					R.string.generic_error_toast, 
+					Toast.LENGTH_SHORT)
+				.show();
+    	}
+    }
+    
+    /**
+     * 	
+     */
 	Handler mPlayListItemSelectedHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
@@ -955,7 +1133,9 @@ public class RockOnNextGenGL extends Activity {
 		}
     };
     	
-    
+    /**
+     * 
+     */
 	DialogInterface.OnClickListener mDialogPlayListClickListener = new DialogInterface.OnClickListener() {
 		
 		@Override
@@ -975,7 +1155,7 @@ public class RockOnNextGenGL extends Activity {
 					songVector[i] = 
 						ContentProviderUnifier.
 							getAudioIdFromUnknownCursor(cursor);
-					Log.i(TAG, "i: "+i+"id: "+songVector[i]);
+//					Log.i(TAG, "i: "+i+"id: "+songVector[i]);
 				}
 				/** Replace entire queue or add to the tail depending on user input */
 				switch(which)
@@ -1129,7 +1309,7 @@ public class RockOnNextGenGL extends Activity {
     	mSongListDialogOverallOptionsHandler.removeCallbacksAndMessages(null);
     	mRequestRenderHandler.removeCallbacksAndMessages(null);
     	updateCurrentPlayerStateButtonsFromServiceHandler.removeCallbacksAndMessages(null);
-    	mPlaylistSelectedHandler.removeCallbacksAndMessages(null);
+    	mPlaylistClickHandler.removeCallbacksAndMessages(null);
     	mUpdateSongProgressHandler.removeCallbacksAndMessages(null);
     	if(mAlbumArtDownloadOkClickListener != null)
     		mAlbumArtDownloadOkClickListener
@@ -1313,15 +1493,15 @@ public class RockOnNextGenGL extends Activity {
      * showIntro
      */
     private void showIntro(){
-    	setContentView(R.layout.intro);
-    	((IntroView)findViewById(R.id.intro_view)).
-    		setIntroBitmap(
-    				BitmapFactory.decodeResource(
-    						getResources(), 
-    						R.drawable.logo_intro));
-    	((IntroView)findViewById(R.id.intro_view)).
-    		setDoneHandler(mPassIntroHandler);
-//    	mPassIntroHandler.sendEmptyMessageDelayed(0, 2000);
+//    	setContentView(R.layout.intro);
+//    	((IntroView)findViewById(R.id.intro_view)).
+//    		setIntroBitmap(
+//    				BitmapFactory.decodeResource(
+//    						getResources(), 
+//    						R.drawable.logo_intro));
+//    	((IntroView)findViewById(R.id.intro_view)).
+//    		setDoneHandler(mPassIntroHandler);
+    	mPassIntroHandler.sendEmptyMessage(0);
     }
     
     /**

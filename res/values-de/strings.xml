@@ -73,6 +73,13 @@
 	<string name="create_playlist_dialog_title">Name der Wiedergabeliste</string>
 	<string name="create_playlist_dialog_save_option">Speichern</string>
 	<string name="create_playlist_dialog_text_hint">Name eingeben...</string>
+
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	DELETE PLAYLIST DIALOG	-->
+	<string name="playlist_delete_confirm_title">Delete playlist</string>
+	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
+	<string name="playlist_delete_positive_button">Yes!</string>
+	<string name="playlist_delete_negative_button">No.</string>
 	
 	<!--	CREATE PLAYLIST TOASTER	-->
 	<string name="create_playlist_toaster_added_part_1">Titel zur Wiedergabeliste hinzugefügt</string>
@@ -82,6 +89,11 @@
 	<!--	ALBUM SONG LIST DIALOG -->
 	<string name="album_song_list_play_all">Alle abspielen</string>
 	<string name="album_song_list_queue_all">Alle der Liste hinzufügen</string>
+	
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_add_to_queue">Add to queue</string>
+	<string name="playlist_option_delete">Delete</string>
 	
 	<!--	PLAYLIST DIALOG		-->
 	<string name="playlist_dialog_title">Wiedergabeliste auswählen</string>
@@ -145,6 +157,10 @@
 	<string name="donate_msg">³ ist ein freier, Open-Source Musicplayer, der komplett in meiner Freizeit geschrieben wurde. Wenn es Dir gefällt, und Du die weitere Entwicklung von ³ unterstützen möchtest, denke über eine Spende nach.</string>
 	<string name="donate_using">Spenden mit</string>
 	<string name="donate_back_to_app">Zurück zu</string>
+
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	UNLOCK SCREEN	-->
+	<string name="unlock_screen">Unlock</string>
 
 	<!--	WIDGET STRINGS	-->
 	<string name="widget_app_start">³ öffnen</string>

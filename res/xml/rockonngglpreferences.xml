@@ -21,14 +21,12 @@
                 android:key="@string/preference_key_controls_on_bottom"
                 android:title="@string/preference_title_controls_on_bottom"
                 android:summary="@string/preference_summary_controls_on_bottom"
-                android:persistent="true" />        
-       <CheckBoxPreference
+                android:persistent="true" />
+        <CheckBoxPreference
                 android:key="@string/preference_key_lock_screen"
                 android:title="@string/preference_title_lock_screen"
                 android:summary="@string/preference_summary_lock_screen"
-                android:persistent="true" />
-		
-
+                android:persistent="true" />    
     </PreferenceCategory>
     
     <PreferenceCategory

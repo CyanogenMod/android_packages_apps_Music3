@@ -617,6 +617,96 @@ public class CursorUtils{
 	}
 	
 	/**
+	 * 
+	 * @param playlistId
+	 * @return
+	 */
+	public boolean deletePlaylist(int playlistId)
+	{
+		if(clearPlaylist(playlistId))
+		{
+			try{
+				ctx.getContentResolver().delete(
+		        		MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+		        		MediaStore.Audio.Playlists._ID + "=" + playlistId, 
+		        		null);
+				return true;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param playlistId
+	 * @return
+	 */
+	public boolean clearPlaylist(int playlistId)
+	{
+		try
+		{
+			Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+	        ctx.getContentResolver().delete(uri, null, null);
+	        return true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param genreId
+	 * @return
+	 */
+	public boolean deleteGenre(int genreId)
+	{
+		clearGenre(genreId); // this does not work -- cannot alter mp3?
+		try{
+			ctx.getContentResolver().delete(
+	        		MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, 
+	        		MediaStore.Audio.Media._ID + "=" + genreId, 
+	        		null);
+			return true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param genreId
+	 * @return
+	 */
+	public boolean clearGenre(int genreId)
+	{
+		try
+		{
+			Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
+	        ctx.getContentResolver().delete(uri, null, null);
+	        return true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
 	 * getPlaylistId
 	 * @param playlistName
 	 * @return

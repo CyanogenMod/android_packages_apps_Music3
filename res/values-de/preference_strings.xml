@@ -14,6 +14,11 @@
     <string name="preference_title_use_headset_buttons">Kopfhörer verwenden</string>
     <string name="preference_summary_use_headset_buttons">Reagiert auf Knopfdruck am Kopfhörer, um Titel abzuspielen, zu stoppen oder zu überspringen.</string>
 
+	<!--	LOCK SCREEN    -->
+    <string name="preference_key_lock_screen">LockScreen</string>
+    <string name="preference_title_lock_screen">Lock Screen</string>
+    <string name="preference_summary_lock_screen">Karte steuert, wann Bildschirm noch gesperrt ist</string>
+    
 	<!--	FULL SCREEN    -->
     <string name="preference_key_full_screen">mFullScreen</string>
     <string name="preference_title_full_screen">Volbildmodus</string>

@@ -383,7 +383,7 @@ public class Constants{
 	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";
 	
 	/** Donation Parameters */
-	static final int	DONATION_INITIAL_INTERVAL = 12;
+	static final int	DONATION_INITIAL_INTERVAL = 8;
 	static final int	DONATION_STANDARD_INTERVAL = 30;
 	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 1000;
 	

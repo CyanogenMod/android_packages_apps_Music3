@@ -16,7 +16,7 @@
 
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
-    <string name="preference_title_lock_screen">Lock Screen</string>
+    <string name="preference_title_lock_screen">Lock screen</string>
     <string name="preference_summary_lock_screen">Show controls when screen is still locked.</string>
 
 	<!--	FULL SCREEN    -->
