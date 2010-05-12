@@ -59,6 +59,7 @@
 	<string name="playlist_queued_toast">Playlist queued</string>
 	<string name="generic_error_toast">Error!</string>
 	<string name="playlist_deleted_toast">Playlist deleted!</string>
+	<string name="song_deleted_toast">Track deleted!</string>
 	
 	<!-- 	SEARCH -->
 	<string name="search_hint">Song Title or Artist Name</string>
@@ -76,6 +77,12 @@
 	<string name="create_playlist_dialog_save_option">Save</string>
 	<string name="create_playlist_dialog_text_hint">Type playlist name...</string>
 	
+	<!--	DELETE SONG DIALOG	-->
+	<string name="song_delete_confirm_title">Delete song</string>
+	<string name="song_delete_message">Are you sure you want to delete the song? This operation is not reversible.</string>
+	<string name="song_delete_positive_button">Yes!</string>
+	<string name="song_delete_negative_button">No.</string>
+	
 	<!--	DELETE PLAYLIST DIALOG	-->
 	<string name="playlist_delete_confirm_title">Delete playlist</string>
 	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
@@ -92,6 +99,10 @@
 	<!--	ALBUM SONG LIST DIALOG -->
 	<string name="album_song_list_play_all">Play all</string>
 	<string name="album_song_list_queue_all">Queue all</string>
+	
+	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_add_to_queue">Add to queue</string>
+	<string name="song_option_delete">Delete</string>
 	
 	<!--	PLAYLIST OPTIONS DIALOG	-->
 	<string name="playlist_option_add_to_queue">Add to queue</string>

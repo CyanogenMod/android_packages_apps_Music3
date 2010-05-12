@@ -65,6 +65,9 @@ public class RockOnNextGenService extends Service {
     private static final int FADEIN = 4;
     private static final int MAX_HISTORY_SIZE = 100;
     
+    private static boolean 	mLock = false;
+    private static String	mScrobblerName = "none";
+    
     private int mRockOnShuffleMode = Constants.SHUFFLE_NONE;
     private int mRockOnRepeatMode = Constants.REPEAT_NONE;
     private int mPlaylistId = Constants.PLAYLIST_UNKNOWN;
@@ -251,7 +254,9 @@ public class RockOnNextGenService extends Service {
         Log.i(TAG, "SERVICE onCreate");
         
 //        mPreferences = getSharedPreferences("Music", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mPreferences = getSharedPreferences("CubedMusic", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE); 
+        	//PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        
         mCardId = 0; // should be the serial number of the sd card
 //        mCardId = FileUtils.getFatVolumeId(Environment.getExternalStorageDirectory().getPath());
         
@@ -390,7 +395,7 @@ public class RockOnNextGenService extends Service {
         }
         ed.putInt("repeatmode", mRepeatMode);
         ed.putInt("shufflemode", mShuffleMode);
-        ed.putInt(Constants.prefkey_mPlaylistId, mPlaylistId);
+//        ed.putInt(Constants.prefkey_mPlaylistId, mPlaylistId);
         ed.putInt("rockonrepeatmode", mRockOnRepeatMode);
         ed.putInt("rockonshufflemode", mRockOnShuffleMode);
         ed.commit();
@@ -832,14 +837,17 @@ public class RockOnNextGenService extends Service {
     		return;
     	}
     	
-    	String who = PreferenceManager.getDefaultSharedPreferences(this).getString(
-    			getString(R.string.preference_scrobble_list_key), 
-    			getString(R.string.preference_scrobble_value_dont));
+//    	String who = PreferenceManager.getDefaultSharedPreferences(this).getString(
+//    			getString(R.string.preference_scrobble_list_key), 
+//    			getString(R.string.preference_scrobble_value_dont));
     	
     	// check if scrobbling is enabled, and to whom we should send the broadcast
-    	if (who.equals(getString(R.string.preference_scrobble_value_sls))) {
+    	if (mScrobblerName.equals(getString(R.string.preference_scrobble_value_sls))) 
+    	{
     		sendScrobbleBroadcastSLS(state);
-    	} else if (who.equals(getString(R.string.preference_scrobble_value_sd))) {
+    	} 
+    	else if (mScrobblerName.equals(getString(R.string.preference_scrobble_value_sd))) 
+    	{
     		sendScrobbleBroadcastSD(state);
     	}
     }
@@ -939,6 +947,8 @@ public class RockOnNextGenService extends Service {
      */
     public void enqueue(long [] list, int action) {
         synchronized(this) {
+        	Log.i(TAG, "yep, action: "+action);
+
             if (action == Constants.NEXT && mPlayPos + 1 < mPlayListLen) {
                 addToPlayList(list, mPlayPos + 1);
                 notifyChange(Constants.QUEUE_CHANGED);
@@ -951,6 +961,7 @@ public class RockOnNextGenService extends Service {
                 notifyChange(Constants.QUEUE_CHANGED);
                 if (action == Constants.NOW) {
 //                	mPlayPos = mPlayListLen - list.length;
+                	Log.i(TAG, "yep, opening: "+mPlayPos);
                 	mPlayPos = mPlayPos + 1;
                     openCurrent();
                     play();
@@ -2241,30 +2252,60 @@ public class RockOnNextGenService extends Service {
 
     /**
      * 
+     * @param scrobbler
+     */
+    public void setScrobbler(String scrobbler)
+    {
+    	mScrobblerName = scrobbler;
+    }
+    
+    /**
+     * 
+     * @param lock
+     */
+    public void setLockScreen(boolean lock)
+    {
+    	if(mLock != lock)
+    	{
+    		mLock = lock;
+    		if(mLock)
+    		{
+	    		Log.i(TAG, "Registering ScreenOn receivers...");
+	    		registerScreenOnReceiver();
+    		}
+    		else
+    		{
+	    		Log.i(TAG, "Unregistering ScreenOn receivers...");
+	    		unregisterScreenOnReceiver();
+    		}
+    	}
+    }
+    
+    /**
+     * 
      */
     public void registerScreenOnReceiver()
     {
     	/**
     	 *  are we using the lockscreen? 
     	 */
-    	if(!PreferenceManager.getDefaultSharedPreferences(this).
-    			getBoolean(
-    					getString(
-    							R.string.preference_key_lock_screen), 
-    					true))
+//    	if(!PreferenceManager.getDefaultSharedPreferences(this).
+//    			getBoolean(
+//    					getString(
+//    							R.string.preference_key_lock_screen), 
+//    					false))
+    	if(mLock)
     	{
-    		return;
+	    	/**
+	    	 * We are, register the receiver
+	    	 */
+	    	if(mScreenOnReceiver == null)
+	    		mScreenOnReceiver = new ScreenOnIntentReceiver();
+	    	
+	    	registerReceiver(
+	    			mScreenOnReceiver,
+	    			new IntentFilter("android.intent.action.SCREEN_ON"));
     	}
-    	
-    	/**
-    	 * We are, register the receiver
-    	 */
-    	if(mScreenOnReceiver == null)
-    		mScreenOnReceiver = new ScreenOnIntentReceiver();
-    	
-    	registerReceiver(
-    			mScreenOnReceiver,
-    			new IntentFilter("android.intent.action.SCREEN_ON"));
     }
     
     public void unregisterScreenOnReceiver()
@@ -2581,6 +2622,14 @@ public class RockOnNextGenService extends Service {
 
 		public void setPlaylistId(int playlistId) throws RemoteException {
 			mService.get().setPlaylistId(playlistId);
+		}
+		
+		public void setScrobbler(String scrobblerName) throws RemoteException {
+			mService.get().setScrobbler(scrobblerName);
+		}
+		
+		public void setLockScreen(boolean lock) throws RemoteException {
+			mService.get().setLockScreen(lock);
 		}
 		
 		public void prepareForCrash() throws RemoteException {

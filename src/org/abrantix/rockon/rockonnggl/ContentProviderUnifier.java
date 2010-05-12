@@ -28,4 +28,27 @@ public class ContentProviderUnifier{
 								MediaStore.Audio.Media._ID));
 		}
 	}
+	
+	/**
+	 * 
+	 * @param cursor
+	 * @return
+	 */
+	static String getAudioNameFromUnknownCursor(Cursor cursor)
+	{
+		/* Playlist.Members */
+		if(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.TITLE) != -1){
+			return 
+				cursor.getString(
+						cursor.getColumnIndexOrThrow(
+								MediaStore.Audio.Playlists.Members.TITLE));
+		} 
+		/* Audio.Media / Genres.Members/... */
+		else {
+			return 
+				cursor.getString(
+						cursor.getColumnIndexOrThrow(
+								MediaStore.Audio.Media.TITLE));
+		}
+	}
 }

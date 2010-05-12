@@ -57,6 +57,10 @@
 	<string name="not_an_album_toast">Das ist ein Künstler nicht ein Album!</string>
 	<string name="playlist_queued_toast">Playlist Warteschlange</string>
 	<string name="generic_error_toast">Fehler!</string>
+	<!--	XXXXXXXXXXXXXXXXXXXXX	-->
+	<string name="playlist_deleted_toast">Playlist deleted!</string>
+	<string name="song_deleted_toast">Track deleted!</string>
+	
 	
 	<!-- 	SEARCH -->
 	<string name="search_hint">Titel oder Künstlername</string>
@@ -75,6 +79,12 @@
 	<string name="create_playlist_dialog_text_hint">Name eingeben...</string>
 
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	DELETE SONG DIALOG	-->
+	<string name="song_delete_confirm_title">Delete song</string>
+	<string name="song_delete_message">Are you sure you want to delete the song? This operation is not reversible.</string>
+	<string name="song_delete_positive_button">Yes!</string>
+	<string name="song_delete_negative_button">No.</string>
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	DELETE PLAYLIST DIALOG	-->
 	<string name="playlist_delete_confirm_title">Delete playlist</string>
 	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
@@ -90,6 +100,10 @@
 	<string name="album_song_list_play_all">Alle abspielen</string>
 	<string name="album_song_list_queue_all">Alle der Liste hinzufügen</string>
 	
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_add_to_queue">Add to queue</string>
+	<string name="song_option_delete">Delete</string>
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	PLAYLIST OPTIONS DIALOG	-->
 	<string name="playlist_option_add_to_queue">Add to queue</string>
@@ -134,7 +148,6 @@
 	</string>
 	<string name="earthquake_dialog_yes">Mach es!</string>
 	<string name="earthquake_dialog_no">Sieht schwierig aus. Abbrechen!</string>
-	
 	
 	<!--	ACTIVITY INTENTS (some of them)-->
 	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>

@@ -46,7 +46,8 @@ public class ManualArtChooserAdapter extends BaseAdapter{
 			String album, 
 			String embeddedArt,
 			long albumId,
-			Handler	handler) {
+			Handler	handler) 
+	{
 		mContext = context;
 		mArtist = artist;
 		mAlbum = album;
@@ -55,6 +56,10 @@ public class ManualArtChooserAdapter extends BaseAdapter{
 		mUpdateHandler = handler;
 		if(mEmbeddedArt != null){
 			covers[0]  = BitmapFactory.decodeFile(embeddedArt);
+		}
+		else
+		{
+			covers[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.unknown_256);
 		}
 		triggerAlbumArtFetchingInADifferentThread();
 	}
@@ -90,7 +95,7 @@ public class ManualArtChooserAdapter extends BaseAdapter{
 			BitmapDrawable bmD = new BitmapDrawable(covers[position]);
 			bmD.setDither(true);
 			bmD.setAntiAlias(true);
-			bmD.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+//			bmD.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
 			((ImageView)itemView.findViewById(R.id.art_grid_item_image))
 				.setImageDrawable(bmD);
 			((TextView)itemView.findViewById(R.id.art_grid_item_res))
@@ -144,7 +149,12 @@ public class ManualArtChooserAdapter extends BaseAdapter{
 					covers[1] = bm;
 					mUpdateHandler.sendEmptyMessage(0);
 				}
-				if(this.currentThread().isInterrupted())
+				else
+				{
+					covers[1] = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.unknown_256);
+					mUpdateHandler.sendEmptyMessage(0);
+				}
+				if(Thread.currentThread().isInterrupted())
 					return;
 				// Google search
 				GoogleImagesFetcher gfetcher = new GoogleImagesFetcher();

@@ -1108,6 +1108,53 @@ public class RockOnNextGenGL extends Activity {
     }
     
     /**
+     * 
+     * @param songId
+     */
+    private void deleteSong(int songId)
+    {
+    	CursorUtils cUtils = new CursorUtils(getApplicationContext());
+    	boolean success = false;
+    	
+    	/**
+    	 * Remove song from service
+    	 */
+    	try
+    	{
+    		mService.removeTrack(songId);
+    	}
+    	catch(RemoteException e)
+    	{
+    		e.printStackTrace();
+    	}
+    	/**
+    	 * Delete song
+    	 */
+    	if(cUtils.deleteSong(songId))
+        		success = true;
+    	
+    	/**
+    	 * UI feedback
+    	 */
+    	if(success)
+		{
+			Toast.makeText(
+					getApplicationContext(), 
+					R.string.song_deleted_toast, 
+					Toast.LENGTH_SHORT)
+				.show();
+		}
+    	else
+    	{
+			Toast.makeText(
+					getApplicationContext(), 
+					R.string.generic_error_toast, 
+					Toast.LENGTH_SHORT)
+				.show();
+    	}
+    }
+    
+    /**
      * 	
      */
 	Handler mPlayListItemSelectedHandler = new Handler(){
@@ -1240,39 +1287,42 @@ public class RockOnNextGenGL extends Activity {
     		mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
     		
     		/**
-    		 * Verify if we need to (un)register the Lock Screen
+    		 * Update the preferences in service (we need to do it because they run in different processes)
     		 */
-    		if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    				getBoolean(getString(R.string.preference_key_lock_screen), false))
-    		{
-    			try
-    			{
-    				mService.registerScreenOnReceiver();
-    			}
-    			catch(RemoteException e)
-    			{
-    				e.printStackTrace();
-    			}
-    			catch(NullPointerException e)
-    			{
-    				e.printStackTrace();
-    			}
-    		}
-    		else
-    		{
-    			try
-    			{
-    				mService.unregisterScreenOnReceiver();
-    			}
-    			catch(RemoteException e)
-    			{
-    				e.printStackTrace();
-    			}
-    			catch(NullPointerException e)
-    			{
-    				e.printStackTrace();
-    			}
-    		}
+    		if(mService != null)
+    			setPreferencesInService();
+    						
+//    		if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+//    				getBoolean(getString(R.string.preference_key_lock_screen), false))
+//    		{
+//    			try
+//    			{
+//    				mService.registerScreenOnReceiver();
+//    			}
+//    			catch(RemoteException e)
+//    			{
+//    				e.printStackTrace();
+//    			}
+//    			catch(NullPointerException e)
+//    			{
+//    				e.printStackTrace();
+//    			}
+//    		}
+//    		else
+//    		{
+//    			try
+//    			{
+//    				mService.unregisterScreenOnReceiver();
+//    			}
+//    			catch(RemoteException e)
+//    			{
+//    				e.printStackTrace();
+//    			}
+//    			catch(NullPointerException e)
+//    			{
+//    				e.printStackTrace();
+//    			}
+//    		}
     		
     		break;
     	case Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE:
@@ -1289,6 +1339,38 @@ public class RockOnNextGenGL extends Activity {
     			e.printStackTrace();
     		}
     		break;
+    	}
+    }
+    
+    /**
+     * Service runs in a different process therefor we 
+     * need to pass the preferences needed to the service 
+     * through its interface
+     */
+    private void setPreferencesInService()
+    {
+    	try
+    	{
+			// service registers the requires receivers
+    		Log.i("TAG", "Sending lock screen to service: "+
+    				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+		    				getBoolean(getString(R.string.preference_key_lock_screen), false));
+			mService.setLockScreen(
+					PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+		    				getBoolean(getString(R.string.preference_key_lock_screen), false));
+			// last.fm scrobbling
+			Log.i("TAG", "Sending scrobbler type to service: "+
+					PreferenceManager.getDefaultSharedPreferences(this).getString(
+			    			getString(R.string.preference_scrobble_list_key), 
+			    			getString(R.string.preference_scrobble_value_dont)));
+			mService.setScrobbler(
+					PreferenceManager.getDefaultSharedPreferences(this).getString(
+			    			getString(R.string.preference_scrobble_list_key), 
+			    			getString(R.string.preference_scrobble_value_dont)));
+    	}
+    	catch(RemoteException e)
+    	{
+    		e.printStackTrace();
     	}
     }
     
@@ -1939,12 +2021,21 @@ public class RockOnNextGenGL extends Activity {
      */
     public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
 		switch(keyCode){
+		/**
+		 * BACK when search thing are visible
+		 */
 		case KeyEvent.KEYCODE_BACK:
 			if(findViewById(R.id.search_container) != null)
 				hideSearch();
 			else{
 				super.onKeyDown(keyCode, event);
 			}
+			return true;
+		/**
+		 * SEARCH triggers search
+		 */
+		case KeyEvent.KEYCODE_SEARCH:
+			mSearchClickListener.onClick(null);
 			return true;
 		}
 		
@@ -2111,8 +2202,8 @@ public class RockOnNextGenGL extends Activity {
 				}
 			}catch(Exception e){
 				e.printStackTrace();
-			}		}
-		
+			}			
+		}
 	};
 	
 	OnClickListener mShuffleClickListener = new OnClickListener() {
@@ -2402,6 +2493,7 @@ public class RockOnNextGenGL extends Activity {
 				}
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ARTIST)
 				{
+					mRockOnRenderer.reverseClickAnimation();
 					Toast.makeText(
 							getApplicationContext(), 
 							R.string.not_an_album_toast, 
@@ -2515,45 +2607,149 @@ public class RockOnNextGenGL extends Activity {
 			dialogBuilder.setAdapter(
 						albumCursorAdapter,
 						null);
-//			dialogBuilder.setPositiveButton(getString(R.string.album_song_list_play_all), mSongDialogPlayAllListener);
-//			dialogBuilder.setNeutralButton(getString(R.string.album_song_list_queue_all), mSongDialogQueueAllListener);
+			ArtistAlbumsDialogButtonClickListener artistAlbumsDialogClickListener = 
+				new ArtistAlbumsDialogButtonClickListener(
+						artistId, 
+						mArtistAlbumListDialogOverallOptionsHandler, 
+						mRockOnRenderer);
+			dialogBuilder.setPositiveButton(getString(R.string.album_song_list_play_all), artistAlbumsDialogClickListener);
+			dialogBuilder.setNeutralButton(getString(R.string.album_song_list_queue_all), artistAlbumsDialogClickListener);
 			dialogBuilder.setOnCancelListener(mSongAndAlbumDialogCancelListener);
 //			/* set the selection listener */
 			albumCursorAdapter.setDialogInterface(dialogBuilder.show());
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	Handler mSongItemSelectedHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
 			try{
-				long[] list = {msg.arg1};
-				if(msg.arg2 == Constants.LAST)
+				if(msg.arg2 == Constants.SINGLE_CLICK) 
 				{
-					mService.enqueue(list, msg.arg2);
-					Toast.makeText(
-							getApplicationContext(), 
-							R.string.song_added_to_playlist, 
-							Toast.LENGTH_SHORT).
-						show();
-				} else {
-					mService.removeTracks(0, mService.getQueue().length-1);
-					mService.enqueue(list, msg.arg2);
-					setPauseButton();
-					setCurrentSongLabels(
-							mService.getTrackName(),
-							mService.getArtistName(),
-							mService.duration(),
-							mService.position());
+					queueTrack(msg.arg1, Constants.NOW);
+					/* reverse the click animation */
+					reverseRendererClickAnimation();	
 				}
-				/* reverse the click animation */
-				reverseRendererClickAnimation();
+				else if(msg.arg2 == Constants.LONG_CLICK)
+				{
+					// show trackoptions dialog 
+					showSongOptionsDialog(msg.arg1, (String)msg.obj);
+				} 
 			} catch(Exception e){
 				e.printStackTrace();
+				/* reverse the click animation */
+				reverseRendererClickAnimation();	
 			}
 		}
 	};
 	
+	/**
+	 * 
+	 * @param trackId
+	 * @param priority
+	 */
+	private void queueTrack(int trackId, int priority)
+	{
+		try
+		{
+			long[] list = {trackId};
+			switch(priority)
+			{
+			case Constants.NOW:
+				mService.removeTracks(0, mService.getQueue().length-1);
+				mService.enqueue(list, Constants.NOW);
+				setPauseButton();
+				setCurrentSongLabels(
+						mService.getTrackName(),
+						mService.getArtistName(),
+						mService.duration(),
+						mService.position());
+				break;
+			case Constants.LAST:
+				mService.enqueue(list, Constants.LAST);
+				Toast.makeText(
+						getApplicationContext(), 
+						R.string.song_added_to_playlist, 
+						Toast.LENGTH_SHORT).
+					show();	
+				break;
+			}
+		}
+		catch(RemoteException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+    /**
+     * 
+     * @param songId
+     * @param songName
+     */
+    public void showSongOptionsDialog(int songId, String songName)
+    {
+    	// show a new dialog with Add to Queue, Delete
+    	AlertDialog.Builder songOptsDBuilder = new AlertDialog.Builder(RockOnNextGenGL.this);
+    	songOptsDBuilder.setTitle(songName);
+    	songOptsDBuilder.setAdapter(
+    			new ArrayAdapter<String>(
+    					getApplicationContext(), 
+    					android.R.layout.select_dialog_item, 
+    					android.R.id.text1, 
+    					getResources().getStringArray(R.array.song_options)), 
+    			new PlaylistOptionClickListener(
+    					songId, 
+    					mSongOptionSelectedHandler));
+    	songOptsDBuilder.show();
+    }
+    
+    /**
+     * 
+     */
+    Handler mSongOptionSelectedHandler = new Handler()
+    {
+    	@Override
+    	public void handleMessage(Message msg)
+    	{
+    		String songOption = getResources().getStringArray(R.array.song_options)[msg.what];
+    		if(songOption.equals(getString(R.string.song_option_add_to_queue)))
+    		{
+    			// add all playlist song to queue
+    			queueTrack(msg.arg1, Constants.LAST); 
+    		}
+    		else if(songOption.equals(getString(R.string.song_option_delete)))
+    		{
+    			// show confirmation dialog
+    			// before deleting
+    			AlertDialog.Builder deleteSongConfirmationDialog = 
+    				new AlertDialog.Builder(RockOnNextGenGL.this);
+    			deleteSongConfirmationDialog.setTitle(
+    					R.string.song_delete_confirm_title);
+    			deleteSongConfirmationDialog.setMessage(
+    					R.string.song_delete_message);
+    			final int songId = msg.arg1;
+    			deleteSongConfirmationDialog.setPositiveButton(
+    					R.string.song_delete_positive_button, 
+    					new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+				    			deleteSong(songId);								
+							}
+						});
+    			deleteSongConfirmationDialog.setNegativeButton(
+    					R.string.song_delete_negative_button, 
+    					null);
+    			deleteSongConfirmationDialog.show();
+    		}	
+			reverseRendererClickAnimation();
+    	}
+    };
+    
 	Handler mAlbumItemSelectedHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
@@ -2574,18 +2770,21 @@ public class RockOnNextGenGL extends Activity {
 	Handler mPlayQueueItemSelectedHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
-			try{
+			Log.i(TAG, "NOW/LAST: "+msg.arg2);
+
+			try{				
 				long[] list = {msg.arg1};
-				if(msg.arg2 == Constants.LAST){
+				if(msg.arg2 == Constants.LONG_CLICK){
 					mService.removeTrack(msg.arg1);
 					Toast.makeText(
 							RockOnNextGenGL.this, 
 							R.string.song_removed_from_playlist, 
 							Toast.LENGTH_SHORT).
 						show();
-				} else {
+				} else if(msg.arg2 == Constants.SINGLE_CLICK){
+					Log.i(TAG, "NOW/LAST: "+msg.arg2);
 					mService.removeTrack(msg.arg1);
-					mService.enqueue(list, msg.arg2);
+					mService.enqueue(list, Constants.NOW);
 					// this should all be done on upon the reception of the service intent 
 					// notifying the new song
 //					setPauseButton();
@@ -2699,29 +2898,40 @@ public class RockOnNextGenGL extends Activity {
 		}
 	};
 	
-//	/**
-//	 * Some tables (e.g. MediaStore.Audio.Playlist.Members) of the 
-//	 * internal content provider have the audio id field
-//	 * in different columns
-//	 * @param cursor
-//	 * @return
-//	 */
-//	long	getAudioIdFromUnknownCursor(Cursor cursor){
-//		/* Playlist.Members */
-//		if(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID) != -1){
-//			return 
-//				cursor.getLong(
-//						cursor.getColumnIndexOrThrow(
-//								MediaStore.Audio.Playlists.Members.AUDIO_ID));
-//		} 
-//		/* Audio.Media / Genres.Members/... */
-//		else {
-//			return 
-//				cursor.getLong(
-//						cursor.getColumnIndexOrThrow(
-//								MediaStore.Audio.Media._ID));
-//		}
-//	}
+	/**
+	 * handler
+	 */
+	Handler mArtistAlbumListDialogOverallOptionsHandler = new Handler(){
+		@Override
+		public void handleMessage(Message msg){
+			if(msg != null)
+			{
+				CursorUtils cUtils = new CursorUtils(getApplicationContext());
+				Cursor	cursor = cUtils.getSongListCursorFromArtistId((Long)msg.obj, Constants.PLAYLIST_ALL);
+				long[] songVector = new long[cursor.getCount()];
+				for(int i = 0; i<cursor.getCount(); i++){
+					cursor.moveToPosition(i);
+					// The _ID field has a different meaning in playlist content providers
+					//		-- if it is a playlist we need to fetch the AUDIO_ID field
+					songVector[i] = 
+						ContentProviderUnifier.
+							getAudioIdFromUnknownCursor(cursor);
+
+				}
+				try{
+					if(mService != null)
+					{
+						if(msg.arg1 == Constants.NOW)
+							mService.removeTracks(0, mService.getQueue().length-1);
+						mService.enqueue(songVector, msg.arg1);
+					}
+				}catch(RemoteException e){
+					e.printStackTrace();
+				}
+				System.gc();
+			}
+		}
+	};
 	
 	/**
 	 * reverse the click animation
@@ -3141,6 +3351,12 @@ public class RockOnNextGenGL extends Activity {
         public void onServiceConnected(ComponentName classname, IBinder obj) {
             mService = IRockOnNextGenService.Stub.asInterface(obj);
             try {
+            	// need to pass preferences to service (service runs in separate process)
+            	setPreferencesInService();
+            	
+            	/**
+            	 * Now let us resume the state
+            	 */
                 if(mService.getAudioId() >= 0 || mService.getPath() != null){
                 	Log.i(TAG, "track: "+mTrackName);
                 	Log.i(TAG, "artist: "+mArtistName);

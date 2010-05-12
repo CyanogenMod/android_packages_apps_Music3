@@ -51,4 +51,10 @@
         <item>@string/playlist_option_delete</item>
     </string-array>
     
+   	<!--	SONG OPTIONS    -->
+    <string-array name="song_options">
+        <item>@string/song_option_add_to_queue</item>
+        <item>@string/song_option_delete</item>
+    </string-array>
+    
 </resources>

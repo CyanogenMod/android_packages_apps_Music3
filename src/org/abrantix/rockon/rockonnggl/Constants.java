@@ -158,9 +158,12 @@ public class Constants{
 	static final String albumAlphabeticalSortOrder = 
 		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
 		+ ", " + 
-		MediaStore.Audio.Albums.LAST_YEAR + " ASC";
+		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
+	/** Artist Albums Cursor Sorting **/
+	static final String artistAlbumsYearSortOrder = 
+		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
 
-	/** Album Cursor Sorting **/
+	/** Artist Cursor Sorting **/
 	static final String artistAlphabeticalSortOrder = 
 //		MediaStore.Audio.Artists.ARTIST_KEY + " COLLATE NOCASE ASC";
 		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
@@ -169,7 +172,9 @@ public class Constants{
 	static final String songListNumericalSorting = 
 		MediaStore.Audio.Media.TRACK + " ASC";
 	static final String songListAlbumAndNumericalSorting = 
-		MediaStore.Audio.Media.ALBUM + " ASC " + 
+		MediaStore.Audio.Media.YEAR + " DESC " + 
+		", "+
+		MediaStore.Audio.Media.ALBUM + " COLLATE NOCASE ASC"+
 		", "+
 		MediaStore.Audio.Media.TRACK + " ASC";
 	static final String songListPlaylistSorting = 

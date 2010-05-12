@@ -160,7 +160,8 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 							getAudioIdFromUnknownCursor(mSongCursor);
 					Message msg = new Message();
 					msg.arg1 = songId;
-					msg.arg2 = Constants.NOW;
+//					msg.arg2 = Constants.NOW;
+					msg.arg2 = Constants.SINGLE_CLICK;
 					mSongItemSelectedHandler.sendMessageDelayed(
 							msg, 
 							Constants.CLICK_ACTION_DELAY);
@@ -188,13 +189,16 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 				int songId = (int)
 					ContentProviderUnifier.
 						getAudioIdFromUnknownCursor(mSongCursor);
-	//				mSongCursor.getInt(
-	//					mSongCursor.getColumnIndexOrThrow(
-	//							MediaStore.Audio.Media._ID));
+				String songName = 
+					ContentProviderUnifier.
+						getAudioNameFromUnknownCursor(mSongCursor);
+				
 				/* tell the handler to put it in the end of the list */
 				Message msg = new Message();
 				msg.arg1 = songId;
-				msg.arg2 = Constants.LAST;
+//				msg.arg2 = Constants.LAST;
+				msg.arg2 = Constants.LONG_CLICK;
+				msg.obj = songName;
 				mSongItemSelectedHandler.sendMessageDelayed(
 						msg, 
 						Constants.CLICK_ACTION_DELAY);

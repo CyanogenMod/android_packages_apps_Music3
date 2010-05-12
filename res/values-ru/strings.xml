@@ -59,6 +59,10 @@
 <string name="not_an_album_toast">К сожалению, это художник не альбом!</string>
 	<string name="playlist_queued_toast">очередь плейлист</string>
 	<string name="generic_error_toast">Ошибка!</string>
+	<!--	XXXXXXXXXXXXXXXXXXXXX	-->
+	<string name="playlist_deleted_toast">Playlist deleted!</string>
+	<string name="song_deleted_toast">Track deleted!</string>
+	
 
 
 <!-- SEARCH -->
@@ -78,6 +82,12 @@
 <string name="create_playlist_dialog_text_hint">Введите название</string>
 
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	DELETE SONG DIALOG	-->
+	<string name="song_delete_confirm_title">Delete song</string>
+	<string name="song_delete_message">Are you sure you want to delete the song? This operation is not reversible.</string>
+	<string name="song_delete_positive_button">Yes!</string>
+	<string name="song_delete_negative_button">No.</string>
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	DELETE PLAYLIST DIALOG	-->
 	<string name="playlist_delete_confirm_title">Delete playlist</string>
 	<string name="playlist_delete_message">Are you sure you want to delete the playlist?</string>
@@ -93,6 +103,10 @@
 <string name="album_song_list_play_all">Воспроизвести всё</string>
 <string name="album_song_list_queue_all">Добавить всё</string>
 
+	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
+	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_add_to_queue">Add to queue</string>
+	<string name="song_option_delete">Delete</string>
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	PLAYLIST OPTIONS DIALOG	-->
 	<string name="playlist_option_add_to_queue">Add to queue</string>

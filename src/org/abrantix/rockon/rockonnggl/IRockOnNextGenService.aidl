@@ -43,6 +43,9 @@ interface IRockOnNextGenService
     int getRockOnRepeatMode();
     int getMediaMountedCount();
     
+    void setScrobbler(String scrobblerName);
+    void setLockScreen(boolean lock);
+    
     void registerScreenOnReceiver();
     void unregisterScreenOnReceiver();
     void prepareForCrash();

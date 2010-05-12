@@ -1,5 +1,6 @@
 package org.abrantix.rockon.rockonnggl;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import android.content.ContentResolver;
@@ -71,7 +72,8 @@ public class CursorUtils{
 				Constants.albumProjection, 
 				null, 
 				null, 
-				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
+				Constants.artistAlbumsYearSortOrder);
+//				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
 	}
 	
 	/**
@@ -335,6 +337,53 @@ public class CursorUtils{
 //		// TODO: verify that all songs belong to the desired playlist
 //		return songList;
 		
+	}
+	
+	/**
+	 * Create song list cursor
+	 * from artistId
+	 */
+	Cursor	getSongListCursorFromArtistId(long artistId, int playlistId){
+		return
+			getSongsFromPlaylistWithConstraint(
+				playlistId, 
+					MediaStore.Audio.Media.ARTIST_ID + " = " + artistId+
+					" AND "+
+					MediaStore.Audio.Media.IS_MUSIC + "=1",
+				true);
+//		ContentResolver resolver = ctx.getContentResolver();
+//		Cursor			songList = resolver.query(
+//				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//				Constants.songProjection,
+//				MediaStore.Audio.Media.ALBUM_ID + " = " + albumId,
+//				null,
+//				Constants.songListNumericalSorting);
+//		// TODO: verify that all songs belong to the desired playlist
+//		return songList;
+		
+	}
+	
+	/**
+	 * Create song list cursor
+	 * from artist name
+	 */
+	Cursor	getSongListCursorFromArtistName(String artistName, int playlistId){
+		return
+			getSongsFromPlaylistWithConstraint(
+				playlistId, 
+				MediaStore.Audio.Media.ARTIST + " = '" + artistName+ "'" +
+					" AND "+
+					MediaStore.Audio.Media.IS_MUSIC + "=1",
+				true);
+//		ContentResolver resolver = ctx.getContentResolver();
+//		Cursor			songList = resolver.query(
+//				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//				Constants.songProjection,
+//				MediaStore.Audio.Media.ALBUM_ID + " = " + albumId,
+//				null,
+//				Constants.songListNumericalSorting);
+//		// TODO: verify that all songs belong to the desired playlist
+//		return songList;	
 	}
 	
 	Cursor	getAllSongsFromPlaylist(int playlistId){
@@ -615,6 +664,102 @@ public class CursorUtils{
 			return false;
 		}
 	}
+	
+	/**
+	 * 
+	 * @param songId
+	 * @return
+	 */
+	public boolean deleteSong(int songId)
+	{
+		try
+		{
+			long[] songIdList = {songId};
+			deleteTracks(songIdList);
+			return true;
+		}
+		catch(NullPointerException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * XXX Borrowed from Android open source project
+	 * Removes several tracks
+	 * @param list
+	 */
+    public void deleteTracks(long [] list) {
+        
+        String [] cols = new String [] { 
+        		MediaStore.Audio.Media._ID, 
+                MediaStore.Audio.Media.DATA, 
+                MediaStore.Audio.Media.ALBUM_ID };
+        StringBuilder where = new StringBuilder();
+        where.append(MediaStore.Audio.Media._ID + " IN (");
+        for (int i = 0; i < list.length; i++) {
+            where.append(list[i]);
+            if (i < list.length - 1) {
+                where.append(",");
+            }
+        }
+        where.append(")");
+        
+        Cursor c = ctx.getContentResolver().query(
+        		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+        		cols,
+                where.toString(), 
+                null, 
+                null);
+
+        if (c != null) 
+        {
+            // step 1: remove selected tracks from the current playlist, as well
+            // as from the album art cache
+            c.moveToFirst();
+            while (! c.isAfterLast()) {
+                // remove from current playlist
+                long id = c.getLong(0);
+//                    sService.removeTrack(id);
+                // remove from album art cache
+                long artIndex = c.getLong(2);
+//                    synchronized(sArtCache) {
+//                        sArtCache.remove(artIndex);
+//                    }
+                c.moveToNext();
+            }
+            
+            // step 2: remove selected tracks from the database
+            ctx.getContentResolver().delete(
+            		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+            		where.toString(), 
+            		null);
+
+            // step 3: remove files from card
+            c.moveToFirst();
+            while (! c.isAfterLast()) {
+                String name = c.getString(1);
+                File f = new File(name);
+                try {  // File.delete can throw a security exception
+                    if (!f.delete()) {
+                        // I'm not sure if we'd ever get here (deletion would
+                        // have to fail, but no exception thrown)
+                        Log.e(TAG, "Failed to delete file " + name);
+                    }
+                    c.moveToNext();
+                } catch (SecurityException ex) {
+                    c.moveToNext();
+                }
+            }
+            c.close();
+        }
+
+        // We deleted a number of tracks, which could affect any number of things
+        // in the media content domain, so update everything.
+        ctx.getContentResolver().notifyChange(Uri.parse("content://media"), null);
+    }
+
 	
 	/**
 	 * 
