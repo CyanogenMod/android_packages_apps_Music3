@@ -17,7 +17,7 @@
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Блокировка экрана</string>
-    <string name="preference_summary_lock_screen">Показать контроля, когда экран по-прежнему заблокирована</string>
+    <string name="preference_summary_lock_screen">Показывать кнопки управления при заблокированном экране</string>
     
 <!-- FULL SCREEN    -->
     <string name="preference_key_full_screen">mFullScreen</string>

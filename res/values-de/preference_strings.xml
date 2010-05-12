@@ -17,7 +17,7 @@
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Lock Screen</string>
-    <string name="preference_summary_lock_screen">Karte steuert, wann Bildschirm noch gesperrt ist</string>
+    <string name="preference_summary_lock_screen">Steuerelemente bei aktivem Lock Screen anzeigen.</string>
     
 	<!--	FULL SCREEN    -->
     <string name="preference_key_full_screen">mFullScreen</string>
