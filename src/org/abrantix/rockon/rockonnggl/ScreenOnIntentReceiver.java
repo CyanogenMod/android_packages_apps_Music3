@@ -12,6 +12,7 @@ import android.app.KeyguardManager.KeyguardLock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -88,4 +89,13 @@ public class ScreenOnIntentReceiver extends BroadcastReceiver {
     	context.startActivity(i);
     	
     }
+    
+//    Handler mLockScreenLauncherHandler = new Handler()
+//    {
+//    	@Override
+//    	public void handleMessage(Message msg)
+//    	{
+//
+//    	}
+//    };
 }

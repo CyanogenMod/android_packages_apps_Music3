@@ -2442,7 +2442,7 @@ public class RockOnNextGenService extends Service {
                 // and allow the device to go to sleep.
                 // This temporary wakelock is released when the RELEASE_WAKELOCK
                 // message is processed, but just in case, put a timeout on it.
-                mWakeLock.acquire(30000);
+                mWakeLock.acquire(10000);
                 mHandler.sendEmptyMessage(TRACK_ENDED);
                 mHandler.sendEmptyMessage(RELEASE_WAKELOCK);
             }

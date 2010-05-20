@@ -168,7 +168,7 @@
 	<string name="donate_back_to_app">Volver a </string>
 	
 	<!--	UNLOCK SCREEN	-->
-	<string name="unlock_screen">Desbloquear</string>
+	<string name="unlock_screen">Liberar</string>
 	
 	<!--	WIDGET STRINGS	-->
 	<string name="widget_app_start">Empezar ³</string>

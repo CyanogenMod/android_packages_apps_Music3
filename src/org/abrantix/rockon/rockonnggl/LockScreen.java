@@ -41,7 +41,8 @@ public class LockScreen extends Activity{
 		Log.i(TAG, "CREATE");
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+        getWindow().setFlags(
+        		WindowManager.LayoutParams.FLAG_FULLSCREEN,   
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         setupWindow();
@@ -130,7 +131,8 @@ public class LockScreen extends Activity{
 			
 		try
 		{
-			unbindService(mServiceConnection);
+			if(mServiceConnection != null)
+				unbindService(mServiceConnection);
 		}
 		catch(IllegalArgumentException e)
 		{
@@ -183,8 +185,8 @@ public class LockScreen extends Activity{
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 //                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON); 
+        		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
+//                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON); 
 		}
 		
 		/**
