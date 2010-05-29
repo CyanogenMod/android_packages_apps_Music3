@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="menu_option_title_get_art">
-		Portadas
+		Caratulas
 	</string>
 	<string name="menu_option_title_preferences">
 		Preferencias
@@ -13,7 +13,7 @@
 		Conciertos
 	</string>
 	<string name="menu_option_title_view_mode">
-		Modo de Visualización
+		Modo de Visualizacion
 	</string>
 	<string name="menu_option_title_theme">
 		Temas

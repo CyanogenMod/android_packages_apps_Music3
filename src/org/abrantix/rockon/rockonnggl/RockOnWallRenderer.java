@@ -1017,7 +1017,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     				Math.round(
     						mPositionY
     						+
-    						Constants.SCROLL_SPEED_BOOST
+    						1.5 * Constants.SCROLL_SPEED_BOOST
     						*
     						scrollSpeed/(mHeight*.5f)
     				);

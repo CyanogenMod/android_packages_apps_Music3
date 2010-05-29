@@ -986,7 +986,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 				Math.round(
 						mPositionY
 						+
-						Constants.SCROLL_SPEED_BOOST
+						1.6f * Constants.SCROLL_SPEED_BOOST
 						*
 						scrollSpeed/(mHeight*1.f/mTextRatio)
 				);

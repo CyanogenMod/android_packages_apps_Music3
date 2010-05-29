@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="menu_option_title_get_art">
-		Portadas
+		Pochettes
 	</string>
 	<string name="menu_option_title_preferences">
-		Preferencias
+		Préférences
 	</string>
 	<string name="menu_option_title_playlist_id">
 		Playlists
 	</string>
 	<string name="menu_option_title_concerts">
-		Conciertos
+		Concerts
 	</string>
 	<string name="menu_option_title_view_mode">
-		Modo de Visualización
+		Mode de Visualisation
 	</string>
 	<string name="menu_option_title_theme">
-		Temas
+		Thème
 	</string>
 </resources>
 

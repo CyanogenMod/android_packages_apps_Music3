@@ -64,7 +64,7 @@ public class DonateActivity extends Activity{
     {
 		saveDonationHistory();
 		Intent i = new Intent(Intent.ACTION_VIEW, 
-				Uri.parse("market://search?q=abrantix donate"));
+				Uri.parse("market://search?q=FilipeAbrantes"));
 		startActivity(i);
     }
     

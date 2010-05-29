@@ -1319,17 +1319,17 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     				Math.round(
     						mPositionY
     						+
-    						Constants.SCROLL_SPEED_BOOST
+    						1.33f * Constants.SCROLL_SPEED_BOOST
     						*
     						scrollSpeed/(mHeight*.5f)
     				);
     		}
     		
     		/* limit move to X covers */
-    		if(Math.abs(mTargetPositionY - mPositionY) > 10)
+    		if(Math.abs(mTargetPositionY - mPositionY) > 12)
     			mTargetPositionY = 
     				Math.round(mPositionY) +
-    				Math.signum(scrollSpeed) * 10;
+    				Math.signum(scrollSpeed) * 12;
     		
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == -1)
@@ -1341,7 +1341,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 			mTargetPositionX = Math.round(
 					mPositionX
 					-
-					(Constants.SCROLL_SPEED_BOOST * scrollSpeed/(mWidth*.9f)));
+					(2.0f * Constants.SCROLL_SPEED_BOOST * scrollSpeed/(mWidth*.9f)));
 			/* small optimization to avoid weird moves on the edges */
 		//	if(mRenderer.mTargetPositionX == -1)
 		//		mRenderer.mTargetPositionX = -2;
