@@ -2,6 +2,7 @@
 <resources>
 	<!--	BUTTON DIMENSIONS	-->
     <dimen name="button_default_width">64dp</dimen>
+    <dimen name="button_default_double_width">128dp</dimen>
     <dimen name="button_default_height">64dp</dimen>
     <dimen name="button_default_double_height">128dp</dimen>
     <dimen name="button_small_padding">28dp</dimen>

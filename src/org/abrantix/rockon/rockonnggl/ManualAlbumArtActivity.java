@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.PixelFormat;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,6 +71,15 @@ public class ManualAlbumArtActivity extends Activity{
 		super.onDestroy();
 	}
 	
+//	  @Override
+//	  public void onAttachedToWindow() {
+//	    super.onAttachedToWindow();
+//	    Window window = getWindow();
+//	    // Eliminates color banding
+//	    window.setFormat(PixelFormat.RGBA_8888);
+//	  }
+	  
+	  
 	public void showNoAlbumSpecifiedError(){
 		AlertDialog.Builder aD = new AlertDialog.Builder(this);
 		aD.setTitle(getString(R.string.manual_albumart_error));

@@ -4,6 +4,7 @@
 	<!--	BROWSING CATEGORIES-->
 	<string name="browse_cat_album">Álbum</string>
 	<string name="browse_cat_artists">Artistas</string>
+	<string name="browse_cat_songs">Pistas</string>
 
 	<!--	GENERAL STUFF -->
 	<string name="album">Álbum</string>

@@ -167,6 +167,16 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="@dimen/button_default_double_height"
 	    android:layout_above="@id/player_current_playing_layout"
-    />    
-<!--	    android:layout_above="@id/player_artist_album_drag_switcher"-->
+    	/>  
+    
+    <org.abrantix.rockon.rockonnggl.NavScrollerView 
+		android:id="@+id/player_nav_scroller"
+	    android:layout_width="@dimen/button_default_double_width"
+	    android:layout_height="fill_parent"
+	    android:layout_above="@id/player_current_playing_layout"
+	    android:layout_below="@id/player_controls_layout"
+	    android:layout_marginBottom="@dimen/button_default_height"
+	    android:layout_alignParentRight="true"
+    	/>    
+	    android:layout_above="@id/player_artist_album_drag_switcher"
 </RelativeLayout>

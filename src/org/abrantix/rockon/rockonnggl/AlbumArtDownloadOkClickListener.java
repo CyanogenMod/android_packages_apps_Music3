@@ -59,7 +59,7 @@ public class AlbumArtDownloadOkClickListener implements OnClickListener{
 						mContext.getString(R.string.art_download_cancel), 
 						cancelDownloadClickListener);
 				mProgressDialog.show();
-				
+								
 				/* start fetching album art */
 				mAlbumArtImporter = new AlbumArtImporter(mContext, mArtDownloadUpdateHandler, true);
 				mAlbumArtImporter.getAlbumArt();							

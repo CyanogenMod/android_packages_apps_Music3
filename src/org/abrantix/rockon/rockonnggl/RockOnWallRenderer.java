@@ -34,6 +34,12 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 
 	final String TAG = "RockOnWallRenderer";
 	
+	/** renderer mode */
+	public int getType()
+	{
+		return Constants.RENDERER_WALL;
+	}
+	
 	public void renderNow(){
 //		if(!mIsRendering)
 			mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -108,7 +114,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
     		NavItem n = new NavItem();
-        	n.index = -1;
+        	n.index = -999;
     		n.cover = Bitmap.createBitmap(
     				mBitmapWidth, 
     				mBitmapHeight, 
@@ -454,8 +460,35 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //        	Log.i(TAG, "texturesUpdated: "+texturesUpdated);
         	stopRender();	
         }
+        else
+        {
+        	renderNow();
+        }
     }
 
+    @Override
+    public float getScrollPosition()
+    {
+    	return (mPositionY * 2) /mCursor.getCount();
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void setCurrentTargetYByProgress(float progress)
+    {
+    	mTargetPositionY = Math.min(
+    			Math.round(progress * mCursor.getCount() * .5f),
+    			mCursor.getCount() * .5f - 1);
+//    	mPositionY = mTargetPositionY;
+    	if(Math.abs(mPositionY - mTargetPositionY) > 5)
+    		mPositionY = 
+    			mTargetPositionY -
+    			Math.signum(mTargetPositionY - mPositionY) * 5.f;
+    	renderNow();
+    }
+    
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         gl.glViewport(0, 0, w, h);
         
@@ -1154,8 +1187,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    /** get the shown song name */
+    String getShownSongName(float x, float y)
+    {
+    	return null;
+    }
+
     /** move navigator to the specified album Id */
-    int setCurrentByAlbumId(long albumId){
+    synchronized int setCurrentByAlbumId(long albumId){
 
     	if(albumId >= 0)
     	{
@@ -1196,7 +1235,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * 
      */
-    int setCurrentByArtistId(long artistId)
+    synchronized int setCurrentByArtistId(long artistId)
     {
     	if(artistId >= 0)
     	{
@@ -1232,6 +1271,13 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	} else {
     		return -1;
     	}
+    }
+    
+    // XXX - this should never be called 
+    /** move navigator to the specified audio Id */
+    synchronized int setCurrentBySongId(long songId)
+    {
+    	return -1;
     }
     
     /**
@@ -1284,7 +1330,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
-    private int 				mBrowseCat;
+//    private int 				mBrowseCat;
     private int 				mTheme;
     private	int					mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
     private Context 			mContext;
@@ -1295,7 +1341,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //    private int[] 			mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int					mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean				mClickAnimation = false;
-    private	Cursor				mCursor = null;
+//    private	Cursor				mCursor = null;
 //    private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
     private NavItem[]			mNavItem = new NavItem[mCacheSize];
     private NavItemUtils		mNavItemUtils;

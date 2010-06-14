@@ -27,14 +27,8 @@ import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.database.MergeCursor;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.inputmethodservice.InputMethodService;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -50,32 +44,25 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
-import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class RockOnNextGenGL extends Activity {
 	private final String TAG = "RockOnNextGenGL";
@@ -91,6 +78,7 @@ public class RockOnNextGenGL extends Activity {
     private RockOnNextGenDefaultExceptionHandler 	mDefaultExceptionHandler; 
     boolean											mIsSdCardPresentAndHasMusic = true;
     String											mNewPlaylistName;
+    NavScrollerView									mNavScroller;
 
     /** Dialogs */
     private	AlertDialog.Builder					mPlaylistDialog;
@@ -116,15 +104,101 @@ public class RockOnNextGenGL extends Activity {
 	static float		mNavigatorTargetPositionY = -1;
 	static int			mPlaylistId = Constants.PLAYLIST_UNKNOWN;
 	
+	/** Media Button registration for 2.2 (using reflection) */
+    private static Method mRegisterMediaButtonEventReceiver;
+    private static Method mUnregisterMediaButtonEventReceiver;
+    private AudioManager mAudioManager;
+    private ComponentName mRemoteControlResponder;
+
+
+    private static void initializeRemoteControlRegistrationMethods() {
+    	   try {
+    	      if (mRegisterMediaButtonEventReceiver == null) {
+    	         mRegisterMediaButtonEventReceiver = AudioManager.class.getMethod(
+    	               "registerMediaButtonEventReceiver",
+    	               new Class[] { ComponentName.class } );
+    	      }
+    	      if (mUnregisterMediaButtonEventReceiver == null) {
+    	         mUnregisterMediaButtonEventReceiver = AudioManager.class.getMethod(
+    	               "unregisterMediaButtonEventReceiver",
+    	               new Class[] { ComponentName.class } );
+    	      }
+    	      /* success, this device will take advantage of better remote */
+    	      /* control event handling                                    */
+    	   } catch (NoSuchMethodException nsme) {
+    	      /* failure, still using the legacy behavior, but this app    */
+    	      /* is future-proof!                                          */
+    	   }
+    }
+    
+    static {
+        initializeRemoteControlRegistrationMethods();
+    }
+
+    private void registerRemoteControl() {
+        try {
+            if (mRegisterMediaButtonEventReceiver == null) {
+                return;
+            }
+            mRegisterMediaButtonEventReceiver.invoke(mAudioManager,
+                    mRemoteControlResponder);
+        } catch (InvocationTargetException ite) {
+            /* unpack original exception when possible */
+            Throwable cause = ite.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof Error) {
+                throw (Error) cause;
+            } else {
+                /* unexpected checked exception; wrap and re-throw */
+                throw new RuntimeException(ite);
+            }
+        } catch (IllegalAccessException ie) {
+            Log.e("MyApp", "unexpected " + ie);
+        }
+    }
+    
+    private void unregisterRemoteControl() {
+        try {
+            if (mUnregisterMediaButtonEventReceiver == null) {
+                return;
+            }
+            mUnregisterMediaButtonEventReceiver.invoke(
+            		mAudioManager,
+                    mRemoteControlResponder);
+        } catch (InvocationTargetException ite) {
+            /* unpack original exception when possible */
+            Throwable cause = ite.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof Error) {
+                throw (Error) cause;
+            } else {
+                /* unexpected checked exception; wrap and re-throw */
+                throw new RuntimeException(ite);
+            }
+        } catch (IllegalAccessException ie) {
+            System.err.println("unexpected " + ie);  
+        }
+    }
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-                        
+               
+
         /* set up our default exception handler */
         mDefaultExceptionHandler = 
         	new RockOnNextGenDefaultExceptionHandler(
         			RockOnNextGenGL.this);
+
+        /* media button reflection variables */
+        mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        mRemoteControlResponder = new ComponentName(
+        		getPackageName(),
+                MediaButtonIntentReceiver.class.getName());
+
         
         setupWindow();
         
@@ -320,6 +394,14 @@ public class RockOnNextGenGL extends Activity {
     	}
     }
    
+//    @Override
+//    public void onAttachedToWindow() {
+//      super.onAttachedToWindow();
+//      Window window = getWindow();
+//      // Eliminates color banding
+//      window.setFormat(PixelFormat.RGBA_8888);
+//    }
+    
     @Override
     public boolean  onCreateOptionsMenu(Menu menu){
     	super.onCreateOptionsMenu(menu);
@@ -647,7 +729,8 @@ public class RockOnNextGenGL extends Activity {
 					Toast.makeText(
 							RockOnNextGenGL.this, 
 							R.string.concert_app_install_no_market_app_msg, 
-							Toast.LENGTH_LONG);
+							Toast.LENGTH_LONG)
+						.show();
 					
 				}
 			}
@@ -829,29 +912,79 @@ public class RockOnNextGenGL extends Activity {
 				editor.putInt(Constants.prefkey_mBrowseCatMode, msg.what);
 				editor.commit();
 				mBrowseCatMode = msg.what;
-				mRockOnRenderer.changeBrowseCat(mBrowseCatMode);
-				try
+				/**
+				 * new mode is song mode?
+				 * 	then we need to always set boring mode
+				 *  if not, then we might need to reverse to the 'default' browsing mode
+				 */
+				boolean changeRenderer = false;
+				if(mBrowseCatMode == Constants.BROWSECAT_SONG)
 				{
-					switch(mBrowseCatMode)
+					if(mRockOnRenderer.getType() != Constants.RENDERER_BORING)
 					{
-					case Constants.SWITCHER_CAT_ALBUM:
-						mRockOnRenderer.setCurrentByAlbumId(mService.getAlbumId());
-						break;
-					case Constants.SWITCHER_CAT_ARTIST:
-						mRockOnRenderer.setCurrentByArtistId(mService.getArtistId());
-						break;
+						changeRenderer = true;
+						mLoadNewViewModeOrTheme.sendEmptyMessage(Constants.RENDERER_BORING);
 					}
 				}
-				catch(RemoteException e)
+				else
 				{
-					e.printStackTrace();
+					if(mRockOnRenderer.getType() != mRendererMode)
+					{
+						changeRenderer = true;
+						mLoadNewViewModeOrTheme.sendEmptyMessage(mRendererMode);
+					}
 				}
-				mRockOnRenderer.renderNow();
-//				mLoadNewViewModeOrTheme.sendEmptyMessage(0);
+				if(!changeRenderer)
+				{
+					mRockOnRenderer.changeBrowseCat(mBrowseCatMode);
+					try
+					{
+						switch(mBrowseCatMode)
+						{
+						case Constants.SWITCHER_CAT_ALBUM:
+							mRockOnRenderer.setCurrentByAlbumId(mService.getAlbumId());
+							break;
+						case Constants.SWITCHER_CAT_ARTIST:
+							mRockOnRenderer.setCurrentByArtistId(mService.getArtistId());
+							break;
+						case Constants.SWITCHER_CAT_SONG:
+							mRockOnRenderer.setCurrentBySongId(mService.getAudioId());
+							break;
+						}
+					}
+					catch(RemoteException e)
+					{
+						e.printStackTrace();
+					}
+					mRockOnRenderer.renderNow();
+	//				mLoadNewViewModeOrTheme.sendEmptyMessage(0);
+				}
 			}
 		}
 	};
     
+//	private boolean prepareSongBrowsingMode()
+//	{
+//		if(mRendererMode != Constants.RENDERER_BORING)
+//		{
+//			mRockOnRenderer.clearCache();
+//			RockOnBoringRenderer renderer = 
+//				new RockOnBoringRenderer(
+//						getApplicationContext(), 
+//						mRequestRenderHandler, 
+//						mTheme, 
+//						mBrowseCatMode);
+//			mRockOnRenderer = renderer;
+//			((GLSurfaceView)findViewById(R.id.cube_surface_view)).
+//				setRenderer((Renderer) mRockOnRenderer);
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+	
     /**
      * 
      * @param playlistId
@@ -1639,6 +1772,10 @@ public class RockOnNextGenGL extends Activity {
          ************************************************/
     	
     	/** Setup the appropriate renderer and theme */
+        mBrowseCatMode = 
+        	PreferenceManager.
+        		getDefaultSharedPreferences(getApplicationContext()).
+        			getInt(Constants.prefkey_mBrowseCatMode, Constants.BROWSECAT_ALBUM);
         mRendererMode = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
@@ -1647,10 +1784,6 @@ public class RockOnNextGenGL extends Activity {
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
         			getInt(Constants.prefkey_mTheme, Constants.THEME_NORMAL);
-        mBrowseCatMode = 
-        	PreferenceManager.
-        		getDefaultSharedPreferences(getApplicationContext()).
-        			getInt(Constants.prefkey_mBrowseCatMode, Constants.BROWSECAT_ALBUM);
 //        			getInt(Constants.prefkey_mBrowseCatMode, Constants.BROWSECAT_ARTIST);
         
         /** Set up category browser */
@@ -1665,7 +1798,12 @@ public class RockOnNextGenGL extends Activity {
          * setting up caches in the renderers */
         System.gc();
         
-        switch(mRendererMode)
+        /** XXX: small song browsing hack - force boring mode */
+        int rendererTmp = mRendererMode;
+        if(mBrowseCatMode == Constants.BROWSECAT_SONG)
+        	rendererTmp = Constants.RENDERER_BORING;
+        // 
+        switch(rendererTmp)
         {
         case Constants.RENDERER_CUBE:
         	RockOnCubeRenderer rockOnCubeRenderer = new RockOnCubeRenderer(
@@ -1717,6 +1855,10 @@ public class RockOnNextGenGL extends Activity {
         	if(mRockOnRenderer.getAlbumCursor() != null)
         		startManagingCursor(mRockOnRenderer.getAlbumCursor());
         }
+    	
+    	/** Get our NavScrollerView */
+    	mNavScroller = (NavScrollerView)findViewById(R.id.player_nav_scroller);
+    	mNavScroller.setRenderer(mRockOnRenderer);
     }
     
 //    Handler mKillAppAndRestartPlaybackHandler = new Handler()
@@ -1731,9 +1873,37 @@ public class RockOnNextGenGL extends Activity {
      * handler for updating the surface view
      */
     Handler mRequestRenderHandler = new Handler(){
+    	
+    	int mScrollSampling = 6;
+    	int mScrollCount = 0;
+    	
     	public void handleMessage(Message msg){
+    		/** update rendering mode */
     		if(mGlSurfaceView.getRenderMode() != msg.what)
     			mGlSurfaceView.setRenderMode(msg.what);
+    		
+    		/** update scroller */
+    		if(mNavScroller != null)
+    		{
+    			switch(msg.what)
+    			{
+    			case GLSurfaceView.RENDERMODE_WHEN_DIRTY:
+	    			mNavScroller.fadeOut();
+    				break;
+    			case GLSurfaceView.RENDERMODE_CONTINUOUSLY:
+    				if(mRockOnRenderer.isSpinning())
+    				{
+    					mScrollCount++;
+	        			if(mScrollCount == mScrollSampling)
+	        			{
+	    	    			mNavScroller.updatePosition(mRockOnRenderer.getScrollPosition());
+	    	    			mScrollCount = 0;
+	        			}
+    				}
+    				break;
+    			}
+
+    		}
     	}
     };
     
@@ -1956,6 +2126,13 @@ public class RockOnNextGenGL extends Activity {
 //	        			mRockOnCubeRenderer);
 //	        	mGlSurfaceView.setOnClickListener(albumClickListener);
     		}
+    		/* NavScroller */
+    		if(mNavScroller != null){
+	        	NavScrollerTouchListener 	navScrollerTouchListener = new NavScrollerTouchListener();
+	        	navScrollerTouchListener.setScrollerHandler(mNavScrollerHandler);
+	        	mNavScroller.setOnTouchListener(navScrollerTouchListener);
+    		}
+    		
     		/* Progress bar seek */
     		ProgressBarTouchListener progressTouchListener = new ProgressBarTouchListener();
     		progressTouchListener.setSeekHandler(mSeekHandler);
@@ -1978,6 +2155,45 @@ public class RockOnNextGenGL extends Activity {
         	return;
     	}
     }
+    
+    /**
+     * 
+     */
+    private Handler mNavScrollerHandler = new Handler()
+    {
+    	float	mTargetPos = 0;
+    	
+    	@Override
+    	public void handleMessage(Message msg)
+    	{
+    		/**
+    		 * Reset the scroll timeout
+    		 */
+    		if(mSetNavigatorCurrent.hasMessages(0))
+    		{
+    			mSetNavigatorCurrent.removeCallbacksAndMessages(null);
+    			mSetNavigatorCurrent.sendEmptyMessageDelayed(0, Constants.SCROLLING_RESET_TIMEOUT);
+    		}
+    		
+    		/** Nav Scroller will check if the touched area
+    		 *  is within the 'grabbable' area 
+    		 */
+//    		if((mTargetPos = mNavScroller.getPositionFromY(msg.arg2)) > 0)
+//    			mRockOnRenderer.setCurrentTargetYByProgress(mTargetPos);
+    		if(msg.what == MotionEvent.ACTION_DOWN)
+    			mNavScroller.setTouching(true);
+    		else if(msg.what == MotionEvent.ACTION_UP)
+    		{
+    			mNavScroller.setTouching(false);
+    			mRockOnRenderer.setCurrentTargetYByProgress(
+    					mNavScroller.getCurrentPosition());
+    		}
+    		
+    		mNavScroller.manualScrollToY(msg.arg2);
+    		mNavScroller.invalidate();
+    	}
+    };
+    
     
     /**
      * Pass Intro
@@ -2452,7 +2668,8 @@ public class RockOnNextGenGL extends Activity {
 				{
 					/* song list cursor */
 					int albumId = mRockOnRenderer.getShownElementId(x, y);
-					if(albumId < 0){
+					if(albumId < 0)
+					{
 						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 						return;
 					}
@@ -2475,11 +2692,28 @@ public class RockOnNextGenGL extends Activity {
 					showAlbumListDialogFromArtist(
 							artistId,
 							mRockOnRenderer.getShownAlbumArtistName(x, y));
-//					
-//					showSongListDialogFromAlbum(
-//							albumId, 
-//							mRockOnRenderer.getShownAlbumArtistName(x, y),
-//							mRockOnRenderer.getShownAlbumName(x, y));
+
+				}
+				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_SONG)
+				{
+					/* song list cursor */
+					int songId = mRockOnRenderer.getShownElementId(x, y);
+					Log.i(TAG, "SongId: "+songId);
+					if(songId < 0){
+						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+						return;
+					}
+					
+					/* Play song */
+					Message newMsg = new Message();
+					newMsg.arg1 = songId;
+					newMsg.arg2 = Constants.SINGLE_CLICK;
+					mSongItemSelectedHandler.sendMessageDelayed(
+							newMsg, 
+							Constants.CLICK_ACTION_DELAY);
+										
+					/* Reverse click animation */
+					mRockOnRenderer.reverseClickAnimation();
 				}
 				
 			} else if(msg.what == Constants.LONG_CLICK){
@@ -2499,6 +2733,20 @@ public class RockOnNextGenGL extends Activity {
 							R.string.not_an_album_toast, 
 							Toast.LENGTH_SHORT)
 						.show();
+				}
+				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_SONG)
+				{
+					/* song options */
+					int songId = mRockOnRenderer.getShownElementId(x, y);
+					if(songId < 0){
+						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
+						return;
+					}
+					
+					String songName = mRockOnRenderer.getShownSongName(x,y);
+					
+					// Show song options
+					showSongOptionsDialog(songId, songName);
 				}
 			}
 			
@@ -2704,6 +2952,14 @@ public class RockOnNextGenGL extends Activity {
     			new PlaylistOptionClickListener(
     					songId, 
     					mSongOptionSelectedHandler));
+    	songOptsDBuilder.setOnCancelListener(
+    			new OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						// Reverse the animation
+						mRockOnRenderer.reverseClickAnimation();
+					}
+    			});
     	songOptsDBuilder.show();
     }
     
@@ -3271,6 +3527,9 @@ public class RockOnNextGenGL extends Activity {
 				break;
 			case Constants.BROWSECAT_ARTIST:
 				mRockOnRenderer.setCurrentByArtistId(service.getArtistId());
+				break;		
+			case Constants.BROWSECAT_SONG:
+				mRockOnRenderer.setCurrentBySongId(service.getAudioId());
 				break;
 			}
 			return true;
@@ -3343,13 +3602,17 @@ public class RockOnNextGenGL extends Activity {
         }
     };
 
-	
 	/**
 	 * Service connection
 	 */
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName classname, IBinder obj) {
             mService = IRockOnNextGenService.Stub.asInterface(obj);
+            /* Media Button registration for 2.2+ 
+             * - could go into the service
+             */
+            registerRemoteControl();
+            
             try {
             	// need to pass preferences to service (service runs in separate process)
             	setPreferencesInService();

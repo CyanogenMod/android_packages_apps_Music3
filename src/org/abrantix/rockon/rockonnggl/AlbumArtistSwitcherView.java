@@ -91,6 +91,18 @@ public class AlbumArtistSwitcherView extends View
 			1f
 	};
 	
+	Paint	mCategoryHighlightIndicatorPaint;
+	int[]	mCategoryHighlightIndicatorGradientColors = 
+	{
+			Color.argb(255, 240, 240, 240),
+			Color.argb(255, 96, 96, 96)
+	};
+	float[]	mCategoryHighlightIndicatorGradientColorPositions =
+	{
+			0.f,
+			1f
+	};
+	
 	Paint	mCategoryIndicatorLightHintingPaint;
 	int		mCategoryIndicatorLightHintingColor = Color.argb(255, 172, 172, 172);
 	Paint	mCategoryIndicatorDarkHintingPaint;
@@ -98,6 +110,7 @@ public class AlbumArtistSwitcherView extends View
 	
 	String	mAlbumsString;
 	String	mArtistsString;
+	String	mSongsString;
 	
 	/**
 	 * Optimization vars
@@ -152,9 +165,19 @@ public class AlbumArtistSwitcherView extends View
 	private void snapPosition()
 	{
 		if(Math.abs(mPosition-mCurrentLockPosition) > Constants.SWITCHER_MOVEMENT_REQUIRED_TO_SWITCH)
-			mTargetPosition = mCurrentLockPosition + Math.signum(mPosition-mCurrentLockPosition);
+		{
+			if(Math.abs(mPosition - mCurrentLockPosition) < 1)
+				mTargetPosition = mCurrentLockPosition + Math.signum(mPosition-mCurrentLockPosition);
+			else
+				mTargetPosition = mCurrentLockPosition + 
+					Math.signum(mPosition-mCurrentLockPosition) * (float)Math.floor(Math.abs(mPosition-mCurrentLockPosition));
+			
+		}
 		// Let's just make sure that this is a round number
 		mTargetPosition = Math.round(mTargetPosition);
+		
+		Log.i(TAG, "mPosition: "+mPosition+" mTargetPosition: "+mTargetPosition+" mCurrentLock: "+mCurrentLockPosition);
+		
 //		if(mTargetPosition < 0)
 //			mTargetPosition = 0;
 //		else if(mTargetPosition > Constants.SWITCHER_CATEGORY_COUNT - 1)
@@ -192,6 +215,9 @@ public class AlbumArtistSwitcherView extends View
 		mArtistsString = 
 			context.getResources().
 				getString(Constants.SWITCHER_CAT_ARTIST_STRING_RES);
+		mSongsString = 
+			context.getResources().
+				getString(Constants.SWITCHER_CAT_SONG_STRING_RES);
 		
 		/** 
 		 * Initial Position 
@@ -206,6 +232,10 @@ public class AlbumArtistSwitcherView extends View
 		case Constants.BROWSECAT_ARTIST:
 			mPosition = Constants.SWITCHER_CAT_ARTIST;
 			mTargetPosition = Constants.SWITCHER_CAT_ARTIST;
+			break;
+		case Constants.BROWSECAT_SONG:
+			mPosition = Constants.SWITCHER_CAT_SONG;
+			mTargetPosition = Constants.SWITCHER_CAT_SONG;
 			break;
 		}
 	}
@@ -290,6 +320,17 @@ public class AlbumArtistSwitcherView extends View
 						0, mHeight * .85f + mHeight*.5f*Constants.SWITCHER_CAT_CIRCLE_RATIO, 
 						mCategoryIndicatorGradientColors,
 						mCategoryIndicatorGradientColorPositions,
+						TileMode.CLAMP));
+		/** Category Highlight Indicator */
+		mCategoryHighlightIndicatorPaint = new Paint();
+		mCategoryHighlightIndicatorPaint.setAntiAlias(true);
+		mCategoryHighlightIndicatorPaint.setDither(true);
+		mCategoryHighlightIndicatorPaint.setShader(
+				new LinearGradient(
+						0, mHeight * .85f - mHeight*.5f*Constants.SWITCHER_CAT_CIRCLE_RATIO, 
+						0, mHeight * .85f + mHeight*.5f*Constants.SWITCHER_CAT_CIRCLE_RATIO, 
+						mCategoryHighlightIndicatorGradientColors,
+						mCategoryHighlightIndicatorGradientColorPositions,
 						TileMode.CLAMP));
 		
 		this.invalidate();
@@ -473,6 +514,9 @@ public class AlbumArtistSwitcherView extends View
 			case Constants.SWITCHER_CAT_ARTIST:
 				mStateChangeHandler.sendEmptyMessage(Constants.BROWSECAT_ARTIST);
 				break;
+			case Constants.SWITCHER_CAT_SONG:
+				mStateChangeHandler.sendEmptyMessage(Constants.BROWSECAT_SONG);
+				break;
 			default:
 				Log.i(TAG, ""+(int)mPosition);
 				break;
@@ -546,6 +590,10 @@ public class AlbumArtistSwitcherView extends View
 				oSlidingText = mAlbumsString;
 				oSlidingTextPosition = Constants.SWITCHER_CAT_ALBUM - mPosition % Constants.SWITCHER_CATEGORY_COUNT;
 				break;
+			case Constants.SWITCHER_CAT_SONG:
+				oSlidingText = mSongsString;
+				oSlidingTextPosition = Constants.SWITCHER_CAT_SONG - mPosition % Constants.SWITCHER_CATEGORY_COUNT;
+				break;
 			}
 			/** text shadow */
 			/** 'light' hinting */
@@ -579,6 +627,8 @@ public class AlbumArtistSwitcherView extends View
 	{
 		for(int k=0; k<2; k++)
 		{
+			
+			/** get initial state position */
 			if(Constants.SWITCHER_CATEGORY_COUNT  % 2 == 0)
 			{
 				if(k == 0)
@@ -604,9 +654,55 @@ public class AlbumArtistSwitcherView extends View
 			}
 			else
 			{
-				// TODO: same old thing but different
+				if(k == 0)
+				{
+//					oCategoryIndicationPosition = mElementDensityPixels * .5f;
+					oCategoryIndicationPosition = mElementDensityPixels * .25f;
+				}
+				else
+				{
+//					oCategoryIndicationPosition = mWidth - mElementDensityPixels * .5f;
+					oCategoryIndicationPosition = mWidth - mElementDensityPixels * .75f;
+				}
+////				oCategoryIndicationPosition = mWidth * .5f;
+//				oCategoryIndicationPosition -= 
+//					// each circle
+//					Constants.SWITCHER_CATEGORY_COUNT/2 * (mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f
+//					+
+//					// space between circles
+//					(Constants.SWITCHER_CATEGORY_COUNT/2 - 1) *  (mHeight*.5f) * 
+//						(2.f * Constants.SWITCHER_CAT_CIRCLE_RATIO * Constants.SWITCHER_CAT_CIRCLE_SPACING)
+//					+
+//					// half spacing
+//					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * 
+//						Constants.SWITCHER_CAT_CIRCLE_SPACING * .5f;			
 			}
 			
+			/** Highlight of current state */
+			float idx;
+			if(mPosition%Constants.SWITCHER_CATEGORY_COUNT > Constants.SWITCHER_CATEGORY_COUNT - 1)
+				idx = (float) (1.f + (Math.floor(mPosition)-mPosition));
+			else
+				idx = (float) (Math.floor(mPosition)%Constants.SWITCHER_CATEGORY_COUNT + (mPosition - Math.floor(mPosition)));
+			canvas.drawCircle(
+					oCategoryIndicationPosition
+					+
+					// each circle
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * idx
+					+
+					// each space between circle
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO * 2.f) * 
+						Constants.SWITCHER_CAT_CIRCLE_SPACING * idx
+					+
+					// center offset
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
+					
+					mHeight*.85f, // cy 
+					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 1.28f, 
+					mCategoryHighlightIndicatorPaint);
+			
+			
+			/** draw all states */
 			for(int i=0; i<Constants.SWITCHER_CATEGORY_COUNT; i++)
 			{	
 				/** All states */
@@ -628,28 +724,7 @@ public class AlbumArtistSwitcherView extends View
 						mCategoryIndicatorPaint);
 			}
 	
-			/** Highlight of current position */
-			float i;
-			if(mPosition%Constants.SWITCHER_CATEGORY_COUNT > Constants.SWITCHER_CATEGORY_COUNT - 1)
-				i = (float) (1.f + (Math.floor(mPosition)-mPosition));
-			else
-				i = (float) (Math.floor(mPosition)%Constants.SWITCHER_CATEGORY_COUNT + (mPosition - Math.floor(mPosition)));
-			canvas.drawCircle(
-					oCategoryIndicationPosition
-					+
-					// each circle
-					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 2.f * i
-					+
-					// each space between circle
-					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO * 2.f) * 
-						Constants.SWITCHER_CAT_CIRCLE_SPACING * i
-					+
-					// center offset
-					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO), 
-					
-					mHeight*.85f, // cy 
-					(mHeight*.5f) * (Constants.SWITCHER_CAT_CIRCLE_RATIO) * 1.28f, 
-					mCategoryIndicatorPaint);
+			
 		}
 	}
 }

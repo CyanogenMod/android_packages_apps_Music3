@@ -15,6 +15,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -41,6 +42,8 @@ public abstract class RockOnRenderer{
 	{
 		mRequestRenderHandler.sendEmptyMessage(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 	}
+	
+	abstract public int getType();
 	
 	abstract public void clearCache();
     
@@ -103,11 +106,14 @@ public abstract class RockOnRenderer{
     /** get the current Album/Artist/... Id */
     abstract int getShownElementId(float x, float y);
     
-    /** get the current Album Name */
+    /** get the shown Album Name */
     abstract String getShownAlbumName(float x, float y);
     
-    /** get the current Album Name */
+    /** get the shown Album Artist Name */
     abstract String getShownAlbumArtistName(float x, float y);
+    
+    /** get the shown song Name */
+    abstract String getShownSongName(float x, float y);
     
     /** move navigator to the specified album Id */
     abstract int setCurrentByAlbumId(long albumId);
@@ -115,6 +121,94 @@ public abstract class RockOnRenderer{
     /** move navigator to the specified artist Id */
     abstract int setCurrentByArtistId(long artistId);
 
+    /** move navigator to the specified audio id */
+    abstract int setCurrentBySongId(long audioId);
+
+    /** move navigator to the specified target range */
+    abstract void setCurrentTargetYByProgress(float progress);
+    
+    /** get the scroll position [0:1] */
+    abstract float getScrollPosition();
+
+    /** get the first letter of the item in a given position [0:1] */
+//    abstract char getFirstLetterInPosition(float pos);
+    CharArrayBuffer oTitleCharArrayBuffer = new CharArrayBuffer(100);
+    String 			oFirstLetterString = "a";	
+    int				oFirstLetterPosition;
+    public char getFirstLetterInPosition(float pos)
+    {
+    	/**
+    	 * Sanity check on the cursor limits
+    	 */
+    	oFirstLetterPosition = Math.round(pos * mCursor.getCount());
+    	if(oFirstLetterPosition >= mCursor.getCount()-1)
+    		oFirstLetterPosition = mCursor.getCount()-1;
+    	else if(oFirstLetterPosition < 0)
+    		oFirstLetterPosition = 0;
+    	mCursor.moveToPosition(oFirstLetterPosition);
+    	
+    	/**
+    	 * Get the first letter
+    	 */
+    	switch(mBrowseCat)
+    	{
+		case Constants.BROWSECAT_ARTIST:
+		    mCursor.copyStringToBuffer(
+		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST), 
+		    		oTitleCharArrayBuffer);
+		    return oTitleCharArrayBuffer.data[0];
+		case Constants.BROWSECAT_ALBUM:
+			mCursor.copyStringToBuffer(
+		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST), 
+		    		oTitleCharArrayBuffer);
+		    return oTitleCharArrayBuffer.data[0];			
+		case Constants.BROWSECAT_SONG:
+			mCursor.copyStringToBuffer(
+		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE), 
+		    		oTitleCharArrayBuffer);
+			/**
+			 * Check if the track title begins with 'the'
+			 */
+			if(oTitleCharArrayBuffer.data.length >= 5)
+			{
+				if(oTitleCharArrayBuffer.data[0] == 't' || oTitleCharArrayBuffer.data[0] == 'T')
+				{
+					if(oTitleCharArrayBuffer.data[1] == 'h' || oTitleCharArrayBuffer.data[1] == 'H')
+					{
+						if(oTitleCharArrayBuffer.data[2] == 'e' || oTitleCharArrayBuffer.data[2] == 'E')
+						{
+							if(oTitleCharArrayBuffer.data[3] == ' ')
+							{
+								return oTitleCharArrayBuffer.data[4];
+							}
+						}
+					}
+				}
+			}
+			/**
+			 * Check if the track title begins with 'the'
+			 */
+			else if(oTitleCharArrayBuffer.data.length >= 3)
+			{
+				if(oTitleCharArrayBuffer.data[0] == 'a' || oTitleCharArrayBuffer.data[0] == 'A')
+				{
+					if(oTitleCharArrayBuffer.data[1] == ' ')
+					{
+						return oTitleCharArrayBuffer.data[2];
+					}
+				}
+			}
+			
+			return oTitleCharArrayBuffer.data[0];
+    	}
+    	return ' ';
+    }
+//    /** Scroller Element */
+//    private GLScroller			mGlScroller;
+    
+    public 	int			mBrowseCat;
+    public 	Cursor		mCursor = null;
+    
     //
     public	float		mPositionX = 0.f;
     public	float		mTargetPositionX = 0.f;
@@ -122,8 +216,12 @@ public abstract class RockOnRenderer{
     public	float		mTargetPositionY = -1.f;
     public	float		mRotationInitialPositionY = 0.f;
     
+    public	float		mViewportTop = 0.f;
+    public	float		mViewportHeight = 0.f;
+    
     public	boolean		mIsChangingCat = false;
 
+	
     
 
 }

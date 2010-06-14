@@ -16,8 +16,8 @@
 
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
-    <string name="preference_title_lock_screen">Verrouillage de l'écran</string>
-    <string name="preference_summary_lock_screen">Montrer les commandes lorsque l'écran est verrouillé.</string>
+    <string name="preference_title_lock_screen">Verrouillage de l\'écran</string>
+    <string name="preference_summary_lock_screen">Montrer les commandes lorsque l\'écran est verrouillé.</string>
 
 	<!--	FULL SCREEN    -->
     <string name="preference_key_full_screen">mFullScreen</string>
@@ -27,7 +27,7 @@
 	<!--	CONTROLS ON BOTTOM    -->
     <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
     <string name="preference_title_controls_on_bottom">Commandes de lecture</string>
-    <string name="preference_summary_controls_on_bottom">Placer les commandes sur le bas de l'écran.</string>
+    <string name="preference_summary_controls_on_bottom">Placer les commandes sur le bas de l\'écran.</string>
 
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">Général</string>
@@ -37,7 +37,7 @@
 	<!--	EMBEDDED ALBUM ART ONLY    -->
 	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
     <string name="preference_title_embedded_album_art">Toujours utiliser les pochettes ID3</string>
-    <string name="preference_summary_embedded_album_art">Malgrés qu'elles soient de basse résolution, utiliser les pochettes des chansons.</string>
+    <string name="preference_summary_embedded_album_art">Malgrés qu\'elles soient de basse résolution, utiliser les pochettes des chansons.</string>
 
     <!--    SCROBBLING -->
     <string name="preference_scrobble_list_key">scrobbling</string>

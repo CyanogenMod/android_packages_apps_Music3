@@ -14,4 +14,6 @@ public class NavItem{
 	int		nAlbumsFromArtist;
 //	String	nAlbumsFromArtistText;
 	int		nSongsFromArtist;
+	String	songName;
+	int		songId;
 }

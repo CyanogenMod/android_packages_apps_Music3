@@ -41,6 +41,12 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 
 	final String TAG = "RockOnCubeRenderer";
 	
+	/** renderer mode */
+	public int getType()
+	{
+		return Constants.RENDERER_CUBE;
+	}
+	
 //	public boolean needsRender()
 //	{
 //        if(mTargetPositionX != mPositionX ||
@@ -127,7 +133,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	/** init cover bitmap cache */
     	for(int i = 0; i < mCacheSize; i++){
     		NavItem n = new NavItem();
-        	n.index = -1;
+        	n.index = -999;
     		n.cover = Bitmap.createBitmap(
     				mBitmapWidth, 
     				mBitmapHeight, 
@@ -586,7 +592,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         	!mClickAnimation &&
         	!texturesUpdated)
         {
-        		stopRender();
+        	stopRender();
+        }
+        else
+        {
+//        	// avoid showing the scrollbar when doing click animations
+//        	if(!mClickAnimation)
+        		renderNow();
         }
         
 //        Log.i(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
@@ -608,19 +620,51 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 //        }
     }
 
+    @Override
+    public float getScrollPosition()
+    {
+    	return mPositionY/mCursor.getCount();
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void setCurrentTargetYByProgress(float progress)
+    {
+    	mTargetPositionY = Math.min(
+    			Math.round(progress * mCursor.getCount()),
+    			mCursor.getCount()-1);
+//    	mPositionY = mTargetPositionY;
+    	if(Math.abs(mPositionY - mTargetPositionY) > 5)
+    		mPositionY = 
+    			mTargetPositionY -
+    			Math.signum(mTargetPositionY - mPositionY) * 5.f;
+    	renderNow();
+    }
+    
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         mHeight = h;
         mWidth = w;
         
         /* if the screen is big make the cube a little bit smaller */
         if(mWidth > 320 && mHeight > mWidth)
+        {
+        	mViewportTop = .20f * (mWidth-320)/2 * h/w;
+        	mViewportHeight = (mWidth - .20f * (mWidth - 320)) * h/w;
         	gl.glViewport(
         			(int) (.20f * (mWidth-320)/2), 						// x
-        			(int) (.20f * (mWidth-320)/2 * h/w),				// y 
+        			(int) (mViewportTop),				// y 
         			(int) (mWidth - .20f * (mWidth - 320)), 			// width
-        			(int) ((mWidth - .20f * (mWidth - 320)) * h/w));	// height
+        			(int) (mViewportHeight));	// height
+        }
         else
+        {
+        	mViewportTop = 0.f;
+        	mViewportHeight = h;
         	gl.glViewport(0, 0, w, h);
+        }
+        
         
         /*
         * Set our projection matrix. This doesn't have to be done
@@ -1469,8 +1513,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    /** get the shown song name */
+    String getShownSongName(float x, float y)
+    {
+    	return null;
+    }
+
     /** move navigator to the specified album Id */
-    int setCurrentByAlbumId(long albumId){
+    synchronized int setCurrentByAlbumId(long albumId){
 
     	if(albumId >= 0)
     	{
@@ -1509,7 +1559,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     }
     
     /** move navigator to the specified artist Id */
-    int setCurrentByArtistId(long artistId)
+    synchronized int setCurrentByArtistId(long artistId)
     {
     	if(artistId >= 0)
     	{
@@ -1547,6 +1597,13 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
 
+    // XXX - this should never be called 
+    /** move navigator to the specified audio Id */
+    synchronized int setCurrentBySongId(long songId)
+    {
+    	return -1;
+    }
+    
     
     /**
      * 
@@ -1610,7 +1667,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     /**
      * Class members
      */
-    private int					mBrowseCat;
+//    private int					mBrowseCat;
     private int					mTheme;
     private	int					mCacheSize = 4;
     private Context 			mContext;
@@ -1622,7 +1679,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int					mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean				mClickAnimation = false;
-    private	Cursor				mCursor = null;
+//    private	Cursor				mCursor = null;
     private AlphabetNavItem[]	mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
     private NavItem[]			mNavItem = new NavItem[mCacheSize];
     private NavItemUtils		mNavItemUtils;

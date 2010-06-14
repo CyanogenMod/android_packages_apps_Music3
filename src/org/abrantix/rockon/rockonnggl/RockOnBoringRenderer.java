@@ -16,6 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import android.content.Context;
+import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -32,6 +33,12 @@ import android.util.Log;
 public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
 
 	final String TAG = "RockOnBoringRenderer";
+	
+	/** renderer mode */
+	public int getType()
+	{
+		return Constants.RENDERER_BORING;
+	}
 	
 	public void renderNow(){
 //		if(!mIsRendering)
@@ -70,22 +77,32 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     private void initCursorVars(Context context, int browseCat, boolean force){
     	/** init album cursor **/
     	if(mCursor == null || force){
+    		Cursor helperCursor;
     		CursorUtils cursorUtils = new CursorUtils(context);
-       		if (browseCat == Constants.BROWSECAT_ARTIST)
+    		switch(browseCat)
     		{
-    			Cursor helperCursor = 
+    		case Constants.BROWSECAT_ARTIST:
+    			helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
     			mCursor = helperCursor;
-    		}
-    		else // ALBUM
-    		{
-	    		Cursor helperCursor= 
+    			break;
+    		case Constants.BROWSECAT_ALBUM:
+	    		helperCursor= 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
 	    							Constants.prefkey_mPlaylistId,
 	    							Constants.PLAYLIST_ALL));
 	    		mCursor = helperCursor;
+	    		break;
+	    	/**
+	    	 * song listing does not support playlist
+	    	 */
+    		case Constants.BROWSECAT_SONG:
+	    		helperCursor= 
+	    			cursorUtils.getAllSongsListOrderedBySongTitle();
+	    		mCursor = helperCursor;
+	    		break;
     		}
     	}
     }
@@ -114,7 +131,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	for(int i = 0; i < mCacheSize; i++){
     		NavItem n;
     		n = new NavItem();
-        	n.index = -1;
+        	n.index = -999;
 //    		mAlbumNavItem[i].cover = Bitmap.createBitmap(
 //    				mBitmapWidth, 
 //    				mBitmapHeight, 
@@ -464,8 +481,36 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //        	Log.i(TAG, "texturesUpdated: "+texturesUpdated);
         	stopRender();	
         }
+        else
+        {
+        	renderNow();
+        }
     }
 
+    @Override
+    public float getScrollPosition()
+    {
+    	return mPositionY/mCursor.getCount();
+    }
+
+    
+    /**
+     * 
+     */
+    @Override
+    public void setCurrentTargetYByProgress(float progress)
+    {
+    	mTargetPositionY = Math.min(
+    			Math.round(progress * mCursor.getCount()),
+    			mCursor.getCount()-1);
+//    	mPositionY = mTargetPositionY;
+    	if(Math.abs(mPositionY - mTargetPositionY) > 5)
+    		mPositionY = 
+    			mTargetPositionY -
+    			Math.signum(mTargetPositionY - mPositionY) * 5.f;
+    	renderNow();
+    }
+    
     public void onSurfaceChanged(GL10 gl, int w, int h) {
         gl.glViewport(0, 0, w, h);
         
@@ -747,6 +792,25 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 			    			mNavItem[cacheIndex].nSongsFromArtist = 0;
 			    		}
 			    		if(!mNavItemUtils.fillArtistBoringLabel(
+			    				mNavItem[cacheIndex],
+			    				mNavItem[cacheIndex].label.getWidth(),
+			    				mNavItem[cacheIndex].label.getHeight()))
+			    		{
+			    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    		}
+	    				break;
+	    			case Constants.BROWSECAT_SONG:
+	    				if(!mNavItemUtils.fillSongInfo(
+			    				mCursor, 
+			    				mNavItem[cacheIndex],
+			    				navIndex))
+			    		{
+			    			mNavItem[cacheIndex].artistId = null;
+			    			mNavItem[cacheIndex].artistName = null;
+			    			mNavItem[cacheIndex].nAlbumsFromArtist = 0;
+			    			mNavItem[cacheIndex].nSongsFromArtist = 0;
+			    		}
+			    		if(!mNavItemUtils.fillSongBoringLabel(
 			    				mNavItem[cacheIndex],
 			    				mNavItem[cacheIndex].label.getWidth(),
 			    				mNavItem[cacheIndex].label.getHeight()))
@@ -1083,7 +1147,15 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     			id = mCursor.getInt(
 	    				mCursor.getColumnIndexOrThrow(
 	    						MediaStore.Audio.Artists._ID));
+    		else if(mBrowseCat == Constants.BROWSECAT_SONG)
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Media._ID));
+    		
+    		// reinstate previous state
     		mCursor.moveToPosition(tmpIndex);
+    		
+    		// answer with element id
     		return id;
     	}
     }
@@ -1115,6 +1187,28 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     						MediaStore.Audio.Albums.ARTIST));
     		mCursor.moveToPosition(tmpIndex);
     		return artistName;
+    	}
+    }
+    
+    /** Get the Clicked Song Name */
+    String getShownSongName(float x, float y){
+    	if(mBrowseCat == Constants.BROWSECAT_SONG)
+    	{
+	    	if(mTargetPositionY != mPositionY)
+	    		return null;
+	    	else{
+	    		int tmpIndex = mCursor.getPosition();
+	    		mCursor.moveToPosition(getVerifiedPositionFromScreenCoordinates(x,y));
+	    		String songName = mCursor.getString(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Media.TITLE));
+	    		mCursor.moveToPosition(tmpIndex);
+	    		return songName;
+	    	}
+    	}
+    	else
+    	{
+    		return null;
     	}
     }
     
@@ -1157,10 +1251,12 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	}
     }
     
+    
+    
     /**
      * 
      */
-    int setCurrentByArtistId(long artistId)
+    synchronized int setCurrentByArtistId(long artistId)
     {
     	if(artistId >= 0)
     	{
@@ -1170,6 +1266,47 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 		    		for(int i = 0; i < mCursor.getCount()-1; i++){
 			    		mCursor.moveToPosition(i);
 			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)) == artistId){
+			    			mTargetPositionY = i;
+			    			mPositionY = 
+			    				mTargetPositionY - 
+			    				Math.signum(mTargetPositionY - mPositionY)
+			    				*
+			    				Math.min(
+			    					Math.abs(mTargetPositionY-mPositionY), 
+			    					10.f);
+			    			// TODO: trigger rotation
+			    			this.renderNow();
+			    			return i;
+			    		}
+			    	}
+			    	return -1;
+		    	} else {
+		    		return -1;
+		    	}
+	    	}
+	    	catch(android.database.CursorIndexOutOfBoundsException e)
+	    	{
+	    		e.printStackTrace();
+	    		return -1;
+	    	}
+    	} else {
+    		return -1;
+    	}
+    }
+    
+    /**
+     * 
+     */
+    synchronized int setCurrentBySongId(long songId)
+    {
+    	if(songId >= 0)
+    	{
+	    	try
+	    	{
+	    		if(mCursor != null){
+		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+			    		mCursor.moveToPosition(i);
+			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)) == songId){
 			    			mTargetPositionY = i;
 			    			mPositionY = 
 			    				mTargetPositionY - 
@@ -1249,7 +1386,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     /**
      * Class members
      */
-    private int						mBrowseCat;
+//    private int						mBrowseCat;
     private int 					mTheme;
     private	int						mCacheSize = 10; // 2 covers at the center row and then 2 more rows up and 2 more rows down
     private Context 				mContext;
@@ -1260,7 +1397,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 //    private int[] 				mTextureAlphabetId = new int[mCacheSize]; // the number of textures must be equal to the number of faces of our shape
     private	int						mScrollMode = Constants.SCROLL_MODE_VERTICAL;
     public	boolean					mClickAnimation = false;
-    private	Cursor					mCursor = null;
+//    private	Cursor					mCursor = null;
 //    private AlphabetNavItem[]		mAlphabetNavItem = new AlphabetNavItem[mCacheSize];
     private NavItem[]				mNavItem = new NavItem[mCacheSize];
     private NavItemUtils			mNavItemUtils;

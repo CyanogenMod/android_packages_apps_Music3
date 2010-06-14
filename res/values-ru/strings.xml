@@ -4,6 +4,7 @@
 	<!--	BROWSING CATEGORIES-->
 	<string name="browse_cat_album">Альбомы</string>
 	<string name="browse_cat_artists">Исполнители</string>
+	<string name="browse_cat_songs">Песни</string>
 	
 	<!--	GENERAL STUFF -->
 	<string name="album">Альбом</string>

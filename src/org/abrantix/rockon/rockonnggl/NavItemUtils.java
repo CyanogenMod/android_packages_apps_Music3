@@ -416,6 +416,63 @@ public class NavItemUtils{
 		return true;
 	}
 	
+	
+	/**
+	 * fillAlbumBoringLabel
+	 * @param albumNavItem
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	boolean fillSongBoringLabel(
+			NavItem albumNavItem,
+			int width,
+			int height)
+	{
+		/** Sanity check */
+    	if(albumNavItem.label.getWidth() != width || 
+				albumNavItem.label.getHeight() != height)
+    	{
+			Log.i(TAG, " - reading pixels from file failed");
+    		return false;
+    	}
+    	/** Create bitmap */
+    	albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
+    	canvas.setBitmap(albumNavItem.label);
+//    	canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
+    	labelAlbumBoringPaint.setTextSize(.24f * height); // will use for artist Name
+    	labelArtistBoringPaint.setTextSize(.48f * height); // will use for song name
+    	if(albumNavItem.songName != null){
+	    	canvas.drawText(
+	    			albumNavItem.songName.substring(
+	    					0, 
+	    					labelArtistBoringPaint.breakText(
+	    							albumNavItem.songName, 
+	    							false, 
+	    							width*.95f, 
+	    							null)),
+					0.f * width, 
+					.5f * height, 
+					labelArtistBoringPaint);
+    	}
+    	if(albumNavItem.artistName != null){
+	    	canvas.drawText(
+	    			albumNavItem.artistName.substring(
+	    					0, 
+	    					labelAlbumBoringPaint.breakText(
+	    							albumNavItem.artistName, 
+	    							false, 
+	    							width*0.95f, 
+	    							null)), 
+	    			0.f * width, 
+	    			.9f * height,
+	    			labelAlbumBoringPaint);
+    	}
+
+		return true;
+	}
+	
+	
 	/**
 	 * 
 	 * @param artistNavItem
@@ -594,6 +651,69 @@ public class NavItemUtils{
 
 	}
 	
+	
+	/**
+	 * fillAlbumInfo
+	 * @param albumNavItem
+	 * @param position
+	 * @return
+	 */
+	boolean fillSongInfo(Cursor albumCursor, NavItem albumNavItem, int position){
+		
+		
+    	/** Sanity check */
+    	if(position < 0 || position >= albumCursor.getCount()){
+			Log.i(TAG, " - reading pixels from file failed");
+    		return false;
+    	}
+    	
+    	try
+    	{
+			/** move cursor */ 
+			albumCursor.moveToPosition(position);
+	
+			/** get album info */
+			albumNavItem.songName = albumCursor.getString(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Media.TITLE));
+			albumNavItem.songId = albumCursor.getInt(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Media._ID));
+			albumNavItem.artistName = albumCursor.getString(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Media.ARTIST));
+			albumNavItem.albumName = albumCursor.getString(
+					albumCursor.getColumnIndexOrThrow(
+							MediaStore.Audio.Media.ALBUM));
+	    	albumNavItem.albumKey = albumCursor.getString(
+	    			albumCursor.getColumnIndexOrThrow(
+	    					MediaStore.Audio.Media.ALBUM_KEY));
+	    	albumNavItem.albumId = String.valueOf(
+	    			albumCursor.getInt(
+	    			albumCursor.getColumnIndexOrThrow(
+	    					MediaStore.Audio.Media.ALBUM_ID)));
+    	
+	    	//    	Log.i(TAG, albumNavItem.albumId+" - "+albumNavItem.artistName+" "+albumNavItem.albumName);
+    	
+	    	return true;
+    	}
+    	catch(CursorIndexOutOfBoundsException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
+    	catch(StaleDataException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
+    	catch(IllegalStateException e)
+    	{
+    		e.printStackTrace();
+    		return false;
+    	}
+
+	}
 	/**
 	 * 
 	 * @param navItem
@@ -729,4 +849,6 @@ public class NavItemUtils{
     	
 		return true;
 	}
+	
+
 }

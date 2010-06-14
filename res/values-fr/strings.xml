@@ -4,6 +4,7 @@
 	<!--	BROWSING CATEGORIES-->
 	<string name="browse_cat_album">Album</string>
 	<string name="browse_cat_artists">Artistes</string>
+	<string name="browse_cat_songs">Chansons</string>
 
 	<!--	GENERAL STUFF -->
 	<string name="album">Album</string>
@@ -19,7 +20,7 @@
 	<!--    ALBUM ART MESSAGES-->
 	<string name="get_art_dialog_title">³ Pochettes</string>
 	<string name="get_art_dialog_message">
-		³ peut télecharger d'internet les pochettes de tes albums. Le faire maintenant? (Ça prendra ~1 min chaque 10 albums. Il est recommandé d'utiliser une connexion WiFi).
+		³ peut télecharger d\'internet les pochettes de tes albums. Le faire maintenant? (Ça prendra ~1 min chaque 10 albums. Il est recommandé d\'utiliser une connexion WiFi).
 	</string>
 	<string name="get_art_dialog_yes">Oui!</string>
 	<string name="get_art_dialog_no">Non.</string>
@@ -31,23 +32,23 @@
 	<string name="art_download_progress_initial_message">Recherche de pochettes...</string>
 
 	<!--	NO SDCARD MESSAGES -->
-	<string name="no_sd_card_dialog_title">Pas d'accès à la mémoire SD!</string>
+	<string name="no_sd_card_dialog_title">Pas d\'accès à la mémoire SD!</string>
 	<string name="no_sd_card_dialog_message">Veuillez insérer une mémoire SD...</string>
 	<string name="no_sd_card_dialog_continue_anyway">Continuer quand même</string>
 	<string name="no_sd_card_dialog_exit">Sortir</string>
 	<!--	NO MUSIC MESSAGES -->
 	<string name="no_music_dialog_title">Pas de musique dans cette playlist!</string>
-	<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta mémoire SD, s'il vous plaît redémarrer l'application ou changer de playlist...</string>
+	<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta mémoire SD, s\'il vous plaît redémarrer l\'application ou changer de playlist...</string>
 	<string name="no_music_dialog_continue_anyway">Continuer quand même</string>
 	<string name="no_music_dialog_exit">Sortir</string>
 
 
 	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
 	<string name="concert_app_install_dialog_title">Installer Concerts³</string>
-	<string name="concert_app_install_dialog_message">Ceci requiert l'installation de Concerts³. Le faire maintenant?</string>
+	<string name="concert_app_install_dialog_message">Ceci requiert l\'installation de Concerts³. Le faire maintenant?</string>
 	<string name="concert_app_install_dialog_ok">Oui</string>
 	<string name="concert_app_install_dialog_cancel">Non!</string>
-	<string name="concert_app_install_no_market_app_msg">Il semble que tu n'ais pas le Market d'installé =S</string>
+	<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
 
 	<!--	TOASTER MESSAGES	-->
 	<string name="song_added_to_playlist">Chanson ajoutée à la playlist</string>
@@ -55,14 +56,14 @@
 	<string name="album_art_changed">Pochette changée</string>
 	<string name="playlist_empty_toast">Erreur! Playlist vide!</string>
 	<string name="playqueue_empty_toast">Pas de chansons!</string>
-	<string name="not_an_album_toast">Erreur! C'est un artiste! Pas un album!</string>
+	<string name="not_an_album_toast">Erreur! C\'est un artiste! Pas un album!</string>
 	<string name="playlist_queued_toast">Playlist</string>
 	<string name="generic_error_toast">Erreur!</string>
 	<string name="playlist_deleted_toast">Playlist effacée!</string>
 	<string name="song_deleted_toast">Chanson effacée!</string>
 
 	<!-- 	SEARCH -->
-	<string name="search_hint">Nom de l'artiste ou de l'album:</string>
+	<string name="search_hint">Nom de l\'artiste ou de l\'album:</string>
 
 	<!--	PLAY QUEUE	-->
 	<string name="play_queue_title">Lire playlist</string>
@@ -79,7 +80,7 @@
 
 	<!--	DELETE SONG DIALOG	-->
 	<string name="song_delete_confirm_title">Effacer la chanson</string>
-	<string name="song_delete_message">Etes vous sûr de vouloir effacer cette chanson? Cette opération n'est pas réversible.</string>
+	<string name="song_delete_message">Etes vous sûr de vouloir effacer cette chanson? Cette opération n\'est pas réversible.</string>
 	<string name="song_delete_positive_button">Oui!</string>
 	<string name="song_delete_negative_button">Non.</string>
 	<!--	DELETE PLAYLIST DIALOG	-->
@@ -131,7 +132,7 @@
 	<!--    HALF TONE DIALOG -->
 	<string name="half_tone_dialog_title">Mi Ton</string>
 	<string name="half_tone_dialog_message">
-		Le thème Mi Ton necessite de taiter tes pochettes. C'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
+		Le thème Mi Ton necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
 	</string>
 	<string name="half_tone_dialog_yes">Accepter!</string>
 	<string name="half_tone_dialog_no">Annuler!</string>
@@ -139,7 +140,7 @@
 	<!--    EARTHQUAKE DIALOG -->
 	<string name="earthquake_dialog_title">Tremblement de Terre</string>
 	<string name="earthquake_dialog_message">
-		Le thème Tremblement de Terre necessite de taiter tes pochettes. C'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
+		Le thème Tremblement de Terre necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
 	</string>
 	<string name="earthquake_dialog_yes">Accepter!</string>
 	<string name="earthquake_dialog_no">Annuler!</string>
@@ -154,7 +155,7 @@
 
 	<!-- 	MANUAL ALBUM ART MSGS -->
 	<string name="manual_albumart_error">Erreur</string>
-	<string name="manual_albumart_no_album_specified">L'album n'est pas spécifié!</string>
+	<string name="manual_albumart_no_album_specified">L\'album n\'est pas spécifié!</string>
 	<string name="manual_albumart_source">Source</string>
 	<string name="manual_albumart_source_local">locale</string>
 	<string name="manual_albumart_source_internet">internet</string>
@@ -163,7 +164,7 @@
 
 	<!--	DONATE MSG	-->
 	<string name="donate_title">Faire un don</string>
-	<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l'améliorer.</string>
+	<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l\'améliorer.</string>
 	<string name="donate_using">Donner par le biais de: </string>
 	<string name="donate_back_to_app">Revenir à </string>
 
@@ -175,7 +176,7 @@
 
 	<!--	BUG REPORTS	-->
 	<string name="bug_report_intro_part_one">Ouch!\n\nRockOn v</string>
-	<string name="bug_report_intro_part_two">Erreur! S'il te plaît envois-moi un mail pour que je comprenne ce qu'il s'est passé, et le corriger.\n</string>
+	<string name="bug_report_intro_part_two">Erreur! S\'il te plaît envois-moi un mail pour que je comprenne ce qu\'il s\'est passé, et le corriger.\n</string>
 
 <!--	<string name="bug_report_intro">-->
 <!--		"Ouch!\n\nRockOn v\"-->

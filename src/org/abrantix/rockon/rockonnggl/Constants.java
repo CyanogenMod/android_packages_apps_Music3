@@ -14,8 +14,9 @@ public class Constants{
 	/** Browse Categories **/
 	static final int BROWSECAT_ARTIST = 0;
 	static final int BROWSECAT_ALBUM = 1;
-	static final int BROWSECAT_GENRE = 2;
-	static final int BROWSECAT_PLAYLIST = 3;
+	static final int BROWSECAT_SONG = 2;
+	static final int BROWSECAT_GENRE = 3;
+	static final int BROWSECAT_PLAYLIST = 4;
 
 	/** Renderer Types */
 	static final int RENDERER_CUBE = 0;
@@ -82,6 +83,7 @@ public class Constants{
 		MediaStore.Audio.Media._ID,
 		MediaStore.Audio.Media.ALBUM,
 		MediaStore.Audio.Media.ALBUM_ID,
+		MediaStore.Audio.Media.ALBUM_KEY,
 		MediaStore.Audio.Media.ARTIST,
 		MediaStore.Audio.Media.ARTIST_ID,
 		MediaStore.Audio.Media.TITLE,
@@ -165,7 +167,7 @@ public class Constants{
 
 	/** Artist Cursor Sorting **/
 	static final String artistAlphabeticalSortOrder = 
-//		MediaStore.Audio.Artists.ARTIST_KEY + " COLLATE NOCASE ASC";
+//		MediaStore.Audio.Artists.ARTIST_KEY + " ASC";
 		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
 	
 	/** Song List Sorting **/
@@ -179,6 +181,9 @@ public class Constants{
 		MediaStore.Audio.Media.TRACK + " ASC";
 	static final String songListPlaylistSorting = 
 		MediaStore.Audio.Playlists.Members.PLAY_ORDER + " ASC";
+	static final String songListTitleSorting =
+//		MediaStore.Audio.Media.TITLE + " COLLATE NOCASE ASC";
+		MediaStore.Audio.Media.TITLE_KEY + " ASC";
 
 	
 	/** song list adapter to/from */
@@ -264,9 +269,11 @@ public class Constants{
 	static final float	SWITCHER_CAT_CIRCLE_SPACING = 1.f;
 	static final int	SWITCHER_CAT_ALBUM = BROWSECAT_ALBUM;
 	static final int	SWITCHER_CAT_ARTIST = BROWSECAT_ARTIST;
-	static final int	SWITCHER_CATEGORY_COUNT = 2; // ALBUMS + ARTIST 
+	static final int	SWITCHER_CAT_SONG = BROWSECAT_SONG;
+	static final int	SWITCHER_CATEGORY_COUNT = 3; // ALBUMS + ARTIST + SONG 
 	static final int	SWITCHER_CAT_ALBUM_STRING_RES = R.string.browse_cat_album;
 	static final int	SWITCHER_CAT_ARTIST_STRING_RES = R.string.browse_cat_artists;
+	static final int	SWITCHER_CAT_SONG_STRING_RES = R.string.browse_cat_songs;
 	
 	/** UI general interaction parameters */
 	static final int CLICK_ACTION_DELAY = 250;
@@ -390,7 +397,7 @@ public class Constants{
 	/** Donation Parameters */
 	static final int	DONATION_INITIAL_INTERVAL = 8;
 	static final int	DONATION_STANDARD_INTERVAL = 30;
-	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 1000;
+	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 10000;
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mBrowseCatMode = "mBrowseCatMode";

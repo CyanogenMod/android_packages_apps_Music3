@@ -4,6 +4,7 @@
 	<!--	BROWSING CATEGORIES-->
 	<string name="browse_cat_album">Albums</string>
 	<string name="browse_cat_artists">Artists</string>
+	<string name="browse_cat_songs">Songs</string>
 	
 	<!--	GENERAL STUFF -->
 	<string name="album">Album</string>

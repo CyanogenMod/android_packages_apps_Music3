@@ -286,6 +286,30 @@ public class CursorUtils{
 		return playlistList;
 	}
 	
+	/**
+	 * All songs ordered by the title
+	 * @return
+	 */
+	Cursor getAllSongsListOrderedBySongTitle()
+	{
+		return getSongListOrderedBySongTitle(null);
+	}
+	
+	/**
+	 * songs list ordered by song title with a given constraint
+	 * @param constraint
+	 * @return
+	 */
+	Cursor getSongListOrderedBySongTitle(String constraint)
+	{
+		Cursor songList = ctx.getContentResolver().query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				Constants.songProjection,
+				constraint,
+				null,
+				Constants.songListTitleSorting);
+		return songList;	
+	}
 	
 	
 	/**
@@ -400,6 +424,7 @@ public class CursorUtils{
 //		}
 //		return null;
 	}
+	
 	
 	Cursor	getSongsFromPlaylistWithConstraint(int playlistId, String constraint, boolean usePlaylistSorting){
 		/* ALL SONGS */
