@@ -17,6 +17,11 @@
                 android:title="@string/preference_title_full_screen"
                 android:summary="@string/preference_summary_full_screen"
                 android:persistent="true" />
+		<CheckBoxPreference
+                android:key="@string/preference_key_lock_portrait"
+                android:title="@string/preference_title_lock_portrait"
+                android:summary="@string/preference_summary_lock_portrait"
+                android:persistent="true" />
    		<CheckBoxPreference
                 android:key="@string/preference_key_controls_on_bottom"
                 android:title="@string/preference_title_controls_on_bottom"

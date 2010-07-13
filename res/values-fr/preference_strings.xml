@@ -14,6 +14,11 @@
     <string name="preference_title_use_headset_buttons">Utiliser les écouteurs</string>
     <string name="preference_summary_use_headset_buttons">Appuis sur le bouton de tes écouteurs pour lire, mettre en pause ou changer de chansons.</string>
 
+	<!--	LOCK PORTRAIT    -->
+    <string name="preference_key_lock_portrait">LockPortrait</string>
+    <string name="preference_title_lock_portrait">Portrait Lock</string>
+    <string name="preference_summary_lock_portrait">Évitez le mode \'landscape\'.</string>
+
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Verrouillage de l\'écran</string>

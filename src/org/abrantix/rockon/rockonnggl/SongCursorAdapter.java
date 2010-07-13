@@ -165,7 +165,14 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 					mSongItemSelectedHandler.sendMessageDelayed(
 							msg, 
 							Constants.CLICK_ACTION_DELAY);
-					mDialogInterface.dismiss();
+					try
+					{
+						mDialogInterface.dismiss();
+					}
+					catch(IllegalArgumentException e)
+					{
+						e.printStackTrace();
+					}
 					
 	//				Log.i(TAG, "Song "+position+" clicked - ADAPTER");
 				}
@@ -202,7 +209,14 @@ public class SongCursorAdapter extends SimpleCursorAdapter{
 				mSongItemSelectedHandler.sendMessageDelayed(
 						msg, 
 						Constants.CLICK_ACTION_DELAY);
-				mDialogInterface.dismiss();
+				try
+				{
+					mDialogInterface.dismiss();
+				}
+				catch(IllegalArgumentException e)
+				{
+					e.printStackTrace();
+				}
 				
 	//			Log.i(TAG, "Song "+position+" LONG clicked - ADAPTER");
 			}

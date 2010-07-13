@@ -1,11 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
-import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.Renderer;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.sax.StartElementListener;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;

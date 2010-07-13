@@ -83,7 +83,11 @@ public class AlbumArtDownloadOkClickListener implements OnClickListener{
 						.getString(Constants.ALBUM_ART_DOWNLOAD_UI_UPDATE_DONE_IPC_MSG)
 						!= null)
 				{
-					mProgressDialog.dismiss();
+					try{
+						mProgressDialog.dismiss();
+					} catch(IllegalArgumentException e) {
+						e.printStackTrace();
+					}
 					stopArtDownload();
 				}
 				// Still going
@@ -109,7 +113,11 @@ public class AlbumArtDownloadOkClickListener implements OnClickListener{
 	
 	public void stopArtDownload(){
 		mAlbumArtImporter.stopAlbumArt();
-		mProgressDialog.dismiss();
+		try{
+			mProgressDialog.dismiss();
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		}
 		mDownloading = false;
 	}
 	

@@ -158,17 +158,18 @@ public class Constants{
 	
 	/** Album Cursor Sorting **/
 	static final String albumAlphabeticalSortOrder = 
-		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
-		+ ", " + 
-		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
+		MediaStore.Audio.Albums.ALBUM_KEY + " ASC";
+//		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
+//		+ ", " + 
+//		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
 	/** Artist Albums Cursor Sorting **/
 	static final String artistAlbumsYearSortOrder = 
 		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
 
 	/** Artist Cursor Sorting **/
 	static final String artistAlphabeticalSortOrder = 
-//		MediaStore.Audio.Artists.ARTIST_KEY + " ASC";
-		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
+		MediaStore.Audio.Artists.ARTIST_KEY + " ASC";
+//		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC";
 	
 	/** Song List Sorting **/
 	static final String songListNumericalSorting = 
@@ -239,7 +240,7 @@ public class Constants{
 	static final float	SCROLL_SPEED_BOOST = 675.f;
 //	static final float	MAX_LOW_SPEED = .08f; // mScrollingSpeed...
 	static final float	MAX_LOW_SPEED = .0025f; // mScrollingSpeed...
-	static final float	MIN_SCROLL_TOUCH_MOVE = 0.08f;
+	static final float	MIN_SCROLL_TOUCH_MOVE = 0.05f;
 	static final double	MAX_CLICK_DOWNTIME = 1000;
 	static final int 	MIN_LONG_CLICK_DURATION = 1000;
 	static final int	MAX_POSITION_OVERSHOOT = 1;

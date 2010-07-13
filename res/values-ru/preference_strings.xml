@@ -14,6 +14,11 @@
     <string name="preference_title_use_headset_buttons">Использовать гарнитуру</string>
     <string name="preference_summary_use_headset_buttons">Использовать кнопки гарнитуры для управления воспроизведением</string>
 
+	<!--	LOCK PORTRAIT    -->
+    <string name="preference_key_lock_portrait">LockPortrait</string>
+    <string name="preference_title_lock_portrait">ортрет только</string>
+    <string name="preference_summary_lock_portrait">Избегайте ландшафтном режиме.</string>
+
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Блокировка экрана</string>

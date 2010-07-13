@@ -39,7 +39,8 @@ import android.util.Log;
 public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
 
 	final String TAG = "RockOnRopeRenderer";
-
+	private boolean mStopThreads = false;
+	
 	/** renderer mode */
 	public int getType()
 	{
@@ -80,7 +81,7 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
         
     	/** init album cursor **/
     	if(mCursor == null || force){
-    		CursorUtils cursorUtils = new CursorUtils(context);
+    		final CursorUtils cursorUtils = new CursorUtils(context);
     		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			/**
@@ -92,11 +93,22 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     			mCursor = helperCursor;
     			// Let's add the audio id to the artist list so we can get art
 //    			double t = System.currentTimeMillis();
-    			if(mCursor != null && mCursor.getCount() >0)
+    			Thread helperThread = new Thread()
     			{
-    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
-    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
-    			}
+    				public void run()
+    				{
+		    			if(mCursor != null && mCursor.getCount() >0)
+		    			{
+		    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
+		    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
+		    				// trigger some update
+		    				if(!mStopThreads)
+		    					forceTextureUpdateOnNextDraw();
+		    			}
+		//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
+    				}
+    			};
+    			helperThread.start();
 //    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
     		}
     		else // ALBUM
@@ -1219,7 +1231,8 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		(int) mPositionY > mCursor.getCount() - 1)
+    		(int) mPositionY > mCursor.getCount() - 1 ||
+    		(int) mPositionY < 0)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
     		return -1;
@@ -1400,6 +1413,7 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
      */
     public void clearCache()
     {
+    	mStopThreads = true;
     	for(int i=0; i<mNavItem.length; i++)
     	{
     		try

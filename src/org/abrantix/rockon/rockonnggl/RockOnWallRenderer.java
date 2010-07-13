@@ -33,6 +33,7 @@ import android.util.Log;
 public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
 
 	final String TAG = "RockOnWallRenderer";
+	private boolean mStopThreads = false;
 	
 	/** renderer mode */
 	public int getType()
@@ -77,21 +78,31 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	
     	/** init album cursor **/
     	if(mCursor == null || force){
-    		CursorUtils cursorUtils = new CursorUtils(context);
+    		final CursorUtils cursorUtils = new CursorUtils(context);
     		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			Cursor helperCursor = 
     				cursorUtils.getArtistListFromPlaylist(Constants.PLAYLIST_ALL);
     			mCursor = helperCursor;
-    			// Let's add the audio id to the artist list so we can get art
-//    			double t = System.currentTimeMillis();
-    			if(mCursor != null && mCursor.getCount() >0)
+    			/**
+    			 * Lets get the album ids on this artist cursor
+    			 */
+    			Thread helperThread = new Thread()
     			{
-    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
-    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
-    			}
-//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
-    		}
+    				public void run()
+    				{
+		    			if(mCursor != null && mCursor.getCount() >0)
+		    			{
+		    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
+		    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
+		    				// trigger some update
+		    				if(!mStopThreads)
+		    					forceTextureUpdateOnNextDraw();
+		    			}
+		//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
+    				}
+    			};
+    			helperThread.start();    		}
     		else // ALBUM
     		{
 	    		Cursor helperCursor = 
@@ -1119,7 +1130,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		getPositionFromScreenCoordinates(x, y) > mCursor.getCount() - 1)
+    		getPositionFromScreenCoordinates(x, y) > mCursor.getCount() - 1 ||
+    		getPositionFromScreenCoordinates(x, y) < 0)
 //    		(int) mPositionY > mAlbumCursor.getCount() - 1)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
@@ -1313,6 +1325,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
      */
     public void clearCache()
     {
+    	mStopThreads = true;
     	for(int i=0; i<mNavItem.length; i++)
     	{
     		try

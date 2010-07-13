@@ -1119,7 +1119,8 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		getPositionFromScreenCoordinates(x, y) > mCursor.getCount() - 1)
+    		getPositionFromScreenCoordinates(x, y) > mCursor.getCount() - 1 ||
+    		getPositionFromScreenCoordinates(x, y) < 0)
 //    		(int) mPositionY > mAlbumCursor.getCount() - 1)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);

@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -104,7 +105,14 @@ public class RockOnNextGenGL extends Activity {
 	static float		mNavigatorTargetPositionY = -1;
 	static int			mPlaylistId = Constants.PLAYLIST_UNKNOWN;
 	
-	/** Media Button registration for 2.2 (using reflection) */
+	/*********************************************************
+	 * *******************************************************
+	 *  
+	 *  	USES REFLECTION
+	 *  
+	 *  Media Button registration for 2.2
+	 *  
+	 *  ******************************************************/
     private static Method mRegisterMediaButtonEventReceiver;
     private static Method mUnregisterMediaButtonEventReceiver;
     private AudioManager mAudioManager;
@@ -181,6 +189,9 @@ public class RockOnNextGenGL extends Activity {
             System.err.println("unexpected " + ie);  
         }
     }
+    /*********************************************************
+     *********************************************************/
+    
     
     /** Called when the activity is first created. */
     @Override
@@ -199,7 +210,7 @@ public class RockOnNextGenGL extends Activity {
         		getPackageName(),
                 MediaButtonIntentReceiver.class.getName());
 
-        
+        /* setup window properties */
         setupWindow();
         
         /**
@@ -1604,14 +1615,30 @@ public class RockOnNextGenGL extends Activity {
      * SetupWindow
      */
     private void setupWindow(){
+    	/*
+    	 * Always remove that ugly title bar
+    	 */
     	requestWindowFeature(Window.FEATURE_NO_TITLE);
     	
+    	/*
+    	 * Has the user chosen to run the app in full screen?
+    	 */
     	if(PreferenceManager.
     			getDefaultSharedPreferences(getApplicationContext()).
     				getBoolean(Constants.prefkey_mFullscreen, false))
 	    	getWindow().setFlags(
 	    			WindowManager.LayoutParams.FLAG_FULLSCREEN,   
 	    			WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+    	
+    	/*
+    	 * Has the user forced to be always portrait?
+    	 */
+    	boolean lockPortrait = 
+    		PreferenceManager.
+    		getDefaultSharedPreferences(getApplicationContext()).
+    		getBoolean(getString(R.string.preference_key_lock_portrait), false);
+    	if(lockPortrait)
+    		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
     
     /**
@@ -1874,7 +1901,7 @@ public class RockOnNextGenGL extends Activity {
      */
     Handler mRequestRenderHandler = new Handler(){
     	
-    	int mScrollSampling = 6;
+    	int mScrollSampling = 9;
     	int mScrollCount = 0;
     	
     	public void handleMessage(Message msg){

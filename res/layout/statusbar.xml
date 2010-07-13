@@ -20,7 +20,7 @@
 			android:textAppearance="?android:attr/textAppearanceMediumInverse" 
 			android:focusable="true" 
 			android:ellipsize="marquee" 
-			android:singleLine="true" 
+			android:maxLines="1" 
 			android:layout_gravity="left" 
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"/>
@@ -30,7 +30,7 @@
 			android:layout_gravity="left" 
 			android:maxLines="2" 
 			android:scrollHorizontally="true" 
-			android:ellipsize="end" 
+			android:ellipsize="marquee" 
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"/>
 	</LinearLayout>

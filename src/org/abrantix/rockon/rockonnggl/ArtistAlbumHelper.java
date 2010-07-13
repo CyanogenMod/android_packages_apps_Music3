@@ -3,5 +3,5 @@ package org.abrantix.rockon.rockonnggl;
 public class ArtistAlbumHelper
 {
 	String	artistId;
-	String	albumId; // could as well be an array
+	String	albumId = null; // could as well be an array
 }

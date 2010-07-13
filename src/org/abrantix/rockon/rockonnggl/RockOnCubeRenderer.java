@@ -18,6 +18,7 @@ import javax.microedition.khronos.opengles.GL11;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.StaleDataException;
@@ -40,6 +41,7 @@ import android.util.Log;
 public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.Renderer{
 
 	final String TAG = "RockOnCubeRenderer";
+	boolean mStopThreads = false;	
 	
 	/** renderer mode */
 	public int getType()
@@ -91,7 +93,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
         
     	/** init album cursor **/
     	if(mCursor == null || force){
-    		CursorUtils cursorUtils = new CursorUtils(context);
+    		final CursorUtils cursorUtils = new CursorUtils(context);
     		if (browseCat == Constants.BROWSECAT_ARTIST)
     		{
     			/**
@@ -103,12 +105,25 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     			mCursor = helperCursor;
     			// Let's add the audio id to the artist list so we can get art
 //    			double t = System.currentTimeMillis();
-    			if(mCursor != null && mCursor.getCount() >0)
+    			/**
+    			 * Lets get the album ids on this artist cursor
+    			 */
+    			Thread helperThread = new Thread()
     			{
-    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
-    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
-    			}
-//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
+    				public void run()
+    				{
+		    			if(mCursor != null && mCursor.getCount() >0)
+		    			{
+		    				mArtistAlbumHelper = new ArtistAlbumHelper[mCursor.getCount()];
+		    				cursorUtils.fillArtistAlbumHelperArray(mCursor, mArtistAlbumHelper);
+		    				// trigger some update
+		    				if(!mStopThreads)
+		    					forceTextureUpdateOnNextDraw();
+		    			}
+		//    			Log.i(TAG, "+ "+(System.currentTimeMillis()-t));
+    				}
+    			};
+    			helperThread.start();
     		}
     		else // ALBUM
     		{
@@ -740,7 +755,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 				for(int i=0; i<mTextureAlphabetId.length; i++){    	    		
 					try
 	    			{
-		    		
 						if(lastInitial == -1){
 	    					/** 
 	    					 * FIXME: quick fix for bug, untested, unchecked
@@ -759,14 +773,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 							{
 								mCursor.moveToPosition(flooredPositionY);
 							}
-	    					lastInitial = 
-	    						mCursor.
-	    							getString(
-	    									mCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)).
-	    							toLowerCase().
-	    								charAt(0);
-	    					if(lastInitial < 'a')
-	    						lastInitial = 'a' - 1;
+	    					
+	    					/*
+	    					 * Get the first meaningful initial of the current position
+	    					 */
+	    			    	lastInitial = getFirstLetterLowerCaseAbstractFromCategory(
+	    			    			mBrowseCat, 
+	    			    			mCursor, 
+	    			    			oCharArrayBuffer);
 	    				}
 	    				
 	//    				Log.i(TAG, "flooredX: "+flooredPositionX);
@@ -1242,6 +1256,51 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 		return true;
     }
     
+    /**
+     * 
+     * @param cat
+     * @param c
+     * @param cBuf
+     * @return
+     */
+    char	oTmpC;
+    private char getFirstLetterLowerCaseAbstractFromCategory(int cat, Cursor c, CharArrayBuffer cBuf)
+    {
+    	switch(mBrowseCat)
+		{
+		case Constants.BROWSECAT_ALBUM:
+			c.copyStringToBuffer(
+					c.getColumnIndex(MediaStore.Audio.Albums.ALBUM),
+					cBuf);
+			oTmpC = 
+				this.filterTheFunnyStuff(cBuf);
+			break;
+		case Constants.BROWSECAT_ARTIST:
+			c.copyStringToBuffer(
+					c.getColumnIndex(MediaStore.Audio.Artists.ARTIST),
+					cBuf);
+			oTmpC = 
+				this.filterTheFunnyStuff(cBuf);	    						
+			break;
+		}
+    	/*
+		 * make it lower case
+		 */
+		if(oTmpC >= 'A' && oTmpC <= 'Z')
+			oTmpC += 32;
+		
+		/*
+		 * if it is outside the alphabet 
+		 * 	make it the '0' of the alphabet
+		 */
+		if(oTmpC < 'a')
+			oTmpC = 'a' - 1;
+		if(oTmpC > 'z')
+			oTmpC = 'z';
+		
+		return oTmpC;
+    }
+    
     /* optimization */
     char lastLetter;
     char newLetter;
@@ -1257,21 +1316,35 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	{
         	try
         	{
+        		/*
+        		 * Supposedly the initial position of the rotation
+        		 */
 		    	mCursor.moveToPosition((int)mPositionY);
-		    	lastLetter = 
-		    		mCursor.getString(
-		    				mCursor.getColumnIndexOrThrow(
-		    						MediaStore.Audio.Albums.ARTIST)).
-		    				toLowerCase().charAt(0);
+		    	
+		    	/*
+		    	 * Find the initial position
+		    	 */
+		    	lastLetter = getFirstLetterLowerCaseAbstractFromCategory(
+		    			mBrowseCat, 
+		    			mCursor, 
+		    			oCharArrayBuffer);
+		    	
+		    	/*
+		    	 * Calculate the final letter
+		    	 */
 		    	newLetter = (char) (lastLetter + mPositionX);
+		    	
+		    	/*
+		    	 * Search for the new cursor index
+		    	 */
 		    	if(mPositionX > 0){
 		    		for(letterIdx = (int)mPositionY; letterIdx<mCursor.getCount(); letterIdx++){
 		    			mCursor.moveToPosition(letterIdx);
-		    			if(mCursor.getString(
-		    					mCursor.getColumnIndexOrThrow(
-		    							MediaStore.Audio.Albums.ARTIST)).
-		    					toLowerCase().charAt(0)
-		    					>= newLetter)
+		    			if(getFirstLetterLowerCaseAbstractFromCategory(
+				    			mBrowseCat, 
+				    			mCursor, 
+				    			oCharArrayBuffer)
+		    				>= newLetter)
 		    			{
 		    				break;
 		    			}
@@ -1279,16 +1352,20 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 		    	} else {
 		    		for(letterIdx = (int)mPositionY; letterIdx>=0; letterIdx--){
 		    			mCursor.moveToPosition(letterIdx);
-		    			if(mCursor.getString(
-		    					mCursor.getColumnIndexOrThrow(
-		    							MediaStore.Audio.Albums.ARTIST)).
-		    					toLowerCase().charAt(0)
-		    					<= newLetter)
+		    			if(getFirstLetterLowerCaseAbstractFromCategory(
+				    			mBrowseCat, 
+				    			mCursor, 
+				    			oCharArrayBuffer)
+		    				<= newLetter)
 		    			{
 		    				break;
 		    			}
 		    		}
 		    	}
+		    	
+		    	/*
+		    	 * Return
+		    	 */
 		    	return letterIdx;
 	    	}
 	    	catch(StaleDataException e)
@@ -1457,7 +1534,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 			/**
 			 * FIXME: this is a quick cursor overflow bugfix, unverified
 			 */
-    		(int) mPositionY > mCursor.getCount() - 1)
+    		(int) mPositionY > mCursor.getCount() - 1 ||
+    		(int) mPositionY < 0)
     	{
 //    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
     		return -1;
@@ -1639,6 +1717,8 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
      */
     public void clearCache()
     {
+    	mStopThreads = true;
+    	
     	for(int i=0; i<mNavItem.length; i++)
     	{
     		try
@@ -1715,16 +1795,17 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     /** 
      * optimization vars 
      */
-    private double 	pTimestamp;
-    private int		flooredPositionX;
-    private int		flooredPositionY;
-    private float	positionOffsetX;
-    private float	positionOffsetY;
-    private float	rotationAngleX;
-    private float	rotationAngleY;
-    private boolean	texturesUpdated;
-    private double	updateFraction;
-    private int		tmpTextureIdx;
+    private double 			pTimestamp;
+    private int				flooredPositionX;
+    private int				flooredPositionY;
+    private float			positionOffsetX;
+    private float			positionOffsetY;
+    private float			rotationAngleX;
+    private float			rotationAngleY;
+    private boolean			texturesUpdated;
+    private double			updateFraction;
+    private int				tmpTextureIdx;
+    private CharArrayBuffer	oCharArrayBuffer = new CharArrayBuffer(100);
 }
 
 

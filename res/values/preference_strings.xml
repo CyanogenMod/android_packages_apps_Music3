@@ -14,6 +14,11 @@
     <string name="preference_title_use_headset_buttons">Use headset</string>
     <string name="preference_summary_use_headset_buttons">Intercepts the button press from your headset to play, pause, or skip songs.</string>
 
+	<!--	LOCK PORTRAIT    -->
+    <string name="preference_key_lock_portrait">LockPortrait</string>
+    <string name="preference_title_lock_portrait">Lock portrait</string>
+    <string name="preference_summary_lock_portrait">Avoid landscape screen orientation.</string>
+
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Lock screen</string>

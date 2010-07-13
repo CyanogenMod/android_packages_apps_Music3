@@ -17,6 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.database.CharArrayBuffer;
 import android.database.Cursor;
+import android.database.StaleDataException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
@@ -137,72 +138,91 @@ public abstract class RockOnRenderer{
     int				oFirstLetterPosition;
     public char getFirstLetterInPosition(float pos)
     {
-    	/**
-    	 * Sanity check on the cursor limits
-    	 */
-    	oFirstLetterPosition = Math.round(pos * mCursor.getCount());
-    	if(oFirstLetterPosition >= mCursor.getCount()-1)
-    		oFirstLetterPosition = mCursor.getCount()-1;
-    	else if(oFirstLetterPosition < 0)
-    		oFirstLetterPosition = 0;
-    	mCursor.moveToPosition(oFirstLetterPosition);
-    	
-    	/**
-    	 * Get the first letter
-    	 */
-    	switch(mBrowseCat)
+    	try
     	{
-		case Constants.BROWSECAT_ARTIST:
-		    mCursor.copyStringToBuffer(
-		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST), 
-		    		oTitleCharArrayBuffer);
-		    return oTitleCharArrayBuffer.data[0];
-		case Constants.BROWSECAT_ALBUM:
-			mCursor.copyStringToBuffer(
-		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST), 
-		    		oTitleCharArrayBuffer);
-		    return oTitleCharArrayBuffer.data[0];			
-		case Constants.BROWSECAT_SONG:
-			mCursor.copyStringToBuffer(
-		    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE), 
-		    		oTitleCharArrayBuffer);
-			/**
-			 * Check if the track title begins with 'the'
-			 */
-			if(oTitleCharArrayBuffer.data.length >= 5)
+	    	/**
+	    	 * Sanity check on the cursor limits
+	    	 */
+	    	oFirstLetterPosition = Math.round(pos * mCursor.getCount());
+	    	if(oFirstLetterPosition >= mCursor.getCount()-1)
+	    		oFirstLetterPosition = mCursor.getCount()-1;
+	    	else if(oFirstLetterPosition < 0)
+	    		oFirstLetterPosition = 0;
+	    	mCursor.moveToPosition(oFirstLetterPosition);
+	    	
+	    	/**
+	    	 * Get the first letter
+	    	 */
+	    	switch(mBrowseCat)
+	    	{
+			case Constants.BROWSECAT_ARTIST:
+			    mCursor.copyStringToBuffer(
+			    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST), 
+			    		oTitleCharArrayBuffer);
+			    return filterTheFunnyStuff(oTitleCharArrayBuffer);
+			case Constants.BROWSECAT_ALBUM:
+				mCursor.copyStringToBuffer(
+			    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM), 
+			    		oTitleCharArrayBuffer);
+			    return filterTheFunnyStuff(oTitleCharArrayBuffer);			
+			case Constants.BROWSECAT_SONG:
+				mCursor.copyStringToBuffer(
+			    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE), 
+			    		oTitleCharArrayBuffer);
+				return filterTheFunnyStuff(oTitleCharArrayBuffer);
+	    	}
+    	}
+    	catch(StaleDataException e)
+    	{
+    		e.printStackTrace();
+    	}
+    	return ' ';
+    }
+    
+    /**
+     * 
+     * @param titleArrayBuffer
+     * @return
+     */
+    public char filterTheFunnyStuff(CharArrayBuffer titleArrayBuffer)
+    {
+    	/**
+		 * Check if the track title begins with 'the'
+		 */
+		if(titleArrayBuffer.data.length >= 5)
+		{
+			if(titleArrayBuffer.data[0] == 't' || titleArrayBuffer.data[0] == 'T')
 			{
-				if(oTitleCharArrayBuffer.data[0] == 't' || oTitleCharArrayBuffer.data[0] == 'T')
+				if(titleArrayBuffer.data[1] == 'h' || titleArrayBuffer.data[1] == 'H')
 				{
-					if(oTitleCharArrayBuffer.data[1] == 'h' || oTitleCharArrayBuffer.data[1] == 'H')
+					if(titleArrayBuffer.data[2] == 'e' || titleArrayBuffer.data[2] == 'E')
 					{
-						if(oTitleCharArrayBuffer.data[2] == 'e' || oTitleCharArrayBuffer.data[2] == 'E')
+						if(titleArrayBuffer.data[3] == ' ')
 						{
-							if(oTitleCharArrayBuffer.data[3] == ' ')
-							{
-								return oTitleCharArrayBuffer.data[4];
-							}
+							return titleArrayBuffer.data[4];
 						}
 					}
 				}
 			}
-			/**
-			 * Check if the track title begins with 'the'
-			 */
-			else if(oTitleCharArrayBuffer.data.length >= 3)
+		}
+		/**
+		 * Check if the track title begins with 'the'
+		 */
+		else if(titleArrayBuffer.data.length >= 3)
+		{
+			if(titleArrayBuffer.data[0] == 'a' || titleArrayBuffer.data[0] == 'A')
 			{
-				if(oTitleCharArrayBuffer.data[0] == 'a' || oTitleCharArrayBuffer.data[0] == 'A')
+				if(titleArrayBuffer.data[1] == ' ')
 				{
-					if(oTitleCharArrayBuffer.data[1] == ' ')
-					{
-						return oTitleCharArrayBuffer.data[2];
-					}
+					return titleArrayBuffer.data[2];
 				}
 			}
-			
-			return oTitleCharArrayBuffer.data[0];
-    	}
-    	return ' ';
+		}
+		
+		return titleArrayBuffer.data[0];
     }
+    
+    
 //    /** Scroller Element */
 //    private GLScroller			mGlScroller;
     

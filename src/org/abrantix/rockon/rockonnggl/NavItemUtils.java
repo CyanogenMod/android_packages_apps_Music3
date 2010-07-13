@@ -437,39 +437,46 @@ public class NavItemUtils{
     		return false;
     	}
     	/** Create bitmap */
-    	albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
-    	canvas.setBitmap(albumNavItem.label);
-//    	canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
-    	labelAlbumBoringPaint.setTextSize(.24f * height); // will use for artist Name
-    	labelArtistBoringPaint.setTextSize(.48f * height); // will use for song name
-    	if(albumNavItem.songName != null){
-	    	canvas.drawText(
-	    			albumNavItem.songName.substring(
-	    					0, 
-	    					labelArtistBoringPaint.breakText(
-	    							albumNavItem.songName, 
-	    							false, 
-	    							width*.95f, 
-	    							null)),
-					0.f * width, 
-					.5f * height, 
-					labelArtistBoringPaint);
-    	}
-    	if(albumNavItem.artistName != null){
-	    	canvas.drawText(
-	    			albumNavItem.artistName.substring(
-	    					0, 
-	    					labelAlbumBoringPaint.breakText(
-	    							albumNavItem.artistName, 
-	    							false, 
-	    							width*0.95f, 
-	    							null)), 
-	    			0.f * width, 
-	    			.9f * height,
-	    			labelAlbumBoringPaint);
+    	if(!albumNavItem.label.isRecycled())
+    	{
+    		albumNavItem.label.eraseColor(Color.argb(0, 0, 0, 0));
+	    	canvas.setBitmap(albumNavItem.label);
+	//    	canvas.drawRoundRect(labelRectf, height/8, height/8, labelBgPaint);
+	    	labelAlbumBoringPaint.setTextSize(.24f * height); // will use for artist Name
+	    	labelArtistBoringPaint.setTextSize(.48f * height); // will use for song name
+	    	if(albumNavItem.songName != null){
+		    	canvas.drawText(
+		    			albumNavItem.songName.substring(
+		    					0, 
+		    					labelArtistBoringPaint.breakText(
+		    							albumNavItem.songName, 
+		    							false, 
+		    							width*.95f, 
+		    							null)),
+						0.f * width, 
+						.5f * height, 
+						labelArtistBoringPaint);
+	    	}
+	    	if(albumNavItem.artistName != null){
+		    	canvas.drawText(
+		    			albumNavItem.artistName.substring(
+		    					0, 
+		    					labelAlbumBoringPaint.breakText(
+		    							albumNavItem.artistName, 
+		    							false, 
+		    							width*0.95f, 
+		    							null)), 
+		    			0.f * width, 
+		    			.9f * height,
+		    			labelAlbumBoringPaint);
+	    	}
+			return true;
+		}
+    	else
+    	{
+    		return false;
     	}
 
-		return true;
 	}
 	
 	
