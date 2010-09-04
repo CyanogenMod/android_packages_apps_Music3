@@ -34,6 +34,17 @@
                 android:persistent="true" />    
     </PreferenceCategory>
     
+    <PreferenceCategory 
+    		android:title="@string/preference_category_sorting"
+            android:key="sorting">
+            <CheckBoxPreference
+                android:key="@string/preference_key_prefer_artist_sorting"
+                android:title="@string/preference_title_prefer_artist_sorting"
+                android:summary="@string/preference_summary_prefer_artist_sorting"
+                android:persistent="true" />
+    </PreferenceCategory>
+    
+    
     <PreferenceCategory
         android:title="@string/preference_category_album_art"
         android:key="album_art">

@@ -87,12 +87,18 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     			mCursor = helperCursor;
     			break;
     		case Constants.BROWSECAT_ALBUM:
+    			mPreferArtistSorting = 
+    				PreferenceManager.getDefaultSharedPreferences(mContext).
+    					getBoolean(
+    						mContext.getString(R.string.preference_key_prefer_artist_sorting),
+    						true);
 	    		helperCursor= 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
-	    							Constants.prefkey_mPlaylistId,
-	    							Constants.PLAYLIST_ALL));
+    							Constants.prefkey_mPlaylistId,
+    							Constants.PLAYLIST_ALL),
+	    				mPreferArtistSorting);
 	    		mCursor = helperCursor;
 	    		break;
 	    	/**
@@ -815,7 +821,8 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 			    				mNavItem[cacheIndex].label.getWidth(),
 			    				mNavItem[cacheIndex].label.getHeight()))
 			    		{
-			    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+			    			if(!mNavItem[cacheIndex].label.isRecycled())
+			    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 			    		}
 	    				break;
 	    			}

@@ -159,9 +159,12 @@ public class Constants{
 	/** Album Cursor Sorting **/
 	static final String albumAlphabeticalSortOrder = 
 		MediaStore.Audio.Albums.ALBUM_KEY + " ASC";
-//		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
-//		+ ", " + 
-//		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
+	
+	static final String albumAlphabeticalSortOrderByArtist = 
+		MediaStore.Audio.Albums.ARTIST + " COLLATE NOCASE ASC"
+		+ ", " + 
+		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
+	
 	/** Artist Albums Cursor Sorting **/
 	static final String artistAlbumsYearSortOrder = 
 		MediaStore.Audio.Albums.LAST_YEAR + " DESC";
@@ -175,8 +178,8 @@ public class Constants{
 	static final String songListNumericalSorting = 
 		MediaStore.Audio.Media.TRACK + " ASC";
 	static final String songListAlbumAndNumericalSorting = 
-		MediaStore.Audio.Media.YEAR + " DESC " + 
-		", "+
+//		MediaStore.Audio.Media.YEAR + " DESC " + 
+//		", "+
 		MediaStore.Audio.Media.ALBUM + " COLLATE NOCASE ASC"+
 		", "+
 		MediaStore.Audio.Media.TRACK + " ASC";
@@ -356,6 +359,10 @@ public class Constants{
     static final String CONCERT_APP_PACKAGE = "org.abrantix.rockon.concerts";
     static final String CONCERT_APP_MAIN_ACTIVITY = "org.abrantix.rockon.concerts.Concerts";
     
+    /* Releases App */
+    static final String RELEASES_APP_PACKAGE = "org.abrantix.releases";
+    static final String RELEASES_APP_MAIN_ACTIVITY = "org.abrantix.releases.Releases";
+    
     /* Widget Stuff */
     static final String WIDGET_COMPONENT_PACKAGE = "org.abrantix.rockon.rockonnggl";
     static final String WIDGET_COMPONENT = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider";
@@ -391,6 +398,8 @@ public class Constants{
     static final int REASONABLE_PLAY_QUEUE_SIZE = 32;
     
 	/** File paths */
+    static final String ROCKON_BASE_PATH = "/sdcard/RockOn/";
+    static final String ROCKON_DONATION_PATH = ROCKON_BASE_PATH + "donate";
 	static final String ROCKON_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/";
 	static final String ROCKON_SMALL_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/small/";
 	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";

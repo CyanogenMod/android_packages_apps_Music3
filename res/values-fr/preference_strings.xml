@@ -34,8 +34,14 @@
     <string name="preference_title_controls_on_bottom">Commandes de lecture</string>
     <string name="preference_summary_controls_on_bottom">Placer les commandes sur le bas de l\'écran.</string>
 
+	<!--	PREFER ARTIST SORTING    -->
+    <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
+    <string name="preference_title_prefer_artist_sorting">Trier par artiste</string>
+    <string name="preference_summary_prefer_artist_sorting">Trier albums par nom d\'artiste plutôt que nom de l\'album.</string>
+
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">Général</string>
+    <string name="preference_category_sorting">Classer</string>
     <string name="preference_category_album_art">Pochettes</string>
     <string name="preference_category_other">Autre</string>
     

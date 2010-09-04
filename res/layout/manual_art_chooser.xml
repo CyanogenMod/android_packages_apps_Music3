@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/manual_art_chooser_main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="#ff000000"
     >
     <GridView
     	android:id="@+id/manual_art_grid"
     	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_weight="1"
     	android:numColumns="auto_fit"
     	android:columnWidth="@dimen/album_art_dimension"
     	android:stretchMode="columnWidth"/>
-
-</RelativeLayout>
+    <LinearLayout
+    	android:id="@+id/manual_input_layout"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal"
+    	android:gravity="center_vertical">
+		<Button
+			android:id="@+id/manual_input_enable_button"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="16dp"
+			android:paddingRight="16dp"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:text="@string/manual_input_enable"/>
+		<LinearLayout
+	    	android:id="@+id/manual_input_sub_layout"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="1"
+	    	android:visibility="gone"
+	    	android:orientation="vertical">
+			<EditText
+				android:id="@+id/manual_input_artist"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:hint="@string/manual_input_artist"/>
+			<EditText
+				android:id="@+id/manual_input_album"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:hint="@string/manual_input_album"/>
+		</LinearLayout>
+		<ImageView
+			android:id="@+id/manual_input_go_button"
+			android:layout_width="64dp"
+			android:layout_height="64dp"
+			android:visibility="gone"
+			android:src="@drawable/search_selector"/>
+	</LinearLayout>
+</LinearLayout>

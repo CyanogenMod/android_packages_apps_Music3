@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.MergeCursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -33,14 +34,23 @@ public class CursorUtils{
 	 * @param playlistId
 	 * @return
 	 */
+//	Cursor getAlbumFromAlbumId(long albumId, boolean preferArtistSorting){
 	Cursor getAlbumFromAlbumId(long albumId){
 		ContentResolver resolver = ctx.getContentResolver();
-		return resolver.query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					Constants.albumProjection, 
-					MediaStore.Audio.Albums._ID + " = "+albumId, 
-					null, 
-					Constants.albumAlphabeticalSortOrder);
+//		if(preferArtistSorting)
+//			return  resolver.query(
+//					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//					Constants.albumProjection, 
+//					MediaStore.Audio.Albums._ID + " = "+albumId, 
+//					null, 
+//					Constants.albumAlphabeticalSortOrderByArtist);
+//		else
+			return resolver.query(
+				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+				Constants.albumProjection, 
+				MediaStore.Audio.Albums._ID + " = "+albumId, 
+				null, 
+				Constants.albumAlphabeticalSortOrder);
 	}
 	
 	/**
@@ -81,13 +91,21 @@ public class CursorUtils{
 	 * @param playlistId
 	 * @return
 	 */
-	Cursor getAlbumListFromPlaylist(int playlistId){
+	Cursor getAlbumListFromPlaylist(int playlistId, boolean preferArtistSorting){
 		
 		/** ALL ALBUMS **/
 		if(Constants.PLAYLIST_ALL == playlistId)
 		{
 			ContentResolver resolver = ctx.getContentResolver();
-			return resolver.query(
+			if(preferArtistSorting)
+				return resolver.query(
+						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+						Constants.albumProjection, 
+						null, 
+						null, 
+						Constants.albumAlphabeticalSortOrderByArtist);
+			else
+				return resolver.query(
 					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 					Constants.albumProjection, 
 					null, 
@@ -146,8 +164,16 @@ public class CursorUtils{
 					}
 				}
 				/* query the album contentprovider */
-				Cursor albumCursor =
-					resolver.query(
+				Cursor albumCursor = null;
+				if(preferArtistSorting)
+					albumCursor =  resolver.query(
+							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+							Constants.albumProjection, 
+							selection, 
+							null, 
+							Constants.albumAlphabeticalSortOrderByArtist);
+				else
+					albumCursor =  resolver.query(
 						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 						Constants.albumProjection, 
 						selection, 
@@ -217,8 +243,16 @@ public class CursorUtils{
 				}
 				Log.i(TAG, "SELECT: "+selection);
 				/* query the album contentprovider */
-				Cursor albumCursor =
-					resolver.query(
+				Cursor albumCursor = null;
+				if(preferArtistSorting)
+					albumCursor =  resolver.query(
+							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+							Constants.albumProjection, 
+							selection, 
+							null, 
+							Constants.albumAlphabeticalSortOrderByArtist);
+				else
+					albumCursor =  resolver.query(
 						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 						Constants.albumProjection, 
 						selection, 
@@ -621,7 +655,7 @@ public class CursorUtils{
 		long nextAlbumId = -1;
 		if(shuffle == Constants.SHUFFLE_NONE){
 			Log.i(TAG, "Fetching next album - SHUFFLE_NONE");
-			Cursor cursor = getAlbumListFromPlaylist(playlistId);
+			Cursor cursor = getAlbumListFromPlaylist(playlistId, true);
 			int i = 0;
 			for(i=0; i<cursor.getCount(); i++){
 				cursor.moveToPosition(i);
@@ -652,12 +686,13 @@ public class CursorUtils{
 		} 
 		/* direction does not matter in shuffle mode */
 		else if(shuffle == Constants.SHUFFLE_NORMAL || shuffle == Constants.SHUFFLE_AUTO){
-			Cursor cursor = getAlbumListFromPlaylist(playlistId);
+			Cursor cursor = getAlbumListFromPlaylist(playlistId, true);
 			nextAlbumId = albumId;
 			int retries = 0;
 			while(nextAlbumId == albumId && retries < 10){
 				cursor.moveToPosition((int) (Math.random() * (cursor.getCount()-1)));
 				nextAlbumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
+				retries++;
 			}
 			cursor.close();
 		}
@@ -946,22 +981,28 @@ public class CursorUtils{
 			ArtistAlbumHelper[] artistAlbumHelperArray)
 	{
 		/** Sanity check */
-		if(artistCursor.getCount() == artistAlbumHelperArray.length)
+		if(!artistCursor.isClosed() &&
+			artistCursor.getCount() == artistAlbumHelperArray.length)
 		{
 			Cursor albumCursor;
 			oArtistColumnIndex = artistCursor.getColumnIndex(MediaStore.Audio.Artists._ID);
 			for(int i=0; i<artistCursor.getCount(); i++)
 			{
-				artistCursor.moveToPosition(i);
-				if(artistAlbumHelperArray[i] == null)
-					artistAlbumHelperArray[i] = new ArtistAlbumHelper();
-				artistAlbumHelperArray[i].artistId = artistCursor.getString(oArtistColumnIndex);
 				try
 				{
+					artistCursor.moveToPosition(i);
+					if(artistAlbumHelperArray[i] == null)
+						artistAlbumHelperArray[i] = new ArtistAlbumHelper();
+					artistAlbumHelperArray[i].artistId = artistCursor.getString(oArtistColumnIndex);
 					// sometimes we obtain an artistId of -1;
 					albumCursor = getAlbumListFromArtistId(artistCursor.getLong(oArtistColumnIndex));
 				}
 				catch(IllegalStateException e)
+				{
+					e.printStackTrace();
+					albumCursor = null;
+				}
+				catch(CursorIndexOutOfBoundsException e)
 				{
 					e.printStackTrace();
 					albumCursor = null;

@@ -50,6 +50,13 @@
 	<string name="concert_app_install_dialog_cancel">Non!</string>
 	<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
 
+	<!--	DOWNLOAD RELEASES APP MESSAGES-->
+	<string name="releases_app_install_dialog_title">Installer Releases³</string>
+	<string name="releases_app_install_dialog_message">Ceci requiert l\'installation de Releases³. Le faire maintenant?</string>
+	<string name="releases_app_install_dialog_ok">Oui</string>
+	<string name="releases_app_install_dialog_cancel">Non!</string>
+	<string name="releases_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
+
 	<!--	TOASTER MESSAGES	-->
 	<string name="song_added_to_playlist">Chanson ajoutée à la playlist</string>
 	<string name="song_removed_from_playlist">Chanson effacée de la playlist</string>
@@ -162,6 +169,10 @@
 	<string name="manual_albumart_resolution_loading">chargement...</string>
 	<string name="manual_albumart_resolution_unavailable">indisponible</string>
 
+	<string name="manual_input_enable">Recherche manuelle</string>
+	<string name="manual_input_artist">Artiste</string>
+	<string name="manual_input_album">Album</string>
+	
 	<!--	DONATE MSG	-->
 	<string name="donate_title">Faire un don</string>
 	<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l\'améliorer.</string>

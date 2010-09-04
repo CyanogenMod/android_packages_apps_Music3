@@ -84,7 +84,15 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 					getBoolean(getString(R.string.preference_key_controls_on_bottom), false));
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
-		
+	
+		/* Prefer artist sorting */
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_prefer_artist_sorting))).
+			setChecked(
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+					getBoolean(getString(R.string.preference_key_prefer_artist_sorting), true));
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_prefer_artist_sorting))).
+			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+	
 		/* Always Embedded Album Art */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_embedded_album_art))).
 			setChecked(

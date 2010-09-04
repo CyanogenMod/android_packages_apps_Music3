@@ -34,8 +34,14 @@
     <string name="preference_title_controls_on_bottom">Controles de reproducción</string>
     <string name="preference_summary_controls_on_bottom">Colocar los botones en la parte inferior de la pantalla.</string>
 
+	<!--	PREFER ARTIST SORTING    -->
+    <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
+    <string name="preference_title_prefer_artist_sorting">Prefiero clasificación por artista</string>
+    <string name="preference_summary_prefer_artist_sorting">Ordenar Álbumes por nombre de artista..</string>
+
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">General</string>
+    <string name="preference_category_sorting">Clasificación</string>
     <string name="preference_category_album_art">Portadas</string>
     <string name="preference_category_other">Otro</string>
     

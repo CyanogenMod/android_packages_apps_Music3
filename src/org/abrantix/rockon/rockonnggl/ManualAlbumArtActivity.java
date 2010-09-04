@@ -13,10 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -25,17 +28,26 @@ public class ManualAlbumArtActivity extends Activity{
 	static long 			mAlbumId = -1;
 	GridView				mChooserGrid;
 	ManualArtChooserAdapter	mChooserAdapter;
+	String					MANUAL_SEARCH = "manualSearch";
+	boolean					mManualSearch = false;
+	static String			mManualArtist;
+	static String			mManualAlbum;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		if(savedInstanceState != null)
+			mManualSearch = savedInstanceState.getBoolean(MANUAL_SEARCH);
+		
 		Intent intent = getIntent();
 		mAlbumId = intent.getLongExtra("albumId", -1);
 		if(mAlbumId == -1){
 			showNoAlbumSpecifiedError();
 		} else {
 			showAlbumChooser();
+			attachListeners();
 		}
 	}
 	
@@ -71,6 +83,12 @@ public class ManualAlbumArtActivity extends Activity{
 		super.onDestroy();
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle savedInstance)
+	{
+		savedInstance.putBoolean(MANUAL_SEARCH, mManualSearch);
+	}
+	
 //	  @Override
 //	  public void onAttachedToWindow() {
 //	    super.onAttachedToWindow();
@@ -79,6 +97,60 @@ public class ManualAlbumArtActivity extends Activity{
 //	    window.setFormat(PixelFormat.RGBA_8888);
 //	  }
 	  
+	
+	public void attachListeners()
+	{
+		findViewById(R.id.manual_input_enable_button)
+		.setOnClickListener(
+				new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						findViewById(R.id.manual_input_sub_layout).setVisibility(View.VISIBLE);
+						findViewById(R.id.manual_input_go_button).setVisibility(View.VISIBLE);
+						findViewById(R.id.manual_input_enable_button).setVisibility(View.GONE);
+					}
+				});
+		
+		findViewById(R.id.manual_input_go_button)
+		.setOnClickListener(
+				new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mManualSearch = true;
+						mManualAlbum = 
+							((EditText)findViewById(R.id.manual_input_album))
+							.getText()
+							.toString();
+						mManualArtist =
+							((EditText)findViewById(R.id.manual_input_artist))
+							.getText()
+							.toString();
+						mChooserAdapter.stopAndClean();
+						showAlbumChooser();
+					}
+				});
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch(keyCode)
+		{
+		case KeyEvent.KEYCODE_BACK:
+			if(mManualSearch)
+			{
+				mManualSearch = false;
+				findViewById(R.id.manual_input_sub_layout).setVisibility(View.GONE);
+				findViewById(R.id.manual_input_go_button).setVisibility(View.GONE);
+				findViewById(R.id.manual_input_enable_button).setVisibility(View.VISIBLE);
+				mChooserAdapter.stopAndClean();
+				showAlbumChooser();
+				return true;
+			}
+			else
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 	  
 	public void showNoAlbumSpecifiedError(){
 		AlertDialog.Builder aD = new AlertDialog.Builder(this);
@@ -88,28 +160,65 @@ public class ManualAlbumArtActivity extends Activity{
 	}
 	
 	private void showAlbumChooser(){
+		/*
+		 * Set the content view if it isnt already set
+		 */
+		if(findViewById(R.id.manual_art_grid) == null)
+		{
+			setContentView(
+				((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
+						inflate(R.layout.manual_art_chooser, null));
+		}
+		
+		/*
+		 * Choose whether to show manual art button or edittexts
+		 */
+		if(mManualSearch)
+		{
+			findViewById(R.id.manual_input_sub_layout).setVisibility(View.VISIBLE);
+			findViewById(R.id.manual_input_go_button).setVisibility(View.VISIBLE);
+			findViewById(R.id.manual_input_enable_button).setVisibility(View.GONE);
+			
+			/*
+			 * Restore album and artist values
+			 */
+			((EditText)findViewById(R.id.manual_input_album)).setText(mManualAlbum);
+			((EditText)findViewById(R.id.manual_input_artist)).setText(mManualArtist);
+		}
+		
+		
+		/*
+		 * Trigger cover fetching in the bg
+		 */
 		Cursor albumCursor = new CursorUtils(this).getAlbumFromAlbumId(mAlbumId);
 		if(albumCursor.getCount() < 1){
 			showNoAlbumSpecifiedError();
 			return;
 		}
 		albumCursor.moveToFirst();
-		String artist = 
-			albumCursor.getString(
-				albumCursor.getColumnIndexOrThrow(
-						MediaStore.Audio.Albums.ARTIST));
-		String album = 
-			albumCursor.getString(
-				albumCursor.getColumnIndexOrThrow(
-						MediaStore.Audio.Albums.ALBUM));
 		String embeddedArt = 
 			albumCursor.getString(
 				albumCursor.getColumnIndexOrThrow(
 						MediaStore.Audio.Albums.ALBUM_ART));
+		String artist = null;
+		String album = null;
+		if(mManualSearch)
+		{
+			artist = mManualArtist;
+			album = mManualAlbum;
+		}
+		else
+		{
+			artist= 
+				albumCursor.getString(
+						albumCursor.getColumnIndexOrThrow(
+								MediaStore.Audio.Albums.ARTIST));
+			album = 
+				albumCursor.getString(
+						albumCursor.getColumnIndexOrThrow(
+								MediaStore.Audio.Albums.ALBUM));
+		}
 		
-		setContentView(
-				((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).
-						inflate(R.layout.manual_art_chooser, null));
 		mChooserGrid = (GridView) findViewById(R.id.manual_art_grid);
 		mChooserAdapter = new ManualArtChooserAdapter(
 				this, 

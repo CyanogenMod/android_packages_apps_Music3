@@ -140,7 +140,7 @@ public abstract class RockOnRenderer{
     {
     	try
     	{
-	    	/**
+    		/**
 	    	 * Sanity check on the cursor limits
 	    	 */
 	    	oFirstLetterPosition = Math.round(pos * mCursor.getCount());
@@ -161,10 +161,20 @@ public abstract class RockOnRenderer{
 			    		oTitleCharArrayBuffer);
 			    return filterTheFunnyStuff(oTitleCharArrayBuffer);
 			case Constants.BROWSECAT_ALBUM:
-				mCursor.copyStringToBuffer(
-			    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM), 
-			    		oTitleCharArrayBuffer);
-			    return filterTheFunnyStuff(oTitleCharArrayBuffer);			
+				if(mPreferArtistSorting)
+				{
+					mCursor.copyStringToBuffer(
+				    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST), 
+				    		oTitleCharArrayBuffer);
+					return oTitleCharArrayBuffer.data[0];
+				}
+				else
+				{
+					mCursor.copyStringToBuffer(
+				    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM), 
+				    		oTitleCharArrayBuffer);
+					return filterTheFunnyStuff(oTitleCharArrayBuffer);
+				}
 			case Constants.BROWSECAT_SONG:
 				mCursor.copyStringToBuffer(
 			    		mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE), 
@@ -173,6 +183,10 @@ public abstract class RockOnRenderer{
 	    	}
     	}
     	catch(StaleDataException e)
+    	{
+    		e.printStackTrace();
+    	}
+    	catch(IllegalStateException e)
     	{
     		e.printStackTrace();
     	}
@@ -227,6 +241,7 @@ public abstract class RockOnRenderer{
 //    private GLScroller			mGlScroller;
     
     public 	int			mBrowseCat;
+    public	boolean		mPreferArtistSorting = true;
     public 	Cursor		mCursor = null;
     
     //

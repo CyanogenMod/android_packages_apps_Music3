@@ -50,6 +50,13 @@
 	<string name="concert_app_install_dialog_cancel">No. Leave me alone!</string>
 	<string name="concert_app_install_no_market_app_msg">Ooops! Looks like there is no Market app installed.</string>
 	
+	<!--	DOWNLOAD RELEASES APP MESSAGES-->
+	<string name="releases_app_install_dialog_title">Install Releases³</string>
+	<string name="releases_app_install_dialog_message">This feature requires the installation of Releases³. Do you want to do it now?</string>
+	<string name="releases_app_install_dialog_ok">Yes</string>
+	<string name="releases_app_install_dialog_cancel">No. Leave me alone!</string>
+	<string name="releases_app_install_no_market_app_msg">Ooops! Looks like there is no Market app installed.</string>
+	
 	<!--	TOASTER MESSAGES	-->
 	<string name="song_added_to_playlist">Song queued</string>
 	<string name="song_removed_from_playlist">Song removed</string>
@@ -166,6 +173,10 @@
 	<string name="manual_albumart_resolution_loading">loading...</string>
 	<string name="manual_albumart_resolution_unavailable">unavailable</string>
 	
+	<string name="manual_input_enable">Manual search</string>
+	<string name="manual_input_artist">Artist</string>
+	<string name="manual_input_album">Album</string>
+	
 	<!--	DONATE MSG	-->
 	<string name="donate_title">Donate</string>
 	<string name="donate_msg">³ is a free, open source music player written entirely on my spare time. If you do like it, please consider donating to support further development of ³. You can do so using one of the following options:</string>
@@ -179,7 +190,7 @@
 	<string name="widget_app_start">Start ³</string>
 	
 	<!--	BUG REPORTS	-->
-	<string name="bug_report_intro_part_one">Sorry!\n\nRockOn v</string>
+	<string name="bug_report_intro_part_one">Sorry!\n\n3 (Cubed) v</string>
 	<string name="bug_report_intro_part_two">crashed! Please send this mail, so that we can analyze/fix the issue.\n</string>
 	
 <!--	<string name="bug_report_intro">-->

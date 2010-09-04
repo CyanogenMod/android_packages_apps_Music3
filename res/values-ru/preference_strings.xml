@@ -16,13 +16,13 @@
 
 	<!--	LOCK PORTRAIT    -->
     <string name="preference_key_lock_portrait">LockPortrait</string>
-    <string name="preference_title_lock_portrait">ортрет только</string>
-    <string name="preference_summary_lock_portrait">Избегайте ландшафтном режиме.</string>
+    <string name="preference_title_lock_portrait">Портретный режим</string>
+    <string name="preference_summary_lock_portrait">Отключить ландшафтный режим</string>
 
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
     <string name="preference_title_lock_screen">Блокировка экрана</string>
-    <string name="preference_summary_lock_screen">Показывать кнопки управления при заблокированном экране</string>
+    <string name="preference_summary_lock_screen">Показывать кнопки управления на экране разблокировки</string>
     
 <!-- FULL SCREEN    -->
     <string name="preference_key_full_screen">mFullScreen</string>
@@ -42,14 +42,14 @@
 <!-- EMBEDDED ALBUM ART ONLY    -->
 <string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
     <string name="preference_title_embedded_album_art">Использовать только ID3</string>
-    <string name="preference_summary_embedded_album_art">Искать только родные обложки даже, если их качество низкое</string>
+    <string name="preference_summary_embedded_album_art">Использовать обложки из тегов даже если их качество низкое</string>
 
 	<!--	CLEAR ALBUM ART    -->
 	<string name="preference_clear_album_art_key">clearAlbumArtKey</string>
     <string name="preference_clear_album_art_title">Удалить обложки</string>
     <string name="preference_clear_album_art_summary">Используйте это, если обложки неправильно ассоциированы с альбомом/исполнителем</string>
     <string name="preference_clear_album_art_dialog_title">Удаление обложек</string>
-    <string name="preference_clear_album_art_dialog_message">Ипользуйте эту функцию только, если обложки были неправильно ассоциированы с альбомом или исполнителем. Будет удалено содержимое папки /sdcard/albumthumbs/RockOnNg. Запустите поиск обложек  (Меню > Обложки) заново после удаления.</string>
+    <string name="preference_clear_album_art_dialog_message">Используйте эту функцию только, если обложки были неправильно ассоциированы с альбомом или исполнителем. Будет удалено содержимое папки /sdcard/albumthumbs/RockOnNg. Запустите поиск обложек  (Меню > Обложки) заново после удаления.</string>
     <string name="preference_clear_album_art_dialog_positive_text">Продолжить</string>
     <string name="preference_clear_album_art_dialog_negative_text">Отменить</string>
     
@@ -67,6 +67,6 @@
     
    	<!--	DONATE    -->
     <string name="preference_key_donate">donate</string>
-    <string name="preference_title_donate">дарить</string>
+    <string name="preference_title_donate">Помочь разработчику</string>
     
 </resources>

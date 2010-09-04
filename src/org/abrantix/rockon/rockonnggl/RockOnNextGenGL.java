@@ -62,6 +62,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -426,6 +428,9 @@ public class RockOnNextGenGL extends Activity {
 
     	/* create the menu items */
     	for(int i=0; i<menuOptionsTitleArray.length; i++){
+    		/* bypass releases for now */
+    		if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_releases)))
+    			continue;
     		menu.add(
     				0, // subgroup 
     				menuOptionsIdxArray[i], // id 
@@ -438,12 +443,12 @@ public class RockOnNextGenGL extends Activity {
     			menu.getItem(i).setIcon(R.drawable.ic_mp_current_playlist_btn);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_get_art)))
     			menu.getItem(i).setIcon(R.drawable.ic_menu_music_library);
-    		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_concerts)))
-    			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_view_mode)))
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_view);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_theme)))
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_gallery);
+    		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_concerts)))
+    			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
     	}
     	
     	return true;
@@ -502,6 +507,33 @@ public class RockOnNextGenGL extends Activity {
     			
     		} catch(NameNotFoundException e) {
     			showConcertsRequiresAppInstallDialog();
+    		}
+    	}
+    	/**
+    	 * Releases
+    	 */
+    	else if(item.getTitle().
+    			equals(getString(R.string.menu_option_title_releases)))
+    	{
+    		try{
+    			ComponentName cName = 
+    				new ComponentName(
+						Constants.RELEASES_APP_PACKAGE, 
+						Constants.RELEASES_APP_MAIN_ACTIVITY);
+				
+    			/* is concerts installed? */
+    			getPackageManager().
+    				getActivityInfo(
+    						cName,
+    						0);
+    			
+    			Intent i = new Intent();
+    			i.setComponent(cName);
+    			/* start it */
+    			startActivity(i);
+    			
+    		} catch(NameNotFoundException e) {
+    			showReleasesRequiresAppInstallDialog();
     		}
     	}
     	/**
@@ -677,15 +709,15 @@ public class RockOnNextGenGL extends Activity {
     	int appCreateCountForDonation = 
     		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
     			getInt(Constants.prefkey_mAppCreateCountForDonation, Constants.DONATION_INITIAL_INTERVAL);
-    	
+
+    	boolean hasDonated = 
+			PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+				getBoolean(Constants.prefkey_mAppHasDonated, false);
+		
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
     	if(appCreateCount >= appCreateCountForDonation)
-    	{    		
-    		boolean hasDonated = 
-    			PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    				getBoolean(Constants.prefkey_mAppHasDonated, false);
-    		
+    	{    			
     		if(hasDonated)
     			appCreateCountForDonation += Constants.DONATION_AFTER_HAVING_DONATED_INTERVAL;
     		else
@@ -704,6 +736,28 @@ public class RockOnNextGenGL extends Activity {
         	editor.putInt(Constants.prefkey_mAppCreateCount, appCreateCount);
         	editor.commit();
     	}
+    	
+    	/*
+    	 * Create dummy file to show other apps
+    	 * that a donation has been made 
+    	 */
+    	if(hasDonated)
+    	{
+    		File f = new File(Constants.ROCKON_DONATION_PATH);
+    		if(!f.exists())
+    		{
+    			f.mkdirs();
+    			try {
+					f.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    		}
+    	}
+    	else
+    	{
+    		// TODO: delete the donation file (necessary?)
+    	}
     }
     
     /**
@@ -719,6 +773,23 @@ public class RockOnNextGenGL extends Activity {
     			mConcertAppInstallClickListener);
     	mInstallConcertAppDialog.setNegativeButton(
     			getString(R.string.concert_app_install_dialog_cancel), 
+    			null);
+    	mInstallConcertAppDialog.show();
+    }
+    
+    /**
+     * ask the user if he wants to install the new app or not
+     */
+    private void showReleasesRequiresAppInstallDialog()
+    {
+    	mInstallConcertAppDialog = new AlertDialog.Builder(this);
+    	mInstallConcertAppDialog.setTitle(getString(R.string.releases_app_install_dialog_title));
+    	mInstallConcertAppDialog.setMessage(getString(R.string.releases_app_install_dialog_message));
+    	mInstallConcertAppDialog.setPositiveButton(
+    			getString(R.string.releases_app_install_dialog_ok), 
+    			mReleasesAppInstallClickListener);
+    	mInstallConcertAppDialog.setNegativeButton(
+    			getString(R.string.releases_app_install_dialog_cancel), 
     			null);
     	mInstallConcertAppDialog.show();
     }
@@ -747,6 +818,30 @@ public class RockOnNextGenGL extends Activity {
 			}
 		};
     
+		DialogInterface.OnClickListener mReleasesAppInstallClickListener = 
+	    	new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					try
+					{
+						Intent i = new Intent(Intent.ACTION_VIEW, 
+						Uri.parse("market://search?q=pname:"+Constants.RELEASES_APP_PACKAGE));
+						startActivity(i);					
+					}
+					catch(ActivityNotFoundException e)
+					{
+						e.printStackTrace();
+						Toast.makeText(
+								RockOnNextGenGL.this, 
+								R.string.releases_app_install_no_market_app_msg, 
+								Toast.LENGTH_LONG)
+							.show();
+						
+					}
+				}
+			};
+	    
 	private DialogInterface.OnClickListener mRendererChoiceDialogClick = 
 		new DialogInterface.OnClickListener() {
 			

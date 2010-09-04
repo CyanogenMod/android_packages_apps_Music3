@@ -127,12 +127,18 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     		}
     		else // ALBUM
     		{
+    			mPreferArtistSorting = 
+    				PreferenceManager.getDefaultSharedPreferences(mContext).
+    					getBoolean(
+    						mContext.getString(R.string.preference_key_prefer_artist_sorting),
+    						true);
     			Cursor helperCursor = 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
 	    							Constants.prefkey_mPlaylistId,
-	    							Constants.PLAYLIST_ALL));
+	    							Constants.PLAYLIST_ALL),
+						mPreferArtistSorting);
     			mCursor = helperCursor;
     		}
     	}
@@ -1269,11 +1275,20 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	switch(mBrowseCat)
 		{
 		case Constants.BROWSECAT_ALBUM:
-			c.copyStringToBuffer(
-					c.getColumnIndex(MediaStore.Audio.Albums.ALBUM),
-					cBuf);
-			oTmpC = 
-				this.filterTheFunnyStuff(cBuf);
+			if(mPreferArtistSorting)
+			{
+				c.copyStringToBuffer(
+						c.getColumnIndex(MediaStore.Audio.Albums.ARTIST),
+						cBuf);
+				oTmpC = cBuf.data[0];
+			}
+			else
+			{
+				c.copyStringToBuffer(
+						c.getColumnIndex(MediaStore.Audio.Albums.ALBUM),
+						cBuf);
+				oTmpC = this.filterTheFunnyStuff(cBuf);
+			}
 			break;
 		case Constants.BROWSECAT_ARTIST:
 			c.copyStringToBuffer(
@@ -1424,7 +1439,7 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     	{
     	case Constants.SCROLL_MODE_VERTICAL:
     		/* make the movement harder for lower rotations */
-    		if(Math.abs(scrollSpeed/(mHeight*.75f)) < Constants.MAX_LOW_SPEED)
+    		if(Math.abs(scrollSpeed/(mHeight*.6f)) < Constants.MAX_LOW_SPEED)
     		{
     			mTargetPositionY = 
     				Math.round(

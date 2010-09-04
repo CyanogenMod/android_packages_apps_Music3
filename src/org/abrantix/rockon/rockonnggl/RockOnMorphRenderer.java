@@ -113,12 +113,18 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     		}
     		else // ALBUM
     		{
+    			mPreferArtistSorting = 
+    				PreferenceManager.getDefaultSharedPreferences(mContext).
+    					getBoolean(
+    						mContext.getString(R.string.preference_key_prefer_artist_sorting),
+    						true);
     			Cursor helperCursor = 
 	    			cursorUtils.getAlbumListFromPlaylist(
 	    				PreferenceManager.getDefaultSharedPreferences(mContext).
 	    					getInt(
 	    							Constants.prefkey_mPlaylistId,
-	    							Constants.PLAYLIST_ALL));
+	    							Constants.PLAYLIST_ALL),
+						mPreferArtistSorting);
     			mCursor = helperCursor;
     		}
     	}

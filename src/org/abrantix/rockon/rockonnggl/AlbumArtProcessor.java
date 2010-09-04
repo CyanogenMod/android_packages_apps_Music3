@@ -54,7 +54,15 @@ public class AlbumArtProcessor{
 	public void	processAlbumArtThreadedWork(){
 		/* create album cursor */
 		Cursor albumCursor = new CursorUtils(mContext)
-			.getAlbumListFromPlaylist(Constants.PLAYLIST_ALL);
+			.getAlbumListFromPlaylist(
+					Constants.PLAYLIST_ALL, 
+					PreferenceManager.
+						getDefaultSharedPreferences(mContext).
+						getBoolean(
+								mContext.
+								getString(
+										R.string.preference_key_prefer_artist_sorting), 
+										true));
 		       
 		/* Give feedback to the user */
 		updateUi(mContext.getResources()

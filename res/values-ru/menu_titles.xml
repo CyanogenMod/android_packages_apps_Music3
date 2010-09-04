@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="menu_option_title_get_art">
-Обложки
-</string>
-<string name="menu_option_title_preferences">
-Настройки
-</string>
-<string name="menu_option_title_playlist_id">
-Плейлист
-</string>
-<string name="menu_option_title_concerts">
-Концерты
-</string>
-<string name="menu_option_title_view_mode">
-Вид
-</string>
-<string name="menu_option_title_theme">
-Тема </string>
+	<string name="menu_option_title_get_art">Обложки</string>
+	<string name="menu_option_title_preferences">Настройки</string>
+	<string name="menu_option_title_playlist_id">Плейлист</string>
+	<string name="menu_option_title_concerts">Концерты</string>
+	<string name="menu_option_title_releases">Новые альбомы</string>
+	<string name="menu_option_title_view_mode">Вид</string>
+	<string name="menu_option_title_theme">Тема</string>
 </resources>

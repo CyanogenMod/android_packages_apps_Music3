@@ -12,6 +12,9 @@
 	<string name="menu_option_title_concerts">
 		Conciertos
 	</string>
+	<string name="menu_option_title_releases">
+		Nuevos Discos
+	</string>
 	<string name="menu_option_title_view_mode">
 		Modo de Visualización
 	</string>

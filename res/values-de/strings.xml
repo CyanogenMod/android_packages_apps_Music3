@@ -49,6 +49,13 @@
 	<string name="concert_app_install_dialog_cancel">Nein danke!</string>
 	<string name="concert_app_install_no_market_app_msg">Ooops! Kein Market app installiert.</string>
 	
+	<!--	DOWNLOAD RELEASES APP MESSAGES-->
+	<string name="releases_app_install_dialog_title">Releases³ installieren</string>
+	<string name="releases_app_install_dialog_message">Diese Funktion benötigt ein installiertes Releases³. Möchten Sie dieses App jetzt installieren?</string>
+	<string name="releases_app_install_dialog_ok">Ja</string>
+	<string name="releases_app_install_dialog_cancel">Nein danke!</string>
+	<string name="releases_app_install_no_market_app_msg">Ooops! Kein Market app installiert.</string>
+	
 	<!--	TOASTER MESSAGES	-->
 	<string name="song_added_to_playlist">Titel hinzugefügt</string>
 	<string name="song_removed_from_playlist">Titel entfernt</string>
@@ -165,6 +172,10 @@
 	<string name="manual_albumart_source_internet">Internet</string>
 	<string name="manual_albumart_resolution_loading">Lade...</string>
 	<string name="manual_albumart_resolution_unavailable">Nicht verfügbar</string>
+	
+	<string name="manual_input_enable">Manuelle Suche</string>
+	<string name="manual_input_artist">Künstler</string>
+	<string name="manual_input_album">Album</string>
 	
 	<!-- DONATE MSG -->
 	<string name="donate_title">Donate</string>

@@ -35,9 +35,15 @@
     <string name="preference_summary_controls_on_bottom">Platziert die Steuerelemente am unteren Bildschirmrand.</string>
 
 
+	<!--	PREFER ARTIST SORTING    -->
+    <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
+    <string name="preference_title_prefer_artist_sorting">Ordnen nach Künstler</string>
+    <string name="preference_summary_prefer_artist_sorting">Sortieren Alben von Künstler-Namen anstatt Albumname.</string>
+
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">Allgemeines</string>
-    <string name="preference_category_album_art">Album-Cover</string>
+    <string name="preference_category_sorting">Classer</string>
+    <string name="preference_category_album_art">Sortierung</string>
     <string name="preference_category_other">Weitere</string>
     
 	<!--	EMBEDDED ALBUM ART ONLY    -->
