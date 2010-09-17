@@ -106,9 +106,12 @@
 	<string name="album_song_list_queue_all">Tout à la playlist</string>
 
 	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_play_now">Jouez maintenant</string>
 	<string name="song_option_add_to_queue">Ajouter à la playlist</string>
 	<string name="song_option_delete">Effacer</string>
+	
 	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_play_now">Jouez maintenant</string>
 	<string name="playlist_option_add_to_queue">Ajouter à la playlist</string>
 	<string name="playlist_option_delete">Effacer</string>
 

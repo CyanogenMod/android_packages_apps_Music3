@@ -113,19 +113,21 @@
 
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_play_now">Играть сейчас</string>
 	<string name="song_option_add_to_queue">Добавить в очередь</string>
 	<string name="song_option_delete">Удалить</string>
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_play_now">Играть сейчас</string>
 	<string name="playlist_option_add_to_queue">Добавить в очередь</string>
 	<string name="playlist_option_delete">Удалить</string>
 	
-<!-- PLAYLIST DIALOG -->
-<string name="playlist_dialog_title">Выберите плейлист</string>
-<string name="playlist_dialog_cancel">Отмена</string>
-<string name="playlist_all_title">Воспроизвести всё</string>
-<string name="playlist_most_recent_title">Недавние</string>
-<string name="playlist_most_played_title">Самые частые</string>
+	<!-- PLAYLIST DIALOG -->
+	<string name="playlist_dialog_title">Выберите плейлист</string>
+	<string name="playlist_dialog_cancel">Отмена</string>
+	<string name="playlist_all_title">Воспроизвести всё</string>
+	<string name="playlist_most_recent_title">Недавние</string>
+	<string name="playlist_most_played_title">Самые частые</string>
 
 <!-- VIEW MODES DIALOG -->
 <string name="view_mode_cube">³ Куб</string>

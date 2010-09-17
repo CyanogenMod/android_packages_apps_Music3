@@ -106,10 +106,13 @@
 	<string name="album_song_list_queue_all">Todo a la playlist</string>
 
 	<!--	SONG OPTIONS DIALOG	-->
-	<string name="song_option_add_to_queue">Todo a la playlist</string>
+	<string name="song_option_play_now">Reproducir ahora</string>
+	<string name="song_option_add_to_queue">Adicionar a la playlist</string>
 	<string name="song_option_delete">Borrar</string>
+	
 	<!--	PLAYLIST OPTIONS DIALOG	-->
-	<string name="playlist_option_add_to_queue">Todo a la playlist</string>
+	<string name="playlist_option_play_now">Reproducir ahora</string>
+	<string name="playlist_option_add_to_queue">Adicionar a la playlist</string>
 	<string name="playlist_option_delete">Borrar</string>
 
 	<!--	PLAYLIST DIALOG		-->

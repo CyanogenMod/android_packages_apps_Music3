@@ -110,12 +110,14 @@
 	
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	SONG OPTIONS DIALOG	-->
-	<string name="song_option_add_to_queue">Add to queue</string>
-	<string name="song_option_delete">Delete</string>
+	<string name="song_option_play_now">Jetzt spielen</string>
+	<string name="song_option_add_to_queue">Queue</string>
+	<string name="song_option_delete">Löschen</string>
 	<!--	XXXXXXXXXXXXXXXXXXXXXXXXXX	-->
 	<!--	PLAYLIST OPTIONS DIALOG	-->
-	<string name="playlist_option_add_to_queue">Add to queue</string>
-	<string name="playlist_option_delete">Delete</string>
+	<string name="playlist_option_play_now">Jetzt spielen</string>
+	<string name="playlist_option_add_to_queue">Queue</string>
+	<string name="playlist_option_delete">Löschen</string>
 	
 	<!--	PLAYLIST DIALOG		-->
 	<string name="playlist_dialog_title">Wiedergabeliste auswählen</string>

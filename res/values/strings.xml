@@ -109,10 +109,12 @@
 	<string name="album_song_list_queue_all">Queue all</string>
 	
 	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_play_now">Play now</string>
 	<string name="song_option_add_to_queue">Add to queue</string>
 	<string name="song_option_delete">Delete</string>
 	
 	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_play_now">Play now</string>
 	<string name="playlist_option_add_to_queue">Add to queue</string>
 	<string name="playlist_option_delete">Delete</string>
 	

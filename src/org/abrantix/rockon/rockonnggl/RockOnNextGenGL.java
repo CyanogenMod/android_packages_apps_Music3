@@ -1189,11 +1189,16 @@ public class RockOnNextGenGL extends Activity {
     	public void handleMessage(Message msg)
     	{
     		String playlistOption = getResources().getStringArray(R.array.playlist_options)[msg.what];
-    		if(playlistOption.equals(getString(R.string.playlist_option_add_to_queue)))
+    		if(playlistOption.equals(getString(R.string.playlist_option_play_now)))
+    		{
+    			// play entire playlist
+    			queueOrPlayAllSongsFromPlaylist(msg.arg1, Constants.NOW);
+ 
+    		}
+    		else if(playlistOption.equals(getString(R.string.playlist_option_add_to_queue)))
     		{
     			// add all playlist song to queue
-    			queueAllSongsFromPlaylist(msg.arg1);
- 
+    			queueOrPlayAllSongsFromPlaylist(msg.arg1, Constants.LAST);
     		}
     		else if(playlistOption.equals(getString(R.string.playlist_option_delete)))
     		{
@@ -1226,7 +1231,7 @@ public class RockOnNextGenGL extends Activity {
      * 
      * @param playlistId
      */
-    private void queueAllSongsFromPlaylist(int playlistId)
+    private void queueOrPlayAllSongsFromPlaylist(int playlistId, int nowOrQueue)
     {
 			CursorUtils cUtils = new CursorUtils(getApplicationContext());
 			Cursor cursor = cUtils.getAllSongsFromPlaylist(playlistId);
@@ -1245,7 +1250,11 @@ public class RockOnNextGenGL extends Activity {
 				try{
 					if(mService != null)
 						{
-							mService.enqueue(songVector, Constants.LAST);
+							if(nowOrQueue == Constants.NOW)
+								mService.removeTracks(0, mService.getQueue().length -1);
+							
+							mService.enqueue(songVector, nowOrQueue);
+//							mService.enqueue(songVector, Constants.LAST);
 						}
 				}catch(Exception e){
 					e.printStackTrace();
@@ -1399,19 +1408,30 @@ public class RockOnNextGenGL extends Activity {
 	Handler mPlayListItemSelectedHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
+			Log.i(TAG, "XXXXX: "+msg.arg1 + " - " + msg.arg2);
+			
 			try{
 				long[] list = {msg.arg1};
-				if(msg.arg2 == Constants.LAST){
+				if(msg.arg2 == Constants.LONG_CLICK){
 //					mService.removeTrack(msg.arg1);
-					mService.enqueue(list, msg.arg2);
+					mService.enqueue(list, Constants.LAST);
 					Toast.makeText(
 							RockOnNextGenGL.this, 
 							R.string.song_added_to_playlist, 
 							Toast.LENGTH_SHORT).
 						show();
-				} else {
-					mService.removeTracks(0, mService.getQueue().length -1);
-					mService.enqueue(list, msg.arg2);
+				} else if(msg.arg2 == Constants.SINGLE_CLICK){
+					if(!mService.isPlaying()){
+						mService.removeTracks(0, mService.getQueue().length -1);
+						mService.enqueue(list, Constants.NOW);
+					} else {
+						mService.enqueue(list, Constants.LAST);
+						Toast.makeText(
+								RockOnNextGenGL.this, 
+								R.string.song_added_to_playlist, 
+								Toast.LENGTH_SHORT).
+							show();
+					}
 				}
 			} catch(Exception e){
 				e.printStackTrace();
@@ -2999,7 +3019,10 @@ public class RockOnNextGenGL extends Activity {
 			try{
 				if(msg.arg2 == Constants.SINGLE_CLICK) 
 				{
-					queueTrack(msg.arg1, Constants.NOW);
+					if(!mService.isPlaying())
+						queueTrack(msg.arg1, Constants.NOW);
+					else
+						queueTrack(msg.arg1, Constants.LAST);
 					/* reverse the click animation */
 					reverseRendererClickAnimation();	
 				}
@@ -3094,7 +3117,12 @@ public class RockOnNextGenGL extends Activity {
     	public void handleMessage(Message msg)
     	{
     		String songOption = getResources().getStringArray(R.array.song_options)[msg.what];
-    		if(songOption.equals(getString(R.string.song_option_add_to_queue)))
+    		if(songOption.equals(getString(R.string.song_option_play_now)))
+    		{
+    			// replace current playlist
+    			queueTrack(msg.arg1, Constants.NOW); 
+    		}
+    		else if(songOption.equals(getString(R.string.song_option_add_to_queue)))
     		{
     			// add all playlist song to queue
     			queueTrack(msg.arg1, Constants.LAST); 
@@ -3605,13 +3633,17 @@ public class RockOnNextGenGL extends Activity {
 			Cursor	songCursor = ((SimpleCursorAdapter)arg0.getAdapter()).getCursor();
 			long trackId = 
 				ContentProviderUnifier.
-					getAudioIdFromUnknownCursor(songCursor); 
+					getAudioIdFromUnknownCursor(songCursor);
+			String trackName = 
+				songCursor.getString(songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
 
 			hideSearch();
-			Message msg = new Message();
-			msg.arg1 = (int) trackId;
-			msg.arg2 = Constants.NOW;
-			mSongSearchClickHandler.sendMessageDelayed(msg, Constants.CLICK_ACTION_DELAY);
+			showSongOptionsDialog((int)trackId, trackName);
+
+//			Message msg = new Message();
+//			msg.arg1 = (int) trackId;
+//			msg.arg2 = Constants.NOW;
+//			mSongSearchClickHandler.sendMessageDelayed(msg, Constants.CLICK_ACTION_DELAY);
 			songCursor.close();
 		}
 		
