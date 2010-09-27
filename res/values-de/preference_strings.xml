@@ -34,6 +34,10 @@
     <string name="preference_title_controls_on_bottom">Steuerelemente</string>
     <string name="preference_summary_controls_on_bottom">Platziert die Steuerelemente am unteren Bildschirmrand.</string>
 
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">Queue</string>
+	<string name="preference_summary_queue_on_click">Wenn ein Song ausgewählt wird, um die Warteschlange zu spielen, anstatt sofort hinzufügen</string>
 
 	<!--	PREFER ARTIST SORTING    -->
     <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>

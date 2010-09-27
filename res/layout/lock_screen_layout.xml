@@ -4,6 +4,21 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	>
+	<TextView
+		android:id="@+id/lock_screen_current_time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:textSize="64dp"
+		android:textColor="#fff"
+		android:shadowColor="#000"
+		android:shadowRadius="1"
+		android:shadowDx="1"
+		android:shadowDy="1"
+		android:layout_marginLeft="0dp"
+		android:layout_marginTop="24dp"
+		/>
 	<LinearLayout
 		android:id="@+id/lock_screen_content"
 		android:layout_width="fill_parent"
@@ -123,6 +138,10 @@
 		android:layout_alignParentRight="true"
 		android:textSize="64dp"
 		android:textColor="#fff"
+		android:shadowColor="#000"
+		android:shadowRadius="1"
+		android:shadowDx="1"
+		android:shadowDy="1"
 		android:layout_marginRight="-4dp"
 		android:layout_marginBottom="-16dp"
 		android:text="@string/unlock_screen"

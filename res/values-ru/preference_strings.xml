@@ -34,6 +34,13 @@
     <string name="preference_title_controls_on_bottom">Панель внизу</string>
     <string name="preference_summary_controls_on_bottom">Разместить кнопки управления воспроизведением внизу экрана</string>
 
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">Выберите в очередь</string>
+	<string name="preference_summary_queue_on_click">Когда песня выбрана, добавить в очередь, вместо того чтобы играть сразу</string>
+
+
+
 <!-- PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">Общие настройки</string>
     <string name="preference_category_album_art">Обложки альбомов</string>

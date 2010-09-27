@@ -1,6 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
 import android.database.Cursor;
+import android.database.StaleDataException;
 import android.provider.MediaStore;
 
 public class ContentProviderUnifier{
@@ -22,10 +23,15 @@ public class ContentProviderUnifier{
 		} 
 		/* Audio.Media / Genres.Members/... */
 		else {
-			return 
-				cursor.getLong(
+			try{
+				return 
+					cursor.getLong(
 						cursor.getColumnIndexOrThrow(
 								MediaStore.Audio.Media._ID));
+			} catch(StaleDataException e) {
+				e.printStackTrace();
+				return -1;
+			}
 		}
 	}
 	

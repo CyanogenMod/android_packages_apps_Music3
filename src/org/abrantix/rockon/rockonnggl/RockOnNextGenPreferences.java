@@ -85,6 +85,14 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
 	
+		/* Queue on click */
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_queue_on_click))).
+			setChecked(
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+					getBoolean(getString(R.string.preference_key_queue_on_click), false));
+		((CheckBoxPreference)findPreference(getString(R.string.preference_key_queue_on_click))).
+			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+	
 		/* Prefer artist sorting */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_prefer_artist_sorting))).
 			setChecked(

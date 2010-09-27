@@ -828,6 +828,9 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 	    			{
 	    				e.printStackTrace();
 	    			}
+	    			catch(IllegalStateException e) {
+	    				e.printStackTrace();
+	    			}
     			}
     		}
 	    	
@@ -1272,48 +1275,53 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     char	oTmpC;
     private char getFirstLetterLowerCaseAbstractFromCategory(int cat, Cursor c, CharArrayBuffer cBuf)
     {
-    	switch(mBrowseCat)
-		{
-		case Constants.BROWSECAT_ALBUM:
-			if(mPreferArtistSorting)
+    	try{
+	    	switch(mBrowseCat)
 			{
+			case Constants.BROWSECAT_ALBUM:
+				if(mPreferArtistSorting)
+				{
+					c.copyStringToBuffer(
+							c.getColumnIndex(MediaStore.Audio.Albums.ARTIST),
+							cBuf);
+					oTmpC = cBuf.data[0];
+				}
+				else
+				{
+					c.copyStringToBuffer(
+							c.getColumnIndex(MediaStore.Audio.Albums.ALBUM),
+							cBuf);
+					oTmpC = this.filterTheFunnyStuff(cBuf);
+				}
+				break;
+			case Constants.BROWSECAT_ARTIST:
 				c.copyStringToBuffer(
-						c.getColumnIndex(MediaStore.Audio.Albums.ARTIST),
+						c.getColumnIndex(MediaStore.Audio.Artists.ARTIST),
 						cBuf);
-				oTmpC = cBuf.data[0];
+				oTmpC = 
+					this.filterTheFunnyStuff(cBuf);	    						
+				break;
 			}
-			else
-			{
-				c.copyStringToBuffer(
-						c.getColumnIndex(MediaStore.Audio.Albums.ALBUM),
-						cBuf);
-				oTmpC = this.filterTheFunnyStuff(cBuf);
-			}
-			break;
-		case Constants.BROWSECAT_ARTIST:
-			c.copyStringToBuffer(
-					c.getColumnIndex(MediaStore.Audio.Artists.ARTIST),
-					cBuf);
-			oTmpC = 
-				this.filterTheFunnyStuff(cBuf);	    						
-			break;
-		}
-    	/*
-		 * make it lower case
-		 */
-		if(oTmpC >= 'A' && oTmpC <= 'Z')
-			oTmpC += 32;
-		
-		/*
-		 * if it is outside the alphabet 
-		 * 	make it the '0' of the alphabet
-		 */
-		if(oTmpC < 'a')
-			oTmpC = 'a' - 1;
-		if(oTmpC > 'z')
-			oTmpC = 'z';
-		
-		return oTmpC;
+	    	/*
+			 * make it lower case
+			 */
+			if(oTmpC >= 'A' && oTmpC <= 'Z')
+				oTmpC += 32;
+			
+			/*
+			 * if it is outside the alphabet 
+			 * 	make it the '0' of the alphabet
+			 */
+			if(oTmpC < 'a')
+				oTmpC = 'a' - 1;
+			if(oTmpC > 'z')
+				oTmpC = 'z';
+			
+			return oTmpC;
+    	} catch(CursorIndexOutOfBoundsException e) {
+    		e.printStackTrace();
+    		return 'a';
+    	}
     }
     
     /* optimization */
@@ -1543,36 +1551,41 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /** get the current Album Id */
     int getShownElementId(float x, float y){
-    	if(mTargetPositionY != mPositionY ||
-    		mCursor == null ||
-    		mCursor.isClosed() ||
-			/**
-			 * FIXME: this is a quick cursor overflow bugfix, unverified
-			 */
-    		(int) mPositionY > mCursor.getCount() - 1 ||
-    		(int) mPositionY < 0)
-    	{
-//    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
+    	try{
+	    	if(mTargetPositionY != mPositionY ||
+	    		mCursor == null ||
+	    		mCursor.isClosed() ||
+				/**
+				 * FIXME: this is a quick cursor overflow bugfix, unverified
+				 */
+	    		(int) mPositionY > mCursor.getCount() - 1 ||
+	    		(int) mPositionY < 0)
+	    	{
+	//    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
+	    		return -1;
+	    	}
+	    	else{
+	    		int tmpIndex = mCursor.getPosition();
+	    		mCursor.moveToPosition((int) mPositionY);
+	    		int id = -1;
+	    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+	    		{
+		    		id = mCursor.getInt(
+		    				mCursor.getColumnIndexOrThrow(
+		    						MediaStore.Audio.Albums._ID));
+	    		}
+	    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+	    		{
+	    			id = mCursor.getInt(
+		    				mCursor.getColumnIndexOrThrow(
+		    						MediaStore.Audio.Artists._ID));
+	    		}
+	    		mCursor.moveToPosition(tmpIndex);
+	    		return id;
+	    	}
+    	} catch(CursorIndexOutOfBoundsException e) {
+    		e.printStackTrace();
     		return -1;
-    	}
-    	else{
-    		int tmpIndex = mCursor.getPosition();
-    		mCursor.moveToPosition((int) mPositionY);
-    		int id = -1;
-    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
-    		{
-	    		id = mCursor.getInt(
-	    				mCursor.getColumnIndexOrThrow(
-	    						MediaStore.Audio.Albums._ID));
-    		}
-    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
-    		{
-    			id = mCursor.getInt(
-	    				mCursor.getColumnIndexOrThrow(
-	    						MediaStore.Audio.Artists._ID));
-    		}
-    		mCursor.moveToPosition(tmpIndex);
-    		return id;
     	}
     }
     
@@ -1677,6 +1690,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 		    		}
 		    		catch(CursorIndexOutOfBoundsException e)
 		    		{
+		    			e.printStackTrace();
+		    			return -1;
+		    		}
+		    		catch(IllegalStateException e) {
 		    			e.printStackTrace();
 		    			return -1;
 		    		}

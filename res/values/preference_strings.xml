@@ -34,6 +34,11 @@
     <string name="preference_title_controls_on_bottom">Thumb controls</string>
     <string name="preference_summary_controls_on_bottom">Place the controls on the bottom of the screen.</string>
 
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">Queue on click</string>
+	<string name="preference_summary_queue_on_click">When a song is selected, add to the queue instead of playing immediately</string>
+
 	<!--	PREFER ARTIST SORTING    -->
     <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
     <string name="preference_title_prefer_artist_sorting">Prefer artist sorting</string>

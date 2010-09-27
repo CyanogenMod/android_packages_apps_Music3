@@ -1,200 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!--	BROWSING CATEGORIES-->
-	<string name="browse_cat_album">Album</string>
-	<string name="browse_cat_artists">Artistes</string>
-	<string name="browse_cat_songs">Chansons</string>
+<!-- BROWSING CATEGORIES-->
+<string name="browse_cat_album">Album</string>
+<string name="browse_cat_artists">Artistes</string>
+<string name="browse_cat_songs">Chansons</string>
 
-	<!--	GENERAL STUFF -->
-	<string name="album">Album</string>
-	<string name="albums">Albums</string>
+<!-- GENERAL STUFF -->
+<string name="album">Album</string>
+<string name="albums">Albums</string>
 
 
-	<!--	INTRO SCREEN-->
+<!-- INTRO SCREEN-->
     <string name="intro_text_1">Rock</string>
     <string name="intro_text_2">On</string>
     <string name="intro_text_3"></string>
     <string name="app_name">³</string>
     
-	<!--    ALBUM ART MESSAGES-->
-	<string name="get_art_dialog_title">³ Pochettes</string>
-	<string name="get_art_dialog_message">
-		³ peut télecharger d\'internet les pochettes de tes albums. Le faire maintenant? (Ça prendra ~1 min chaque 10 albums. Il est recommandé d\'utiliser une connexion WiFi).
-	</string>
-	<string name="get_art_dialog_yes">Oui!</string>
-	<string name="get_art_dialog_no">Non.</string>
+<!-- ALBUM ART MESSAGES-->
+<string name="get_art_dialog_title">³ Pochettes</string>
+<string name="get_art_dialog_message">
+³ peut télecharger d\'internet les pochettes de tes albums. Le faire maintenant? (Ça prendra ~1 min chaque 10 albums. Il est recommandé d\'utiliser une connexion WiFi).
+</string>
+<string name="get_art_dialog_yes">Oui!</string>
+<string name="get_art_dialog_no">Non.</string>
 
-	<!--	ART DOWNLOAD MESSAGES-->
-	<string name="art_download_no_inet">Sans connexion internet!</string>
-	<string name="art_download_progress_title">Téléchargement des pochettes</string>
-	<string name="art_download_cancel">Annuler</string>
-	<string name="art_download_progress_initial_message">Recherche de pochettes...</string>
+<!-- ART DOWNLOAD MESSAGES-->
+<string name="art_download_no_inet">Sans connexion internet!</string>
+<string name="art_download_progress_title">Téléchargement des pochettes</string>
+<string name="art_download_cancel">Annuler</string>
+<string name="art_download_progress_initial_message">Recherche de pochettes...</string>
 
-	<!--	NO SDCARD MESSAGES -->
-	<string name="no_sd_card_dialog_title">Pas d\'accès à la mémoire SD!</string>
-	<string name="no_sd_card_dialog_message">Veuillez insérer une mémoire SD...</string>
-	<string name="no_sd_card_dialog_continue_anyway">Continuer quand même</string>
-	<string name="no_sd_card_dialog_exit">Sortir</string>
-	<!--	NO MUSIC MESSAGES -->
-	<string name="no_music_dialog_title">Pas de musique dans cette playlist!</string>
-	<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta mémoire SD, s\'il vous plaît redémarrer l\'application ou changer de playlist...</string>
-	<string name="no_music_dialog_continue_anyway">Continuer quand même</string>
-	<string name="no_music_dialog_exit">Sortir</string>
-
-
-	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
-	<string name="concert_app_install_dialog_title">Installer Concerts³</string>
-	<string name="concert_app_install_dialog_message">Ceci requiert l\'installation de Concerts³. Le faire maintenant?</string>
-	<string name="concert_app_install_dialog_ok">Oui</string>
-	<string name="concert_app_install_dialog_cancel">Non!</string>
-	<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
-
-	<!--	DOWNLOAD RELEASES APP MESSAGES-->
-	<string name="releases_app_install_dialog_title">Installer Releases³</string>
-	<string name="releases_app_install_dialog_message">Ceci requiert l\'installation de Releases³. Le faire maintenant?</string>
-	<string name="releases_app_install_dialog_ok">Oui</string>
-	<string name="releases_app_install_dialog_cancel">Non!</string>
-	<string name="releases_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
-
-	<!--	TOASTER MESSAGES	-->
-	<string name="song_added_to_playlist">Chanson ajoutée à la playlist</string>
-	<string name="song_removed_from_playlist">Chanson effacée de la playlist</string>
-	<string name="album_art_changed">Pochette changée</string>
-	<string name="playlist_empty_toast">Erreur! Playlist vide!</string>
-	<string name="playqueue_empty_toast">Pas de chansons!</string>
-	<string name="not_an_album_toast">Erreur! C\'est un artiste! Pas un album!</string>
-	<string name="playlist_queued_toast">Playlist</string>
-	<string name="generic_error_toast">Erreur!</string>
-	<string name="playlist_deleted_toast">Playlist effacée!</string>
-	<string name="song_deleted_toast">Chanson effacée!</string>
-
-	<!-- 	SEARCH -->
-	<string name="search_hint">Nom de l\'artiste ou de l\'album:</string>
-
-	<!--	PLAY QUEUE	-->
-	<string name="play_queue_title">Lire playlist</string>
-	<string name="clear_playlist_dialog_option">Effacer</string>
-	<string name="create_playlist_dialog_option">Enregistrer</string>
-
-	<!--	SONG LISTS MORE RESULTS -->
-	<string name="song_list_more_results">Chansons...</string>
-
-	<!--	CREATE PLAYLIST DIALOG -->
-	<string name="create_playlist_dialog_title">Choisis le nom de la playlist</string>
-	<string name="create_playlist_dialog_save_option">Enregistrer</string>
-	<string name="create_playlist_dialog_text_hint">Ecris le nom de la playlist...</string>
-
-	<!--	DELETE SONG DIALOG	-->
-	<string name="song_delete_confirm_title">Effacer la chanson</string>
-	<string name="song_delete_message">Etes vous sûr de vouloir effacer cette chanson? Cette opération n\'est pas réversible.</string>
-	<string name="song_delete_positive_button">Oui!</string>
-	<string name="song_delete_negative_button">Non.</string>
-	<!--	DELETE PLAYLIST DIALOG	-->
-	<string name="playlist_delete_confirm_title">Effacer la playlist</string>
-	<string name="playlist_delete_message">Etes vous sûr de vouloir effacer cette playlist?</string>
-	<string name="playlist_delete_positive_button">Oui!</string>
-	<string name="playlist_delete_negative_button">Non.</string>
-
-	<!--	CREATE PLAYLIST TOASTER	-->
-	<string name="create_playlist_toaster_added_part_1">Chanson ajoutée à la playlist</string>
-	<string name="create_playlist_toaster_failed">Erreur lors de la création de la playlist!</string>
-	<string name="create_playlist_toaster_name_required">Le nom de la playlist est requis...</string>
-
-	<!--	ALBUM SONG LIST DIALOG -->
-	<string name="album_song_list_play_all">Tout lire</string>
-	<string name="album_song_list_queue_all">Tout à la playlist</string>
-
-	<!--	SONG OPTIONS DIALOG	-->
-	<string name="song_option_play_now">Jouez maintenant</string>
-	<string name="song_option_add_to_queue">Ajouter à la playlist</string>
-	<string name="song_option_delete">Effacer</string>
-	
-	<!--	PLAYLIST OPTIONS DIALOG	-->
-	<string name="playlist_option_play_now">Jouez maintenant</string>
-	<string name="playlist_option_add_to_queue">Ajouter à la playlist</string>
-	<string name="playlist_option_delete">Effacer</string>
-
-	<!--	PLAYLIST DIALOG		-->
-	<string name="playlist_dialog_title">Choisis une playlist</string>
-	<string name="playlist_dialog_cancel">Annuler</string>
-	<string name="playlist_all_title">Tout lire</string>
-	<string name="playlist_most_recent_title">Récents</string>
-	<string name="playlist_most_played_title">Les plus écoutées</string>
-
-	<!-- 	VIEW MODES DIALOG -->
-	<string name="view_mode_cube">³</string>
-	<string name="view_mode_wall">Murale</string>
-	<string name="view_mode_boring">Ennuyant</string>
-	<string name="view_mode_morph">Flux</string>
-
-	<!-- 	THEMES DIALOG -->
-	<string name="theme_normal">Normal</string>
-	<string name="theme_halftone">Mi ton</string>
-	<string name="theme_earthquake">Tremblement de terre</string>
-
-	<!--	THEME PROCESSING MESSAGES	-->
-	<string name="art_processing_progress_title">Traitement des pochettes</string>
-	<string name="art_processing_cancel">Annuler</string>
-	<string name="art_processing_go_background">Le faire en second plan</string>
-	<string name="art_processing_progress_initial_message">Recherche de pochettes...</string>
-
-	<!--    HALF TONE DIALOG -->
-	<string name="half_tone_dialog_title">Mi Ton</string>
-	<string name="half_tone_dialog_message">
-		Le thème Mi Ton necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
-	</string>
-	<string name="half_tone_dialog_yes">Accepter!</string>
-	<string name="half_tone_dialog_no">Annuler!</string>
-
-	<!--    EARTHQUAKE DIALOG -->
-	<string name="earthquake_dialog_title">Tremblement de Terre</string>
-	<string name="earthquake_dialog_message">
-		Le thème Tremblement de Terre necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
-	</string>
-	<string name="earthquake_dialog_yes">Accepter!</string>
-	<string name="earthquake_dialog_no">Annuler!</string>
+<!-- NO SDCARD MESSAGES -->
+<string name="no_sd_card_dialog_title">Pas d\'accès à la mémoire SD!</string>
+<string name="no_sd_card_dialog_message">Veuillez insérer une mémoire SD...</string>
+<string name="no_sd_card_dialog_continue_anyway">Continuer quand même</string>
+<string name="no_sd_card_dialog_exit">Sortir</string>
+<!-- NO MUSIC MESSAGES -->
+<string name="no_music_dialog_title">Pas de musique dans cette playlist!</string>
+<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta mémoire SD, s\'il vous plaît redémarrer l\'application ou changer de playlist...</string>
+<string name="no_music_dialog_continue_anyway">Continuer quand même</string>
+<string name="no_music_dialog_exit">Sortir</string>
 
 
-	<!--	ACTIVITY INTENTS (some of them)-->
-	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+<!-- DOWNLOAD CONCERTS APP MESSAGES-->
+<string name="concert_app_install_dialog_title">Installer Concerts³</string>
+<string name="concert_app_install_dialog_message">Ceci requiert l\'installation de Concerts³. L\'installer maintenant?</string>
+<string name="concert_app_install_dialog_ok">Oui</string>
+<string name="concert_app_install_dialog_cancel">Non!</string>
+<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
 
-	<!--	NOTIFICATION STRINGS -->
-	<string name="unknown_album_name">Album inconnu</string>
-	<string name="unknown_artist_name">Artiste inconnu</string>
+<!-- DOWNLOAD RELEASES APP MESSAGES-->
+<string name="releases_app_install_dialog_title">Installer Releases³</string>
+<string name="releases_app_install_dialog_message">Ceci requiert l\'installation de Releases³. Le faire maintenant?</string>
+<string name="releases_app_install_dialog_ok">Oui</string>
+<string name="releases_app_install_dialog_cancel">Non!</string>
+<string name="releases_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
 
-	<!-- 	MANUAL ALBUM ART MSGS -->
-	<string name="manual_albumart_error">Erreur</string>
-	<string name="manual_albumart_no_album_specified">L\'album n\'est pas spécifié!</string>
-	<string name="manual_albumart_source">Source</string>
-	<string name="manual_albumart_source_local">locale</string>
-	<string name="manual_albumart_source_internet">internet</string>
-	<string name="manual_albumart_resolution_loading">chargement...</string>
-	<string name="manual_albumart_resolution_unavailable">indisponible</string>
+<!-- TOASTER MESSAGES -->
+<string name="song_added_to_playlist">Chanson ajoutée à la playlist</string>
+<string name="song_removed_from_playlist">Chanson effacée de la playlist</string>
+<string name="album_art_changed">Pochette changée</string>
+<string name="playlist_empty_toast">Erreur! Playlist vide!</string>
+<string name="playqueue_empty_toast">Pas de chansons!</string>
+<string name="not_an_album_toast">Erreur! C\'est un artiste! Pas un album!</string>
+<string name="playlist_queued_toast">Playlist</string>
+<string name="generic_error_toast">Erreur!</string>
+<string name="playlist_deleted_toast">Playlist effacée!</string>
+<string name="song_deleted_toast">Chanson effacée!</string>
 
-	<string name="manual_input_enable">Recherche manuelle</string>
-	<string name="manual_input_artist">Artiste</string>
-	<string name="manual_input_album">Album</string>
-	
-	<!--	DONATE MSG	-->
-	<string name="donate_title">Faire un don</string>
-	<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l\'améliorer.</string>
-	<string name="donate_using">Donner par le biais de: </string>
-	<string name="donate_back_to_app">Revenir à </string>
+<!-- SEARCH -->
+<string name="search_hint">Nom de l\'artiste ou de l\'album:</string>
 
-	<!--	UNLOCK SCREEN	-->
-	<string name="unlock_screen">Libérer</string>
+<!-- PLAY QUEUE -->
+<string name="play_queue_title">Lire playlist</string>
+<string name="clear_playlist_dialog_option">Effacer</string>
+<string name="create_playlist_dialog_option">Enregistrer</string>
 
-	<!--	WIDGET STRINGS	-->
-	<string name="widget_app_start">Commencer ³</string>
+<!-- SONG LISTS MORE RESULTS -->
+<string name="song_list_more_results">Chansons...</string>
 
-	<!--	BUG REPORTS	-->
-	<string name="bug_report_intro_part_one">Ouch!\n\nRockOn v</string>
-	<string name="bug_report_intro_part_two">Erreur! S\'il te plaît envois-moi un mail pour que je comprenne ce qu\'il s\'est passé, et le corriger.\n</string>
+<!-- CREATE PLAYLIST DIALOG -->
+<string name="create_playlist_dialog_title">Choisis le nom de la playlist</string>
+<string name="create_playlist_dialog_save_option">Enregistrer</string>
+<string name="create_playlist_dialog_text_hint">Ecris le nom de la playlist...</string>
 
-<!--	<string name="bug_report_intro">-->
-<!--		"Ouch!\n\nRockOn v\"-->
-<!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
-<!--		\" Error! Por favor enviame un mail asi vea que paso, y pueda solucionarlo.\n"-->
-<!--	</string>-->
+<!-- DELETE SONG DIALOG -->
+<string name="song_delete_confirm_title">Effacer la chanson</string>
+<string name="song_delete_message">Etes vous sûr de vouloir effacer cette chanson? Cette opération n\'est pas réversible.</string>
+<string name="song_delete_positive_button">Oui!</string>
+<string name="song_delete_negative_button">Non.</string>
+<!-- DELETE PLAYLIST DIALOG -->
+<string name="playlist_delete_confirm_title">Effacer la playlist</string>
+<string name="playlist_delete_message">Etes vous sûr de vouloir effacer cette playlist?</string>
+<string name="playlist_delete_positive_button">Oui!</string>
+<string name="playlist_delete_negative_button">Non.</string>
+
+<!-- CREATE PLAYLIST TOASTER -->
+<string name="create_playlist_toaster_added_part_1">Chanson ajoutée à la playlist</string>
+<string name="create_playlist_toaster_failed">Erreur lors de la création de la playlist!</string>
+<string name="create_playlist_toaster_name_required">Le nom de la playlist est requis...</string>
+
+<!-- ALBUM SONG LIST DIALOG -->
+<string name="album_song_list_play_all">Tout lire</string>
+<string name="album_song_list_queue_all">Tout à la playlist</string>
+
+<!-- SONG OPTIONS DIALOG -->
+<string name="song_option_play_now">L\'écouter maintenant</string>
+<string name="song_option_add_to_queue">L\'ajouter à la playlist</string>
+<string name="song_option_delete">L\'effacer</string>
+
+<!-- PLAYLIST OPTIONS DIALOG -->
+<string name="playlist_option_play_now">L\'écouter maintenant</string>
+<string name="playlist_option_add_to_queue">L\'ajouter à la playlist</string>
+<string name="playlist_option_delete">L\'effacer</string>
+
+<!-- PLAYLIST DIALOG -->
+<string name="playlist_dialog_title">Choisis une playlist</string>
+<string name="playlist_dialog_cancel">Annuler</string>
+<string name="playlist_all_title">Tout lire</string>
+<string name="playlist_most_recent_title">Récents</string>
+<string name="playlist_most_played_title">Les plus écoutées</string>
+
+<!-- VIEW MODES DIALOG -->
+<string name="view_mode_cube">³</string>
+<string name="view_mode_wall">Murale</string>
+<string name="view_mode_boring">Ennuyant</string>
+<string name="view_mode_morph">Flux</string>
+
+<!-- THEMES DIALOG -->
+<string name="theme_normal">Normal</string>
+<string name="theme_halftone">Mi ton</string>
+<string name="theme_earthquake">Tremblement de terre</string>
+
+<!-- THEME PROCESSING MESSAGES -->
+<string name="art_processing_progress_title">Traitement des pochettes</string>
+<string name="art_processing_cancel">Annuler</string>
+<string name="art_processing_go_background">Le faire en second plan</string>
+<string name="art_processing_progress_initial_message">Recherche de pochettes...</string>
+
+<!-- HALF TONE DIALOG -->
+<string name="half_tone_dialog_title">Mi Ton</string>
+<string name="half_tone_dialog_message">
+Le thème Mi Ton necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
+</string>
+<string name="half_tone_dialog_yes">Accepter!</string>
+<string name="half_tone_dialog_no">Annuler!</string>
+
+<!-- EARTHQUAKE DIALOG -->
+<string name="earthquake_dialog_title">Tremblement de Terre</string>
+<string name="earthquake_dialog_message">
+Le thème Tremblement de Terre necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
+</string>
+<string name="earthquake_dialog_yes">Accepter!</string>
+<string name="earthquake_dialog_no">Annuler!</string>
+
+
+<!-- ACTIVITY INTENTS (some of them)-->
+<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+
+<!-- NOTIFICATION STRINGS -->
+<string name="unknown_album_name">Album inconnu</string>
+<string name="unknown_artist_name">Artiste inconnu</string>
+
+<!-- MANUAL ALBUM ART MSGS -->
+<string name="manual_albumart_error">Erreur</string>
+<string name="manual_albumart_no_album_specified">L\'album n\'est pas spécifié!</string>
+<string name="manual_albumart_source">Source</string>
+<string name="manual_albumart_source_local">locale</string>
+<string name="manual_albumart_source_internet">internet</string>
+<string name="manual_albumart_resolution_loading">chargement...</string>
+<string name="manual_albumart_resolution_unavailable">indisponible</string>
+
+<string name="manual_input_enable">Recherche manuelle</string>
+<string name="manual_input_artist">Artiste</string>
+<string name="manual_input_album">Album</string>
+
+<!-- DONATE MSG -->
+<string name="donate_title">Faire un don</string>
+<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l\'améliorer.</string>
+<string name="donate_using">Donner par le biais de: </string>
+<string name="donate_back_to_app">Revenir à </string>
+
+<!-- UNLOCK SCREEN -->
+<string name="unlock_screen">Débloquer</string>
+
+<!-- WIDGET STRINGS -->
+<string name="widget_app_start">Commencer ³</string>
+
+<!-- BUG REPORTS -->
+<string name="bug_report_intro_part_one">Ouch!\n\nRockOn v</string>
+<string name="bug_report_intro_part_two">Erreur! S\'il te plaît envois-moi un mail pour que je comprenne ce qu\'il s\'est passé, et le corriger.\n</string>
+
+<!-- <string name="bug_report_intro">-->
+<!-- "Ouch!\n\nRockOn v\"-->
+<!-- <xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!-- \" Error! Por favor enviame un mail asi vea que paso, y pueda solucionarlo.\n"-->
+<!-- </string>-->
 </resources>
+
+

@@ -34,6 +34,12 @@
     <string name="preference_title_controls_on_bottom">Controles de reproducción</string>
     <string name="preference_summary_controls_on_bottom">Colocar los botones en la parte inferior de la pantalla.</string>
 
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">Seleccionar a la lista</string>
+	<string name="preference_summary_queue_on_click">Añadir a la fila en vez de reproducir de inmediato</string>
+
+
 	<!--	PREFER ARTIST SORTING    -->
     <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
     <string name="preference_title_prefer_artist_sorting">Prefiero clasificación por artista</string>

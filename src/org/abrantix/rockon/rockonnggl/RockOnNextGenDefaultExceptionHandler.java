@@ -49,6 +49,16 @@ import android.util.Log;
 				android.os.Process.killProcess(android.os.Process.myPid());						
 				return;
 			}
+			if(e.getMessage().contains("eglSwapBuffers failed"))
+			{
+				android.os.Process.killProcess(android.os.Process.myPid());						
+				return;
+			}
+			if(e.getMessage().contains("createContext failed"))
+			{
+				android.os.Process.killProcess(android.os.Process.myPid());						
+				return;
+			}
 			
             PackageManager manager = context.getPackageManager();
             PackageInfo info;

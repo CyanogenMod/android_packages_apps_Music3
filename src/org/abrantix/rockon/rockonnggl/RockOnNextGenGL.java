@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -1421,17 +1422,22 @@ public class RockOnNextGenGL extends Activity {
 							Toast.LENGTH_SHORT).
 						show();
 				} else if(msg.arg2 == Constants.SINGLE_CLICK){
-					if(!mService.isPlaying()){
-						mService.removeTracks(0, mService.getQueue().length -1);
-						mService.enqueue(list, Constants.NOW);
-					} else {
+					if(mService.isPlaying() && getQueueOnClickPreference(getApplicationContext())) {
 						mService.enqueue(list, Constants.LAST);
 						Toast.makeText(
 								RockOnNextGenGL.this, 
 								R.string.song_added_to_playlist, 
 								Toast.LENGTH_SHORT).
 							show();
+					} else {
+						mService.removeTracks(0, mService.getQueue().length -1);
+						mService.enqueue(list, Constants.NOW);
 					}
+//					if(!mService.isPlaying()){
+//						
+//					} else {
+//						
+//					}
 				}
 			} catch(Exception e){
 				e.printStackTrace();
@@ -1439,6 +1445,13 @@ public class RockOnNextGenGL extends Activity {
 		}
     };
     	
+    boolean getQueueOnClickPreference(Context ctx) {
+    	return 
+    		PreferenceManager
+    		.getDefaultSharedPreferences(ctx)
+    		.getBoolean(getString(R.string.preference_key_queue_on_click), false);
+    }
+    
     /**
      * 
      */
@@ -2510,6 +2523,8 @@ public class RockOnNextGenGL extends Activity {
 				mService.next();
 			} catch (RemoteException e) {
 				e.printStackTrace();
+			} catch(IllegalStateException e) {
+				e.printStackTrace();
 			}
 		}
 	};
@@ -3019,10 +3034,11 @@ public class RockOnNextGenGL extends Activity {
 			try{
 				if(msg.arg2 == Constants.SINGLE_CLICK) 
 				{
-					if(!mService.isPlaying())
-						queueTrack(msg.arg1, Constants.NOW);
-					else
+					if(mService.isPlaying() && getQueueOnClickPreference(getApplicationContext()))
 						queueTrack(msg.arg1, Constants.LAST);
+					else
+						queueTrack(msg.arg1, Constants.NOW);
+						
 					/* reverse the click animation */
 					reverseRendererClickAnimation();	
 				}

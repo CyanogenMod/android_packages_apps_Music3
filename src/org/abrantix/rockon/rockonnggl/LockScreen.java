@@ -1,5 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
@@ -14,7 +16,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.RemoteException;
+import android.os.PowerManager.WakeLock;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,10 +46,11 @@ public class LockScreen extends Activity{
 		Log.i(TAG, "CREATE");
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(
+		getWindow().setFlags(
+        		//WindowManager.LayoutParams.FLAG_FULLSCREEN|WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,   
         		WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+        		0);
+		
         setupWindow();
 	}
 	
@@ -84,9 +90,14 @@ public class LockScreen extends Activity{
         {
 	        if(mService != null && mService.isPlaying())
 	        {
+//	        	WakeLock wakeLock =
+//	        		((PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE))
+//	        		.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "CUBED");
+//	    		wakeLock.acquire(10);
+	    		
 	    		setupWindow();
 	    		unlockPhone();	    			
-	    		showLockScreen();
+	    		showLockScreen();	    		
 	        }
 	        else if(mService != null && !mService.isPlaying())
 	        {
@@ -182,7 +193,8 @@ public class LockScreen extends Activity{
 		 */
 		if(Integer.parseInt(Build.VERSION.SDK) >= 5) // 5
 		{
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+			getWindow().addFlags(
+				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 //                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
@@ -317,6 +329,22 @@ public class LockScreen extends Activity{
 		{
 			try
 			{
+				// set date
+				Calendar c = Calendar.getInstance();
+				String hour;
+				String min;
+				if(DateFormat.is24HourFormat(getApplicationContext()))
+					hour = String.valueOf(c.get(Calendar.HOUR_OF_DAY));
+				else
+					hour = String.valueOf(c.get(Calendar.HOUR));
+				int minInt = c.get(Calendar.MINUTE);
+				if(minInt<10) 
+					min = '0'+String.valueOf(minInt);
+				else
+					min = String.valueOf(minInt);
+				((TextView)findViewById(R.id.lock_screen_current_time)).
+					setText(hour+":"+min);
+				
 				// set trackName
 				((TextView)findViewById(R.id.lock_song)).
 					setText(mService.getTrackName());

@@ -759,8 +759,10 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    			mNavItem[cacheIndex].albumName = "";
 	    			mNavItem[cacheIndex].artistName = "";
 	    			mNavItem[cacheIndex].cover = undefined;
-	    			mNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
-	    			mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
+	    			if(!mNavItem[cacheIndex].cover.isRecycled())
+	    				mNavItem[cacheIndex].cover.eraseColor(Color.argb(255, 0, 0, 0));
+	    			if(!mNavItem[cacheIndex].label.isRecycled())
+	    				mNavItem[cacheIndex].label.eraseColor(Color.argb(0, 0, 0, 0));
 	    		} 
 	    		else 
 	    		{
