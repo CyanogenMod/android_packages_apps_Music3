@@ -339,7 +339,10 @@ public class Constants{
     static final String CMDSAVE = "save";
     static final String CMDRESTART = "restart";
     
-
+    static final String CMDSEEKFWD = "seekfwd";
+    static final String CMDSEEKBACK = "seekback";
+    static final String CMDSEEKAMOUNT = "seekamount";
+    
     static final String TOGGLEPAUSE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.togglepause";
     static final String PAUSE_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.pause";
     static final String PREVIOUS_ACTION = "org.abrantix.rockon.rockonnggl.musicservicecommand.previous";

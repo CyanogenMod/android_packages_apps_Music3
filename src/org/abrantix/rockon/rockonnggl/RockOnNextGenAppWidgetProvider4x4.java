@@ -197,8 +197,10 @@ public class RockOnNextGenAppWidgetProvider4x4 extends AppWidgetProvider {
         mRepeatMode = service.getRepeatMode();
         if (mRepeatMode == Constants.REPEAT_NONE) {
             views.setImageViewResource(R.id.control_repeat, R.drawable.repeat_none_selector);
-        } else {
+        } else if(mRepeatMode == Constants.REPEAT_CURRENT){
             views.setImageViewResource(R.id.control_repeat, R.drawable.repeat_current_selector);
+        } else {
+        	views.setImageViewResource(R.id.control_repeat, R.drawable.repeat_all_selector);
         }
 
         // Link actions buttons to intents

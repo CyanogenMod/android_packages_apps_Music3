@@ -32,6 +32,8 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
     private static long mLastClickTime = 0;
     private static boolean mDown = false;
     private static boolean mLaunched = false;
+    private static long whenForwardPressed = 0;
+    private static long whenBackPressed = 0;
 
     private static Handler mHandler = new Handler() {
         @Override
@@ -103,6 +105,8 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
             int action = event.getAction();
             long eventtime = event.getEventTime();
 
+            long amountToSeek = 0;
+            
             // single quick press: pause/resume. 
             // double press: next track
             // long press: start auto-shuffle mode.
@@ -117,15 +121,74 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                     command = Constants.CMDTOGGLEPAUSE;
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    command = Constants.CMDNEXT;
+                    // command = Constants.CMDNEXT;
+					// lets look at this separately below to see if the user wants to skip forward
+					// to the next track or seek forward within the current track
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    command = Constants.CMDPREVIOUS;
+                    // command = Constants.CMDPREVIOUS;
+					// lets look at this separately below to see if the user wants to skip back
+					// to the beginning of the track or seek backwards within the current track
                     break;
             }
-
+            
+            boolean sendSeekCommand = false;
+			
+			// record time of forward / backward button being pressed so when it is release
+			// we can see how long it was pressed for
+            if (action == KeyEvent.ACTION_DOWN ) {
+            	if (keycode == KeyEvent.KEYCODE_MEDIA_NEXT) {
+            		whenForwardPressed = eventtime;
+            	}
+            	else if (keycode == KeyEvent.KEYCODE_MEDIA_PREVIOUS) {
+            		whenBackPressed = eventtime;
+            	}
+            }
+            
+			// on release of forward / backward button, see how long it was pressed to determine
+			// correct command to send
+            if (action == KeyEvent.ACTION_UP) {
+            	if (keycode == KeyEvent.KEYCODE_MEDIA_NEXT) {
+            		if (whenForwardPressed > 0) {
+            			long length = eventtime - whenForwardPressed;
+            			if (length < 250) {
+            				command = Constants.CMDNEXT;
+            			}
+            			else {
+            				command = Constants.CMDSEEKFWD;
+            				amountToSeek = (length * length / 100);            				
+            			}
+            			sendSeekCommand = true;
+						whenForwardPressed = 0;
+            		}
+					else
+					{
+						command = Constants.CMDNEXT;
+					}
+            	}
+            	else if (keycode == KeyEvent.KEYCODE_MEDIA_PREVIOUS) {
+            		if (whenBackPressed > 0) {
+            			long length = eventtime - whenBackPressed;
+            			if (length < 250) {
+            				command = Constants.CMDPREVIOUS;
+            			}
+            			else {
+            				command = Constants.CMDSEEKBACK;
+            				amountToSeek = (length * length / 100);            				
+            			}
+            			sendSeekCommand = true;
+						whenBackPressed = 0;
+            		}
+					else
+					{
+						command = Constants.CMDPREVIOUS;
+					}
+            	}
+            }            
+            
+            // Process command
             if (command != null) {
-                if (action == KeyEvent.ACTION_DOWN) {
+                if (action == KeyEvent.ACTION_DOWN || sendSeekCommand) {
                     if (mDown) {
                         if (Constants.CMDTOGGLEPAUSE.equals(command)
                                 && mLastClickTime != 0 
@@ -149,17 +212,27 @@ public class MediaButtonIntentReceiver extends BroadcastReceiver {
                         } else {
                         	Log.i(TAG, "Sending other command: "+command);
                             i.putExtra(Constants.CMDNAME, command);
-                            context.startService(i);
-                            mLastClickTime = eventtime;
+                            
+							if (amountToSeek > 0) {
+                            	i.putExtra(Constants.CMDSEEKAMOUNT, amountToSeek);
+                            }
+                    		context.startService(i);
+                            
+                            if (keycode == KeyEvent.KEYCODE_HEADSETHOOK)
+                            {
+                            	mLastClickTime = eventtime;
+                            	mDown = true;
+                            }
                         }
 
                         mLaunched = false;
-                        mDown = true;
+                        
                     }
                 } else {
                     mHandler.removeMessages(MSG_LONGPRESS_TIMEOUT);
                     mDown = false;
                 }
+                
                 abortBroadcast();
             }
         }

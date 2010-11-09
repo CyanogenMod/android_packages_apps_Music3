@@ -42,6 +42,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.Vector;
 import java.util.jar.Pack200.Unpacker;
@@ -227,8 +228,13 @@ public class RockOnNextGenService extends Service {
             } else if (Constants.CMDSTOP.equals(cmd)) {
                 pause();
                 seek(0);
-            } 
-            else if (RockOnNextGenAppWidgetProvider.CMDAPPWIDGETUPDATE.equals(cmd)) {
+            } else if (Constants.CMDSEEKFWD.equals(cmd)) {
+            	long value = intent.getLongExtra(Constants.CMDSEEKAMOUNT, 0);
+            	seek(position() + value); 	
+            } else if (Constants.CMDSEEKBACK.equals(cmd)) {
+            	long value = intent.getLongExtra(Constants.CMDSEEKAMOUNT, 0);
+            	seek(position() - value); 	
+            } else if (RockOnNextGenAppWidgetProvider.CMDAPPWIDGETUPDATE.equals(cmd)) {
                 // Someone asked us to refresh a set of specific widgets, probably
                 // because they were just added.
                 int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
@@ -729,10 +735,25 @@ public class RockOnNextGenService extends Service {
             // since the user exited the music app (because of
             // party-shuffle or because the play-position changed)
             saveQueue(true);
-            setForeground(false);
+            stopForegroundReflected();
             stopSelf(mServiceStartId);
         }
     };
+    
+    private void stopForegroundReflected() {
+    	try{
+        	Method m = RockOnNextGenService.class.getMethod(
+        			"stopForeground", 
+        			new Class[]{
+        					boolean.class});
+        	m.invoke(this, true);
+        	//stopForeground(true);
+        } catch(Exception e){
+        	e.printStackTrace();
+        	// XXX - deprecated
+        	setForeground(false);
+        }
+    }
     
     /**
      * Called when we receive a ACTION_MEDIA_EJECT notification.
@@ -1304,6 +1325,7 @@ public class RockOnNextGenService extends Service {
                     0);
 //            		new Intent("com.android.music.PLAYBACK_VIEWER"), 0);
             
+            startForegroundReflected(PLAYBACKSERVICE_STATUS, status);
 //            try{
 //            	RockOnNextGenService.class.getMethod(
 //            			"startForeground", 
@@ -1313,11 +1335,11 @@ public class RockOnNextGenService extends Service {
 //              startForeground(PLAYBACKSERVICE_STATUS, status);
 //            } catch(Exception e){
 //            	e.printStackTrace();
-            	// XXX - deprecated
-            	setForeground(true);
-            	NotificationManager notificationManager = (NotificationManager) 
-            		getSystemService(Context.NOTIFICATION_SERVICE);
-            	notificationManager.notify(Constants.PLAY_NOTIFICATION_ID, status);	
+//            	// XXX - deprecated
+//            	setForeground(true);
+//            	NotificationManager notificationManager = (NotificationManager) 
+//            		getSystemService(Context.NOTIFICATION_SERVICE);
+//            	notificationManager.notify(Constants.PLAY_NOTIFICATION_ID, status);	
 //            }
             if (!mIsSupposedToBePlaying) {
                 mIsSupposedToBePlaying = true;
@@ -1333,6 +1355,24 @@ public class RockOnNextGenService extends Service {
 //            // something.
 //            setShuffleMode(Constants.SHUFFLE_AUTO);
 //        }
+    }
+    
+    private void startForegroundReflected(int id, Notification notification) {
+    	try{
+        	Method m = RockOnNextGenService.class.getMethod(
+        			"startForeground", 
+        			new Class[]{
+        					int.class, 
+        					Notification.class});
+        	m.invoke(this, id, notification);
+        } catch(Exception e){
+        	e.printStackTrace();
+        	// XXX - deprecated
+        	setForeground(true);
+        	NotificationManager notificationManager = (NotificationManager) 
+        		getSystemService(Context.NOTIFICATION_SERVICE);
+        	notificationManager.notify(Constants.PLAY_NOTIFICATION_ID, notification);	
+        }
     }
     
     private void stop(boolean remove_status_icon) {
@@ -1938,53 +1978,57 @@ public class RockOnNextGenService extends Service {
             
             // - remember to keep the first item in place
             // - clear history? YES
-            trimPlayQueue(mShuffleMode);
+//            trimPlayQueue(mShuffleMode);
             
             saveQueue(false);
         }
     }
     
-    private void trimPlayQueue(int shuffleMode){
-    	synchronized(this) {
-    		/**
-    		 * Trim the play list only if it contains songs
-    		 */
-    		if(mPlayListLen > 0 && mPlayPos < mPlayListLen)
-    		{
-	    		if(shuffleMode == Constants.SHUFFLE_NORMAL){
-	    			// FIXME: this may be wrong
-	        		long[] newlist = new long[mPlayListLen-mPlayPos];
-	        		for(int i=0; i<mPlayListLen-mPlayPos; i++){
-	        			Log.i(TAG, "i: "+i+" oldListLen: "+mPlayListLen+" newListLen: "+(mPlayListLen-mPlayPos));
-	        			newlist[i] = mPlayList[i+mPlayPos];
-	        			
-	        		}
-	        		mPlayList = newlist;
-	        		mPlayListLen = mPlayListLen-mPlayPos;
-	        		mPlayPos = 0;
-	            	mHistory.clear();	
-	        	} else if(shuffleMode == Constants.SHUFFLE_NONE){
-	        		// TODO: test extensively...
-	        		// go through the whole playlist and get all items that are not in history
-	        		long[] unplayedItems = getUnplayedItems();
-	        		// put the current item in the first position
-	        		for(int i=0; i<unplayedItems.length; i++){
-	        			if(unplayedItems[i] == mPlayList[mPlayPos]){
-	        				unplayedItems[i] = unplayedItems[0];
-	        				unplayedItems[0] = mPlayList[mPlayPos];
-	        				break;
-	        			}
-	        		}
-	        		// update the playlist, its length and current position
-	    			Log.i(TAG, "oldListLen: "+mPlayListLen+" newListLen: "+unplayedItems.length);
-	        		mPlayList = unplayedItems;
-	        		mPlayListLen = unplayedItems.length;
-	        		mPlayPos = 0;
-	        		mHistory.clear();
-	        	}
-			}
-    	}
-    }
+    /**
+     * Unused stuff
+     * @param shuffleMode
+     */
+//    private void trimPlayQueue(int shuffleMode){
+//    	synchronized(this) {
+//    		/**
+//    		 * Trim the play list only if it contains songs
+//    		 */
+//    		if(mPlayListLen > 0 && mPlayPos < mPlayListLen)
+//    		{
+//	    		if(shuffleMode == Constants.SHUFFLE_NORMAL){
+//	    			// FIXME: this may be wrong
+//	        		long[] newlist = new long[mPlayListLen-mPlayPos];
+//	        		for(int i=0; i<mPlayListLen-mPlayPos; i++){
+//	        			Log.i(TAG, "i: "+i+" oldListLen: "+mPlayListLen+" newListLen: "+(mPlayListLen-mPlayPos));
+//	        			newlist[i] = mPlayList[i+mPlayPos];
+//	        			
+//	        		}
+//	        		mPlayList = newlist;
+//	        		mPlayListLen = mPlayListLen-mPlayPos;
+//	        		mPlayPos = 0;
+//	            	mHistory.clear();	
+//	        	} else if(shuffleMode == Constants.SHUFFLE_NONE){
+//	        		// TODO: test extensively...
+//	        		// go through the whole playlist and get all items that are not in history
+//	        		long[] unplayedItems = getUnplayedItems();
+//	        		// put the current item in the first position
+//	        		for(int i=0; i<unplayedItems.length; i++){
+//	        			if(unplayedItems[i] == mPlayList[mPlayPos]){
+//	        				unplayedItems[i] = unplayedItems[0];
+//	        				unplayedItems[0] = mPlayList[mPlayPos];
+//	        				break;
+//	        			}
+//	        		}
+//	        		// update the playlist, its length and current position
+//	    			Log.i(TAG, "oldListLen: "+mPlayListLen+" newListLen: "+unplayedItems.length);
+//	        		mPlayList = unplayedItems;
+//	        		mPlayListLen = unplayedItems.length;
+//	        		mPlayPos = 0;
+//	        		mHistory.clear();
+//	        	}
+//			}
+//    	}
+//    }
     
     private long[] getUnplayedItems(){
     	int unplayedCount = mPlayListLen;

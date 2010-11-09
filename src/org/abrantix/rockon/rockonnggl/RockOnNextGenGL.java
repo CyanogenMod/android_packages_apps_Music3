@@ -429,9 +429,9 @@ public class RockOnNextGenGL extends Activity {
 
     	/* create the menu items */
     	for(int i=0; i<menuOptionsTitleArray.length; i++){
-    		/* bypass releases for now */
-    		if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_releases)))
-    			continue;
+//    		/* bypass releases for now */
+//    		if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_releases)))
+//    			continue;
     		menu.add(
     				0, // subgroup 
     				menuOptionsIdxArray[i], // id 
@@ -2565,8 +2565,10 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void handleMessage(Message msg){
 			try{
-				if(mService.getRepeatMode() == Constants.REPEAT_CURRENT ||
-						mService.getShuffleMode() == Constants.REPEAT_ALL){
+				if(mService.getRepeatMode() == Constants.REPEAT_CURRENT){
+					mService.setRepeatMode(Constants.REPEAT_ALL);
+					setRepeatButton(Constants.REPEAT_ALL);
+				} else if ( mService.getRepeatMode() == Constants.REPEAT_ALL){
 					mService.setRepeatMode(Constants.REPEAT_NONE);
 					setRepeatNoneButton();
 				} else {
@@ -2652,7 +2654,8 @@ public class RockOnNextGenGL extends Activity {
 				/* song list cursor */
 				final int RESULT_LIMIT = 50; // need to limit this to avoid memory exhaustion in MergeCursor
 				CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
-				long[] outstandingQueue = mService.getOutstandingQueue();
+//				long[] outstandingQueue = mService.getOutstandingQueue();
+				long[] outstandingQueue = mService.getQueue();
 				Cursor		songCursor = 
 					cursorUtils.getSongListCursorFromSongList(
 						outstandingQueue,
@@ -2676,7 +2679,7 @@ public class RockOnNextGenGL extends Activity {
 								songCursor, 
 								Constants.queueSongListFrom, 
 								Constants.queueSongListTo,
-								50, // show at most 50 results
+								75, // show at most 75 results
 								outstandingQueue.length - RESULT_LIMIT,
 								mPlayQueueItemSelectedHandler);
 					dialogBuilder.setAdapter(
@@ -2693,7 +2696,12 @@ public class RockOnNextGenGL extends Activity {
 							R.string.create_playlist_dialog_option, 
 							mDialogPlayQueueClickListener);
 					/* set the selection listener */
-					songCursorAdapter.setDialogInterface(dialogBuilder.show());
+					AlertDialog dialog = dialogBuilder.show();
+					songCursorAdapter.setDialogInterface(dialog);
+					/* scroll the list view */
+//					dialog.getListView().setSelection(mService.getQueuePosition());
+					dialog.getListView().setSelectionFromTop(mService.getQueuePosition(), 32);
+					
 				} else {
 					// Play queue is empty
 					Toast.makeText(
@@ -2788,9 +2796,11 @@ public class RockOnNextGenGL extends Activity {
 			if(!cUtils.createPlaylist(playlistName))
 				throw new Exception();
 			long playlistId = cUtils.getPlaylistIdFromName(playlistName);
-			cUtils.addSongsToPlaylist(playlistId, mService.getOutstandingQueue());
+//			cUtils.addSongsToPlaylist(playlistId, mService.getOutstandingQueue());
+			cUtils.addSongsToPlaylist(playlistId, mService.getQueue());
 			String message = 
-				(mService.getOutstandingQueue().length-1) +
+//				(mService.getOutstandingQueue().length-1) +
+				(mService.getQueue().length-1) +
 				" " + getString(R.string.create_playlist_toaster_added_part_1) +
 				" '" + playlistName + "'!"; 
 			Toast.makeText(
@@ -2961,7 +2971,26 @@ public class RockOnNextGenGL extends Activity {
 			dialogBuilder.setNeutralButton(getString(R.string.album_song_list_queue_all), mSongDialogQueueAllListener);
 			dialogBuilder.setOnCancelListener(mSongAndAlbumDialogCancelListener);
 			/* set the selection listener */
-			songCursorAdapter.setDialogInterface(dialogBuilder.show());
+			AlertDialog dialog = dialogBuilder.show();
+			songCursorAdapter.setDialogInterface(dialog);
+			/* scroll the dialog list to right place */
+			try {
+				if(albumId == mService.getAlbumId()) {
+					long songId = mService.getAudioId();
+					int j=-1;
+					for(int i=0; i<songCursor.getCount(); i++) {
+						songCursor.moveToPosition(i);
+						if(songCursor.getLong(songCursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)) == songId) {
+							j=i;
+						}
+					}
+					if(j>=0) {
+						dialog.getListView().setSelectionFromTop(j, 32);
+					}
+				}
+			} catch(RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -3467,7 +3496,10 @@ public class RockOnNextGenGL extends Activity {
 				((ImageView)findViewById(R.id.player_controls_repeat)).
 					setImageResource(R.drawable.repeat_current_selector);
 				break;
-			// TODO: REPEAT_ALL
+			case Constants.REPEAT_ALL:
+				((ImageView)findViewById(R.id.player_controls_repeat)).
+					setImageResource(R.drawable.repeat_all_selector);
+				break;
 			}
 		}
 	}
@@ -3523,6 +3555,8 @@ public class RockOnNextGenGL extends Activity {
     		setRepeatNoneButton();
     	else if(repeat == Constants.REPEAT_CURRENT)
     		setRepeatButton(Constants.REPEAT_CURRENT);
+    	else if(repeat == Constants.REPEAT_ALL)
+    		setRepeatButton(Constants.REPEAT_ALL);
 	}
 	
 	/**

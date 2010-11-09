@@ -969,7 +969,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 								updateFraction
 									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* .25f * Constants.MIN_SCROLL)
+									* .05f * Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
 					, updateFraction * Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
@@ -980,7 +980,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 							updateFraction
 								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* .25f * -Constants.MIN_SCROLL)
+								* .05f * -Constants.MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
 					, updateFraction * -Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 
@@ -1074,9 +1074,9 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 //    		}
     		/* small optimization to avoid weird moves on the edges */
     		if(mTargetPositionY == 0)
-    			mTargetPositionY = -2;
-    		else if(mTargetPositionY == getAlbumCount()/2 - 1)
-    			mTargetPositionY = getAlbumCount()/2;		
+    			mTargetPositionY = -1;
+    		else if(mTargetPositionY == Math.floor(getAlbumCount()*.5f))
+    			mTargetPositionY = (float) Math.floor(getAlbumCount()*.5f)+1;		
     		return;
     	}
     }
