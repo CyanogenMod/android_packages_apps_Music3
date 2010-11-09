@@ -735,7 +735,7 @@ public class RockOnNextGenService extends Service {
             // since the user exited the music app (because of
             // party-shuffle or because the play-position changed)
             saveQueue(true);
-            stopForegroundReflected();
+//            stopForegroundReflected();
             stopSelf(mServiceStartId);
         }
     };
@@ -1729,6 +1729,7 @@ public class RockOnNextGenService extends Service {
         NotificationManager notificationManager = (NotificationManager)
         	getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(Constants.PLAY_NOTIFICATION_ID);
+        stopForegroundReflected();
 //        stopForeground(true);
     }
     
