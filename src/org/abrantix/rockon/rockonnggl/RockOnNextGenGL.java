@@ -2800,7 +2800,7 @@ public class RockOnNextGenGL extends Activity {
 			cUtils.addSongsToPlaylist(playlistId, mService.getQueue());
 			String message = 
 //				(mService.getOutstandingQueue().length-1) +
-				(mService.getQueue().length-1) +
+				(mService.getQueue().length) +
 				" " + getString(R.string.create_playlist_toaster_added_part_1) +
 				" '" + playlistName + "'!"; 
 			Toast.makeText(
