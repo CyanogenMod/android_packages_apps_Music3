@@ -11,13 +11,13 @@
         
 	<!--	HEADSET BUTTONS    -->
     <string name="preference_key_use_headset_buttons">UseHeadset</string>
-    <string name="preference_title_use_headset_buttons">Kopfhörer verwenden</string>
+    <string name="preference_title_use_headset_buttons">Kopfhörersteuerung verwenden</string>
     <string name="preference_summary_use_headset_buttons">Reagiert auf Knopfdruck am Kopfhörer, um Titel abzuspielen, zu stoppen oder zu überspringen.</string>
 
 	<!--	LOCK PORTRAIT    -->
     <string name="preference_key_lock_portrait">LockPortrait</string>
     <string name="preference_title_lock_portrait">Lock Porträt</string>
-    <string name="preference_summary_lock_portrait">Vermeiden Landschaft Bildschirmausrichtung.</string>
+    <string name="preference_summary_lock_portrait">Horizontale Bildschirmausrichtung deaktivieren.</string>
 
 	<!--	LOCK SCREEN    -->
     <string name="preference_key_lock_screen">LockScreen</string>
@@ -37,18 +37,18 @@
 	<!-- 	QUEUE ON CLICK -->
 	<string name="preference_key_queue_on_click">mQueueOnClick</string>
 	<string name="preference_title_queue_on_click">Queue</string>
-	<string name="preference_summary_queue_on_click">Wenn ein Song ausgewählt wird, um die Warteschlange zu spielen, anstatt sofort hinzufügen</string>
+	<string name="preference_summary_queue_on_click">Wenn ein Song ausgewählt wird, füge ihn der Warteschlange hinzu anstatt ihn sofort abszuspielen</string>
 
 	<!--	PREFER ARTIST SORTING    -->
     <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
     <string name="preference_title_prefer_artist_sorting">Ordnen nach Künstler</string>
-    <string name="preference_summary_prefer_artist_sorting">Sortieren Alben von Künstler-Namen anstatt Albumname.</string>
+    <string name="preference_summary_prefer_artist_sorting">Ordne Alben nach Künstler-Namen anstatt Alben-Namen.</string>
 
 	<!--	PREFERENCE CATEGORIES    -->
     <string name="preference_category_general">Allgemeines</string>
-    <string name="preference_category_sorting">Classer</string>
-    <string name="preference_category_album_art">Sortierung</string>
-    <string name="preference_category_other">Weitere</string>
+    <string name="preference_category_sorting">Sortierung</string>
+    <string name="preference_category_album_art">Albumcover</string>
+    <string name="preference_category_other">Sonstige</string>
     
 	<!--	EMBEDDED ALBUM ART ONLY    -->
 	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
@@ -79,5 +79,5 @@
     
    	<!--	DONATE    -->
     <string name="preference_key_donate">donate</string>
-    <string name="preference_title_donate">Donate</string>
+    <string name="preference_title_donate">Spenden</string>
 </resources>
