@@ -1,6 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
 import java.io.File;
+import java.sql.SQLData;
 import java.util.LinkedList;
 
 import android.content.ContentResolver;
@@ -9,7 +10,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.MergeCursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
@@ -37,20 +40,30 @@ public class CursorUtils{
 //	Cursor getAlbumFromAlbumId(long albumId, boolean preferArtistSorting){
 	Cursor getAlbumFromAlbumId(long albumId){
 		ContentResolver resolver = ctx.getContentResolver();
-//		if(preferArtistSorting)
-//			return  resolver.query(
-//					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-//					Constants.albumProjection, 
-//					MediaStore.Audio.Albums._ID + " = "+albumId, 
-//					null, 
-//					Constants.albumAlphabeticalSortOrderByArtist);
-//		else
-			return resolver.query(
-				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-				Constants.albumProjection, 
-				MediaStore.Audio.Albums._ID + " = "+albumId, 
-				null, 
-				Constants.albumAlphabeticalSortOrder);
+		Cursor c = null;
+		if(DirectoryFilter.usesExternalStorage()) {
+			c = resolver.query(
+					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+					Constants.albumProjection, 
+					MediaStore.Audio.Albums._ID + " = "+albumId, 
+					null, 
+					Constants.albumAlphabeticalSortOrder);
+		} else {
+			c = resolver.query(
+					MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
+					Constants.albumProjection, 
+					MediaStore.Audio.Albums._ID + " = "+albumId, 
+					null, 
+					Constants.albumAlphabeticalSortOrder);
+		}
+		return c;
+		
+//			return resolver.query(
+//				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//				Constants.albumProjection, 
+//				MediaStore.Audio.Albums._ID + " = "+albumId, 
+//				null, 
+//				Constants.albumAlphabeticalSortOrder);
 	}
 	
 	/**
@@ -77,13 +90,31 @@ public class CursorUtils{
 	Cursor getAlbumListFromArtistId(long artistId)
 	{
 		ContentResolver resolver = ctx.getContentResolver();
-		return resolver.query(
-				MediaStore.Audio.Artists.Albums.getContentUri("external", artistId), 
-				Constants.albumProjection, 
-				null, 
-				null, 
-				Constants.artistAlbumsYearSortOrder);
-//				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
+		Cursor c = null;
+		if(DirectoryFilter.usesExternalStorage()) {
+			c = resolver.query(
+					MediaStore.Audio.Artists.Albums.getContentUri("external", artistId), 
+					Constants.albumProjection, 
+					null, 
+					null, 
+					Constants.artistAlbumsYearSortOrder);
+		} else {
+			c = resolver.query(
+					MediaStore.Audio.Artists.Albums.getContentUri("internal", artistId), 
+					Constants.albumProjection, 
+					null, 
+					null, 
+					Constants.artistAlbumsYearSortOrder);
+		}
+		return c;
+		
+//		return resolver.query(
+//				MediaStore.Audio.Artists.Albums.getContentUri("external", artistId), 
+//				Constants.albumProjection, 
+//				null, 
+//				null, 
+//				Constants.artistAlbumsYearSortOrder);
+////				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
 	}
 	
 	/**
@@ -91,182 +122,212 @@ public class CursorUtils{
 	 * @param playlistId
 	 * @return
 	 */
+	String test;
 	Cursor getAlbumListFromPlaylist(int playlistId, boolean preferArtistSorting){
 		
 		/** ALL ALBUMS **/
 		if(Constants.PLAYLIST_ALL == playlistId)
 		{
 			ContentResolver resolver = ctx.getContentResolver();
-			if(preferArtistSorting)
-				return resolver.query(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-						Constants.albumProjection, 
-						null, 
-						null, 
-						Constants.albumAlphabeticalSortOrderByArtist);
-			else
-				return resolver.query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					Constants.albumProjection, 
-					null, 
-					null, 
-					Constants.albumAlphabeticalSortOrder);
-		} 
-		/** 'NORMAL' PLAYLISTS */
-		else if(playlistId >= 0)
-		{
-			double start = System.currentTimeMillis();
-			ContentResolver resolver = ctx.getContentResolver();
-			/* get songs of this playlist */
-			Cursor playlistSongsCursor =
-				resolver.query(
-					MediaStore.Audio.Playlists.Members.getContentUri(
-							"external", 
-							playlistId),
-					Constants.playlistMembersProjection,
-					MediaStore.Audio.Playlists.Members.IS_MUSIC+"=1", // Filter Ringtones and other funny stuff
-					null,
-					Constants.playlistMembersAlbumSorting);
-			
-			/* get the albums in this playlist */
-			if(playlistSongsCursor != null)
-			{
-				LinkedList<Long>	albumList = new LinkedList<Long>();
-				Long				albumId;
-				for(int i=0; i<playlistSongsCursor.getCount(); i++){
-					playlistSongsCursor.moveToPosition(i);
-					albumId = 
-						playlistSongsCursor.getLong(
-								playlistSongsCursor.getColumnIndexOrThrow(
-										MediaStore.Audio.Playlists.Members.ALBUM_ID));
-					// small optimization -- check if albumId is different from the last 
-					if(!albumList.contains(albumId))
-						albumList.add(albumId);
-				}
-				playlistSongsCursor.close();
-				/* this playlist has no songs? */
-				if(albumList.size() <= 0)
-					return null;
-				/* create the selection string for querying the album contentprovider */
-				String	selection = null;
-				for(int i=0; i<albumList.size(); i++){
-					if(i==0){
-						selection = 
-							MediaStore.Audio.Albums._ID +
-							" = "+
-							albumList.get(i).toString();
-					} else {
-						selection += 
-							" OR "+
-							MediaStore.Audio.Albums._ID+
-							" = "+
-							albumList.get(i).toString();
-					}
-				}
-				/* query the album contentprovider */
-				Cursor albumCursor = null;
-				if(preferArtistSorting)
-					albumCursor =  resolver.query(
+			Cursor c = null;
+			if(DirectoryFilter.usesExternalStorage()) {
+				if(preferArtistSorting) {
+					c = resolver.query(
 							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 							Constants.albumProjection, 
-							selection, 
+							null, 
 							null, 
 							Constants.albumAlphabeticalSortOrderByArtist);
-				else
-					albumCursor =  resolver.query(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-						Constants.albumProjection, 
-						selection, 
-						null, 
-						Constants.albumAlphabeticalSortOrder);
-				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
-				return albumCursor;
+				} else {
+					c = resolver.query(
+							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+							Constants.albumProjection, 
+							null, 
+							null, 
+							Constants.albumAlphabeticalSortOrder);
+				}
 			} else {
-				return null;
-			}
-		}
-		/** GENRE PLAYLISTS*/
-		else if(playlistId <= Constants.PLAYLIST_GENRE_OFFSET &&
-				playlistId >= Constants.PLAYLIST_GENRE_OFFSET - Constants.PLAYLIST_GENRE_RANGE)
-		{
-			double start = System.currentTimeMillis();
-			ContentResolver resolver = ctx.getContentResolver();
-			/* get songs of this playlist */
-			Cursor genreSongsCursor =
-				resolver.query(
-					MediaStore.Audio.Genres.Members.getContentUri(
-							"external", 
-							Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
-					Constants.genreMemberProjection,
-					MediaStore.Audio.Genres.Members.IS_MUSIC+"=1",
-					null,
-//					null);
-					Constants.genreMembersAlbumSorting);
-			if(genreSongsCursor != null)
-			{
-				/* get the albums in this playlist */
-				LinkedList<Long>	albumList = new LinkedList<Long>();
-				Long				albumId;
-				for(int i=0; i<genreSongsCursor.getCount(); i++){
-					genreSongsCursor.moveToPosition(i);
-					albumId = 
-						genreSongsCursor.getLong(
-								genreSongsCursor.getColumnIndexOrThrow(
-										MediaStore.Audio.Genres.Members.ALBUM_ID));
-					// small optimization -- check if albumId is different from the last 
-					Log.i(TAG, String.valueOf(
-							genreSongsCursor.getLong(
-									genreSongsCursor.getColumnIndexOrThrow(
-											MediaStore.Audio.Genres.Members.ALBUM_ID))));
-					if(!albumList.contains(albumId))
-						albumList.add(albumId);
-				}
-				genreSongsCursor.close();
-				/* this genre has no songs? */
-				if(albumList.size() <= 0)
-					return null;
-				/* create the selection string for querying the album contentprovider */
-				String	selection = null;
-				for(int i=0; i<albumList.size(); i++){
-					if(i==0){
-						selection = 
-							MediaStore.Audio.Albums._ID +
-							" = "+
-							albumList.get(i).toString();
-					} else {
-						selection += 
-							" OR "+
-							MediaStore.Audio.Albums._ID+
-							" = "+
-							albumList.get(i).toString();
-					}
-				}
-				Log.i(TAG, "SELECT: "+selection);
-				/* query the album contentprovider */
-				Cursor albumCursor = null;
-				if(preferArtistSorting)
-					albumCursor =  resolver.query(
-							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+				if(preferArtistSorting) {
+					c = resolver.query(
+							MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
 							Constants.albumProjection, 
-							selection, 
+							null, 
 							null, 
 							Constants.albumAlphabeticalSortOrderByArtist);
-				else
-					albumCursor =  resolver.query(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-						Constants.albumProjection, 
-						selection, 
-						null, 
-						Constants.albumAlphabeticalSortOrder);
-				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
-				return albumCursor;
+				} else {
+					c = resolver.query(
+							MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
+							Constants.albumProjection, 
+							null, 
+							null, 
+							Constants.albumAlphabeticalSortOrder);
+				}
 			}
-			else
-			{
-				// TODO: reset playlist to play all
-				return null;
-			}
-		} 
+			return c;
+		}
+				
+//				return resolver.query(
+//					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//					Constants.albumProjection, 
+//					null, 
+//					null, 
+//					Constants.albumAlphabeticalSortOrder);
+//			}
+//		} 
+//		/** 'NORMAL' PLAYLISTS */
+//		else if(playlistId >= 0)
+//		{
+//			double start = System.currentTimeMillis();
+//			ContentResolver resolver = ctx.getContentResolver();
+//			/* get songs of this playlist */
+//			Cursor playlistSongsCursor =
+//				resolver.query(
+//					MediaStore.Audio.Playlists.Members.getContentUri(
+//							"external", 
+//							playlistId),
+//					Constants.playlistMembersProjection,
+//					MediaStore.Audio.Playlists.Members.IS_MUSIC+"=1", // Filter Ringtones and other funny stuff
+//					null,
+//					Constants.playlistMembersAlbumSorting);
+//			
+//			/* get the albums in this playlist */
+//			if(playlistSongsCursor != null)
+//			{
+//				LinkedList<Long>	albumList = new LinkedList<Long>();
+//				Long				albumId;
+//				for(int i=0; i<playlistSongsCursor.getCount(); i++){
+//					playlistSongsCursor.moveToPosition(i);
+//					albumId = 
+//						playlistSongsCursor.getLong(
+//								playlistSongsCursor.getColumnIndexOrThrow(
+//										MediaStore.Audio.Playlists.Members.ALBUM_ID));
+//					// small optimization -- check if albumId is different from the last 
+//					if(!albumList.contains(albumId))
+//						albumList.add(albumId);
+//				}
+//				playlistSongsCursor.close();
+//				/* this playlist has no songs? */
+//				if(albumList.size() <= 0)
+//					return null;
+//				/* create the selection string for querying the album contentprovider */
+//				String	selection = null;
+//				for(int i=0; i<albumList.size(); i++){
+//					if(i==0){
+//						selection = 
+//							MediaStore.Audio.Albums._ID +
+//							" = "+
+//							albumList.get(i).toString();
+//					} else {
+//						selection += 
+//							" OR "+
+//							MediaStore.Audio.Albums._ID+
+//							" = "+
+//							albumList.get(i).toString();
+//					}
+//				}
+//				/* query the album contentprovider */
+//				Cursor albumCursor = null;
+//				if(preferArtistSorting)
+//					albumCursor =  resolver.query(
+//							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//							Constants.albumProjection, 
+//							selection, 
+//							null, 
+//							Constants.albumAlphabeticalSortOrderByArtist);
+//				else
+//					albumCursor =  resolver.query(
+//						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//						Constants.albumProjection, 
+//						selection, 
+//						null, 
+//						Constants.albumAlphabeticalSortOrder);
+//				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
+//				return albumCursor;
+//			} else {
+//				return null;
+//			}
+//		}
+//		/** GENRE PLAYLISTS*/
+//		else if(playlistId <= Constants.PLAYLIST_GENRE_OFFSET &&
+//				playlistId >= Constants.PLAYLIST_GENRE_OFFSET - Constants.PLAYLIST_GENRE_RANGE)
+//		{
+//			double start = System.currentTimeMillis();
+//			ContentResolver resolver = ctx.getContentResolver();
+//			/* get songs of this playlist */
+//			Cursor genreSongsCursor =
+//				resolver.query(
+//					MediaStore.Audio.Genres.Members.getContentUri(
+//							"external", 
+//							Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
+//					Constants.genreMemberProjection,
+//					MediaStore.Audio.Genres.Members.IS_MUSIC+"=1",
+//					null,
+////					null);
+//					Constants.genreMembersAlbumSorting);
+//			if(genreSongsCursor != null)
+//			{
+//				/* get the albums in this playlist */
+//				LinkedList<Long>	albumList = new LinkedList<Long>();
+//				Long				albumId;
+//				for(int i=0; i<genreSongsCursor.getCount(); i++){
+//					genreSongsCursor.moveToPosition(i);
+//					albumId = 
+//						genreSongsCursor.getLong(
+//								genreSongsCursor.getColumnIndexOrThrow(
+//										MediaStore.Audio.Genres.Members.ALBUM_ID));
+//					// small optimization -- check if albumId is different from the last 
+//					Log.i(TAG, String.valueOf(
+//							genreSongsCursor.getLong(
+//									genreSongsCursor.getColumnIndexOrThrow(
+//											MediaStore.Audio.Genres.Members.ALBUM_ID))));
+//					if(!albumList.contains(albumId))
+//						albumList.add(albumId);
+//				}
+//				genreSongsCursor.close();
+//				/* this genre has no songs? */
+//				if(albumList.size() <= 0)
+//					return null;
+//				/* create the selection string for querying the album contentprovider */
+//				String	selection = null;
+//				for(int i=0; i<albumList.size(); i++){
+//					if(i==0){
+//						selection = 
+//							MediaStore.Audio.Albums._ID +
+//							" = "+
+//							albumList.get(i).toString();
+//					} else {
+//						selection += 
+//							" OR "+
+//							MediaStore.Audio.Albums._ID+
+//							" = "+
+//							albumList.get(i).toString();
+//					}
+//				}
+//				Log.i(TAG, "SELECT: "+selection);
+//				/* query the album contentprovider */
+//				Cursor albumCursor = null;
+//				if(preferArtistSorting)
+//					albumCursor =  resolver.query(
+//							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//							Constants.albumProjection, 
+//							selection, 
+//							null, 
+//							Constants.albumAlphabeticalSortOrderByArtist);
+//				else
+//					albumCursor =  resolver.query(
+//						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//						Constants.albumProjection, 
+//						selection, 
+//						null, 
+//						Constants.albumAlphabeticalSortOrder);
+//				Log.i(TAG, " + "+(System.currentTimeMillis()-start));
+//				return albumCursor;
+//			}
+//			else
+//			{
+//				// TODO: reset playlist to play all
+//				return null;
+//			}
 		/** NOT RECOGNIZED */
 		else {
 			return null;
@@ -279,12 +340,30 @@ public class CursorUtils{
 		if(Constants.PLAYLIST_ALL == playlistId)
 		{
 			ContentResolver resolver = ctx.getContentResolver();
-			return resolver.query(
-					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-					Constants.artistProjection, 
-					null, 
-					null, 
-					Constants.artistAlphabeticalSortOrder);
+			Cursor c = null;
+			if(DirectoryFilter.usesExternalStorage()) {
+				c = resolver.query(
+						MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+						Constants.artistProjection, 
+						null, 
+						null, 
+						Constants.artistAlphabeticalSortOrder);
+			} else {
+				c = resolver.query(
+						MediaStore.Audio.Artists.INTERNAL_CONTENT_URI,
+						Constants.artistProjection, 
+						null, 
+						null, 
+						Constants.artistAlphabeticalSortOrder);
+			}
+			return c;
+						
+//			return resolver.query(
+//					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+//					Constants.artistProjection, 
+//					null, 
+//					null, 
+//					Constants.artistAlphabeticalSortOrder);
 		} 
 		else
 		{
@@ -297,13 +376,37 @@ public class CursorUtils{
 	 * @return
 	 */
 	Cursor	getGenres(){
-		Cursor genreList = ctx.getContentResolver().query(
-					MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-					Constants.genreProjection,
-					null,
-					null,
-					Constants.genreAlphabeticalSorting);
-		return genreList;
+		try{
+			Cursor c = null;
+			if(DirectoryFilter.usesExternalStorage()) {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+						Constants.genreProjection,
+						null,
+						null,
+						Constants.genreAlphabeticalSorting);
+			} else {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Genres.INTERNAL_CONTENT_URI,
+						Constants.genreProjection,
+						null,
+						null,
+						Constants.genreAlphabeticalSorting);
+			}
+			return c;
+		} catch(SQLiteException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+//		Cursor genreList = ctx.getContentResolver().query(
+//		MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+//		Constants.genreProjection,
+//		null,
+//		null,
+//		Constants.genreAlphabeticalSorting);
+
+//		return genreList;
 	}
 	
 	/**
@@ -311,13 +414,28 @@ public class CursorUtils{
 	 * @return
 	 */
 	Cursor	getPlaylists(){
-		Cursor playlistList = ctx.getContentResolver().query(
-					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-					Constants.playlistProjection,
-					null,
-					null,
-					Constants.playlistAlphabeticalSorting);
-		return playlistList;
+		try{
+			Cursor c = null;
+			if(DirectoryFilter.usesExternalStorage()) {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+						Constants.playlistProjection,
+						null,
+						null,
+						Constants.playlistAlphabeticalSorting);
+			} else {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI,
+						Constants.playlistProjection,
+						null,
+						null,
+						Constants.playlistAlphabeticalSorting);
+			}
+			return c;
+		} catch(SQLiteException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**
@@ -336,13 +454,61 @@ public class CursorUtils{
 	 */
 	Cursor getSongListOrderedBySongTitle(String constraint)
 	{
-		Cursor songList = ctx.getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				Constants.songProjection,
-				constraint,
-				null,
-				Constants.songListTitleSorting);
-		return songList;	
+		Cursor c = null;
+		if(DirectoryFilter.usesExternalStorage()) {
+			String sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.EXTERNAL_STORAGE);
+			if(sqlDirFilter != null) {
+				if(constraint != null) {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+							Constants.songProjection,
+							constraint + " AND (" + sqlDirFilter + ")",
+							null,
+							Constants.songListTitleSorting);
+				} else {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+							Constants.songProjection,
+							sqlDirFilter,
+							null,
+							Constants.songListTitleSorting);
+				}
+			} else {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+						Constants.songProjection,
+						constraint,
+						null,
+						Constants.songListTitleSorting);
+			}
+		} else {
+			String sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.INTERNAL_STORAGE);
+			if(sqlDirFilter != null) {
+				if(constraint != null) {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+							Constants.songProjection,
+							constraint + " AND (" + sqlDirFilter + ")",
+							null,
+							Constants.songListTitleSorting);
+				} else {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+							Constants.songProjection,
+							sqlDirFilter,
+							null,
+							Constants.songListTitleSorting);
+				}
+			} else {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+						Constants.songProjection,
+						constraint,
+						null,
+						Constants.songListTitleSorting);
+			}
+		}
+		return c;
 	}
 	
 	
@@ -461,16 +627,49 @@ public class CursorUtils{
 	
 	
 	Cursor	getSongsFromPlaylistWithConstraint(int playlistId, String constraint, boolean usePlaylistSorting){
+		String sqlDirFilter = null;
+
+		Log.i(TAG, "YAY");
+
+		if(DirectoryFilter.usesExternalStorage())
+			sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.EXTERNAL_STORAGE);
+		else
+			sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.INTERNAL_STORAGE);
+		
+		Log.i(TAG, "YAY twice");
+
+		String finalConstraint = null;
+		if(sqlDirFilter != null){
+			if(constraint != null)
+				finalConstraint = constraint  + " AND (" + sqlDirFilter + ")";
+			else
+				finalConstraint = sqlDirFilter;
+		} else {
+			finalConstraint = constraint;
+		}
+		
+		Log.i(TAG, finalConstraint);
+		
+		Cursor c = null;
 		/* ALL SONGS */
 		if(playlistId == Constants.PLAYLIST_ALL)
 		{
-			Cursor songList = ctx.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					Constants.songProjection,
-					constraint,
-					null,
-					Constants.songListAlbumAndNumericalSorting);
-			return songList;
+			if(DirectoryFilter.usesExternalStorage()) {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+						Constants.songProjection,
+						finalConstraint,
+						null,
+						Constants.songListAlbumAndNumericalSorting);
+			} else {
+				c = ctx.getContentResolver().query(
+						MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+						Constants.songProjection,
+						finalConstraint,
+						null,
+						Constants.songListAlbumAndNumericalSorting);
+			}
+			return c;
 		}
 		/* 'NORMAL' PLAYLISTS */
 		else if(playlistId >= 0)
@@ -480,33 +679,75 @@ public class CursorUtils{
 				sorting = Constants.songListPlaylistSorting;
 			else
 				sorting = Constants.songListAlbumAndNumericalSorting;
-			Cursor songList = ctx.getContentResolver().query(
-					MediaStore.Audio.Playlists.Members.getContentUri(
-							"external", 
-							playlistId),
-					Constants.playlistMembersProjection,
-					constraint+
-						" AND "+
-						MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1",
-					null,
-					sorting);
-			return songList;
+			
+			try {
+				String lastConstraint;
+				if(finalConstraint != null)
+					lastConstraint = finalConstraint
+									+ " AND "
+									+ MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1";
+				else
+					lastConstraint = MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1";
+				if(DirectoryFilter.usesExternalStorage()) {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Playlists.Members.getContentUri(
+									"external", 
+									playlistId),
+							Constants.playlistMembersProjection,
+							lastConstraint,
+							null,
+							sorting);
+				} else {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Playlists.Members.getContentUri(
+									"internal", 
+									playlistId),
+							Constants.playlistMembersProjection,
+							lastConstraint,
+							null,
+							sorting);
+				}
+			} catch(SQLiteException e) {
+				e.printStackTrace();
+			}
+			return c;	
 		}
 		/* GENRE PLAYLIST */
 		else if(playlistId <= Constants.PLAYLIST_GENRE_OFFSET &&
 				playlistId > Constants.PLAYLIST_GENRE_OFFSET - Constants.PLAYLIST_GENRE_RANGE)
 		{
-			Cursor songList = ctx.getContentResolver().query(
-					MediaStore.Audio.Genres.Members.getContentUri(
-							"external", 
-							Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
-					Constants.genreMemberProjection,
-					constraint+
-						" AND "+
-						MediaStore.Audio.Genres.Members.IS_MUSIC + "=1",
-					null,
-					Constants.songListAlbumAndNumericalSorting);
-			return songList;
+			String lastConstraint;
+			if(finalConstraint != null)
+				lastConstraint = finalConstraint
+								+ " AND "
+								+ MediaStore.Audio.Genres.Members.IS_MUSIC + "=1";
+			else
+				lastConstraint = MediaStore.Audio.Genres.Members.IS_MUSIC + "=1";
+			try {
+				if(DirectoryFilter.usesExternalStorage()) {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Genres.Members.getContentUri(
+									"external", 
+									Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
+							Constants.genreMemberProjection,
+							lastConstraint,
+							null,
+							Constants.songListAlbumAndNumericalSorting);
+				} else {
+					c = ctx.getContentResolver().query(
+							MediaStore.Audio.Genres.Members.getContentUri(
+									"internal", 
+									Math.abs(playlistId - Constants.PLAYLIST_GENRE_OFFSET)),
+							Constants.genreMemberProjection,
+							lastConstraint,
+							null,
+							Constants.songListAlbumAndNumericalSorting);
+				}
+			} catch(SQLiteException e) {
+				e.printStackTrace();
+			}
+			
+			return c;
 		}
 		return null;
 	}
@@ -522,6 +763,7 @@ public class CursorUtils{
 		{
 			Cursor[]	cursor = 
 				new Cursor[Math.min(list.length-position, position + limit + 1)];
+			boolean external = DirectoryFilter.usesExternalStorage(); 
 			String	constraint;
 			for(int i = position; i < Math.min(list.length, position + limit + 1) ; i++){
 				Log.i(TAG, ""+list[i]);
@@ -531,13 +773,23 @@ public class CursorUtils{
 					MediaStore.Audio.Media._ID+
 					"="+
 					String.valueOf(list[i]);
-				cursor[i-position] = 
-					ctx.getContentResolver().query(
-						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
-						Constants.songProjection, 
-						constraint, 
-						null, 
-						null);	
+				if(external) {
+					cursor[i-position] = 
+						ctx.getContentResolver().query(
+							MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+							Constants.songProjection, 
+							constraint, 
+							null, 
+							null);
+				} else {
+					cursor[i-position] = 
+						ctx.getContentResolver().query(
+							MediaStore.Audio.Media.INTERNAL_CONTENT_URI, 
+							Constants.songProjection, 
+							constraint, 
+							null, 
+							null);
+				}
 			}
 			MergeCursor playQueueCursor = null;
 			if(cursor != null)
@@ -713,9 +965,23 @@ public class CursorUtils{
 					MediaStore.Audio.Playlists.NAME,
 					name);
 			ContentResolver res = ctx.getContentResolver();
-			res.insert(
+			if(DirectoryFilter.usesExternalStorage()) {
+				res.insert(
 					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
 					values);
+			} else {
+				res.insert(
+						MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI, 
+						values);
+			}
+//			if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+//				res.insert(
+//					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+//					values);
+//			else 
+//				res.insert(
+//					MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI, 
+//					values);
 			return true;
 		}
 		catch(Exception e)
@@ -766,12 +1032,23 @@ public class CursorUtils{
         }
         where.append(")");
         
-        Cursor c = ctx.getContentResolver().query(
-        		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
-        		cols,
-                where.toString(), 
-                null, 
-                null);
+        Cursor c = null;
+        boolean external = DirectoryFilter.usesExternalStorage(); 
+        if(external) {
+        	c = ctx.getContentResolver().query(
+            		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+            		cols,
+                    where.toString(), 
+                    null, 
+                    null);
+        } else {
+        	c = ctx.getContentResolver().query(
+            		MediaStore.Audio.Media.INTERNAL_CONTENT_URI, 
+            		cols,
+                    where.toString(), 
+                    null, 
+                    null); 
+        }
 
         if (c != null) 
         {
@@ -791,8 +1068,14 @@ public class CursorUtils{
             }
             
             // step 2: remove selected tracks from the database
-            ctx.getContentResolver().delete(
+            if(external)
+            	ctx.getContentResolver().delete(
             		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+            		where.toString(), 
+            		null);
+            else
+            	ctx.getContentResolver().delete(
+            		MediaStore.Audio.Media.INTERNAL_CONTENT_URI, 
             		where.toString(), 
             		null);
 
@@ -831,8 +1114,14 @@ public class CursorUtils{
 		if(clearPlaylist(playlistId))
 		{
 			try{
-				ctx.getContentResolver().delete(
+				if(DirectoryFilter.usesExternalStorage())
+					ctx.getContentResolver().delete(
 		        		MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+		        		MediaStore.Audio.Playlists._ID + "=" + playlistId, 
+		        		null);
+				else
+					ctx.getContentResolver().delete(
+		        		MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI, 
 		        		MediaStore.Audio.Playlists._ID + "=" + playlistId, 
 		        		null);
 				return true;
@@ -858,8 +1147,13 @@ public class CursorUtils{
 	{
 		try
 		{
-			Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
-	        ctx.getContentResolver().delete(uri, null, null);
+			if(DirectoryFilter.usesExternalStorage()) {
+				Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+		        ctx.getContentResolver().delete(uri, null, null);
+			} else {
+		        Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("internal", playlistId);
+		        ctx.getContentResolver().delete(uri, null, null);
+			}
 	        return true;
 		}
 		catch(Exception e)
@@ -878,8 +1172,14 @@ public class CursorUtils{
 	{
 		clearGenre(genreId); // this does not work -- cannot alter mp3?
 		try{
-			ctx.getContentResolver().delete(
+			if(DirectoryFilter.usesExternalStorage())
+				ctx.getContentResolver().delete(
 	        		MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, 
+	        		MediaStore.Audio.Media._ID + "=" + genreId, 
+	        		null);
+			else
+				ctx.getContentResolver().delete(
+	        		MediaStore.Audio.Genres.INTERNAL_CONTENT_URI, 
 	        		MediaStore.Audio.Media._ID + "=" + genreId, 
 	        		null);
 			return true;
@@ -900,8 +1200,13 @@ public class CursorUtils{
 	{
 		try
 		{
-			Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
-	        ctx.getContentResolver().delete(uri, null, null);
+			if(DirectoryFilter.usesExternalStorage()) {
+				Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
+		        ctx.getContentResolver().delete(uri, null, null);
+			} else {
+		        Uri uri = MediaStore.Audio.Genres.Members.getContentUri("internal", genreId);
+		        ctx.getContentResolver().delete(uri, null, null);
+			}
 	        return true;
 		}
 		catch(Exception e)
@@ -919,14 +1224,28 @@ public class CursorUtils{
 	public long getPlaylistIdFromName(String playlistName)
 	{
 		ContentResolver res = ctx.getContentResolver();
-		Cursor c = res.query(
-				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
-				Constants.playlistProjection, 
-				MediaStore.Audio.Playlists.NAME + "='" + playlistName + "'", 
-				null, 
-				null);
+		Cursor c = null;
+		if(DirectoryFilter.usesExternalStorage()) {
+			c = res.query(
+					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, 
+					Constants.playlistProjection, 
+					MediaStore.Audio.Playlists.NAME + "='" + playlistName + "'", 
+					null, 
+					null);
+		} else {
+			c = res.query(
+					MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI, 
+					Constants.playlistProjection, 
+					MediaStore.Audio.Playlists.NAME + "='" + playlistName + "'", 
+					null, 
+					null);
+		}
+//		try{
 		c.moveToFirst();
 		return c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Playlists._ID));
+//		} catch(Exception e) {
+//			return -1;
+//		}
 	}
 	
 	/**
@@ -951,8 +1270,15 @@ public class CursorUtils{
             String[] cols = new String[] {
                     "count(*)"
             };
-            Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
-            Cursor cur = resolver.query(uri, cols, null, null, null);
+            Cursor cur;
+            Uri uri;
+            if(DirectoryFilter.usesExternalStorage()) {
+	            uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
+	            cur = resolver.query(uri, cols, null, null, null);
+            } else {
+            	uri = MediaStore.Audio.Playlists.Members.getContentUri("internal", playlistId);
+            	cur = resolver.query(uri, cols, null, null, null);
+            }
             cur.moveToFirst();
             int base = cur.getInt(0);
             cur.close();

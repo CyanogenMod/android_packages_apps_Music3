@@ -220,6 +220,7 @@ public class AlbumArtUtils{
 		try{
 			if(bitmap != null){
 				File file = new File(Constants.ROCKON_SMALL_ALBUM_ART_PATH+albumKey);
+				Log.i(TAG, file.getAbsolutePath());
 				if(!file.exists())
 					file.createNewFile();
 				FileOutputStream fileOutStream = new FileOutputStream(file);

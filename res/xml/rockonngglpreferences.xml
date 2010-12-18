@@ -49,6 +49,20 @@
                 android:persistent="true" />
     </PreferenceCategory>
     
+    <PreferenceCategory 
+    		android:title="@string/preference_category_storage"
+            android:key="storage">
+            <Preference
+                android:key="@string/preference_key_storage_type"
+                android:title="@string/preference_title_storage_type"
+                android:summary="@string/preference_summary_storage_type"
+                android:persistent="true" /> <!-- not really used -->
+            <Preference
+                android:key="@string/preference_key_directory_filter"
+                android:title="@string/preference_title_directory_filter"
+                android:summary="@string/preference_summary_directory_filter"
+                android:persistent="true" /> <!-- not really used -->
+    </PreferenceCategory>
     
     <PreferenceCategory
         android:title="@string/preference_category_album_art"

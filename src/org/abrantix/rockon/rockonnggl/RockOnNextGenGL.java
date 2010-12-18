@@ -729,8 +729,60 @@ public class RockOnNextGenGL extends Activity {
     		
         	editor.commit();
         	
-	    	Intent i = new Intent(this, DonateActivity.class);
-	        startActivity(i);
+        	int donationAppsInstalled = 0;
+        	try{
+        		ComponentName cName = 
+    				new ComponentName(
+						Constants.DONATION_APP_PKG_1, 
+						Constants.DONATION_APP_MAIN_ACTIVITY_1);
+    			getPackageManager().
+    				getActivityInfo(
+    						cName,
+    						0);
+    			donationAppsInstalled++;
+    		} catch(NameNotFoundException e) {
+    		}
+    		try{
+        		ComponentName cName = 
+    				new ComponentName(
+    						Constants.DONATION_APP_PKG_2, 
+    						Constants.DONATION_APP_MAIN_ACTIVITY_2);
+    			getPackageManager().
+    				getActivityInfo(
+    						cName,
+    						0);
+    			donationAppsInstalled++;
+    		} catch(NameNotFoundException e) {
+    		}
+    		try{
+        		ComponentName cName = 
+    				new ComponentName(
+    						Constants.DONATION_APP_PKG_3, 
+    						Constants.DONATION_APP_MAIN_ACTIVITY_3);
+    			getPackageManager().
+    				getActivityInfo(
+    						cName,
+    						0);
+    			donationAppsInstalled++;
+    		} catch(NameNotFoundException e) {
+    		}
+    		try{
+        		ComponentName cName = 
+    				new ComponentName(
+    						Constants.DONATION_APP_PKG_4, 
+    						Constants.DONATION_APP_MAIN_ACTIVITY_4);
+    			getPackageManager().
+    				getActivityInfo(
+    						cName,
+    						0);
+    			donationAppsInstalled++;
+    		} catch(NameNotFoundException e) {
+    		}
+        	
+    		if(donationAppsInstalled <= 0) {
+		    	Intent i = new Intent(this, DonateActivity.class);
+		        startActivity(i);
+    		}
     	}
     	else
     	{
@@ -2943,7 +2995,6 @@ public class RockOnNextGenGL extends Activity {
 				artistId,
 				mPlaylistId); 
 		}
-		
 		if(songCursor != null){
 			startManagingCursor(songCursor);
 			songCursor.moveToFirst();				

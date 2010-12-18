@@ -42,7 +42,6 @@
 	<string name="no_music_dialog_continue_anyway">Continue anyway</string>
 	<string name="no_music_dialog_exit">Exit</string>
 	
-	
 	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
 	<string name="concert_app_install_dialog_title">Install Concerts³</string>
 	<string name="concert_app_install_dialog_message">This feature requires the installation of Concerts³. Do you want to do it now?</string>
@@ -200,4 +199,16 @@
 <!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
 <!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
 <!--	</string>-->
+
+	<!--	DIRECTORY FILTER	-->
+	<string name="directories_on_sdcard">Your SD Card contains the following directories:</string>
+	<string name="select_all">Select all</string>
+	<string name="unselect_all">Unselect all</string>
+
+	<!--	GENERIC STUFF -->
+	<string name="ok">Ok</string>
+	<string name="back">Back</string>
+	<string name="all">All</string>
+	<string name="none">None</string>
+
 </resources>

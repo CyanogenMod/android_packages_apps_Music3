@@ -79,4 +79,22 @@
 	<!--	DONATE    -->
     <string name="preference_key_donate">donate</string>
     <string name="preference_title_donate">Donate</string>
+    
+	<!--	ADDITIONAL PREFERENCE CATEGORIES    -->
+    <string name="preference_category_storage">Storage</string>
+    
+    <!--	STORAGE TYPE    -->
+    <string name="preference_key_storage_type">mStorageType</string>
+    <string name="preference_title_storage_type"></string>
+    <string name="preference_title_storage_type_internal">Internal</string>
+    <string name="preference_title_storage_type_external">External</string>
+    <string name="preference_summary_storage_type"></string>
+    <string name="preference_storage_free">free</string>
+    <string name="preference_storage_dialog_title">Storage type</string>
+    <string name="preference_storage_media_not_mounted">Media not mounted.</string>
+    
+    <!--	DIRECTORY FILTER    -->
+    <string name="preference_key_directory_filter">mDirectoryFilter</string>
+    <string name="preference_title_directory_filter">Directory filter</string>
+    <string name="preference_summary_directory_filter">Choose which directories contain your music.</string>
 </resources>

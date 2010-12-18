@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.abrantix.rockon.rockonnggl"
-      android:versionName="1.0.70" android:versionCode="71">
+      android:versionName="1.0.74" android:versionCode="75">
 <!--      android:installLocation="auto"-->
     <application 
     		android:icon="@drawable/icon_dice" 
@@ -36,6 +36,12 @@
         <!--	DONATE ACTIVITY	-->
 		<activity
 			android:name="DonateActivity"
+			android:label="@string/app_name"	
+            android:launchMode="singleTask"/>
+        
+        <!--	DIRECTORY FILTER ACTIVITY	-->
+		<activity
+			android:name="DirectoryFilterActivity"
 			android:label="@string/app_name"	
             android:launchMode="singleTask"/>
         

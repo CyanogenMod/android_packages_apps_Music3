@@ -1,7 +1,10 @@
 package org.abrantix.rockon.rockonnggl;
 
+import java.io.File;
+
 import org.abrantix.rockon.rockonnggl.R;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 
 public class Constants{
@@ -362,6 +365,16 @@ public class Constants{
     static final String CONCERT_APP_PACKAGE = "org.abrantix.rockon.concerts";
     static final String CONCERT_APP_MAIN_ACTIVITY = "org.abrantix.rockon.concerts.Concerts";
     
+    /* Donation Apps */
+    static final String DONATION_APP_PKG_1 = "org.abrantix.rockon.rockonnggl.donate.std.pt"; 
+	static final String DONATION_APP_MAIN_ACTIVITY_1 = "org.abrantix.rockon.rockonnggl.donate.std.pt.Donate";
+	static final String DONATION_APP_PKG_2 = "org.abrantix.rockon.rockonnggl.donate.nicerguy.pt"; 
+	static final String DONATION_APP_MAIN_ACTIVITY_2 = "org.abrantix.rockon.rockonnggl.donate.nicerguy.pt.Donate";
+	static final String DONATION_APP_PKG_3 = "org.abrantix.rockon.rockonnggl.donate.std"; 
+	static final String DONATION_APP_MAIN_ACTIVITY_3 = "org.abrantix.rockon.rockonnggl.donate.std.Donate";
+	static final String DONATION_APP_PKG_4 = "org.abrantix.rockon.rockonnggl.donate.nicerguy"; 
+	static final String DONATION_APP_MAIN_ACTIVITY_4 = "org.abrantix.rockon.rockonnggl.donate.nicerguy.Donate";
+    
     /* Releases App */
     static final String RELEASES_APP_PACKAGE = "org.abrantix.releases";
     static final String RELEASES_APP_MAIN_ACTIVITY = "org.abrantix.releases.Releases";
@@ -401,16 +414,20 @@ public class Constants{
     static final int REASONABLE_PLAY_QUEUE_SIZE = 32;
     
 	/** File paths */
-    static final String ROCKON_BASE_PATH = "/sdcard/RockOn/";
+    private static final String ROCKON_STORAGE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+    static final String ROCKON_BASE_PATH = ROCKON_STORAGE_PATH + "RockOn/";
     static final String ROCKON_DONATION_PATH = ROCKON_BASE_PATH + "donate";
-	static final String ROCKON_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/";
-	static final String ROCKON_SMALL_ALBUM_ART_PATH = "/sdcard/albumthumbs/RockOnNg/small/";
+	static final String ROCKON_ALBUM_ART_PATH = ROCKON_STORAGE_PATH + "albumthumbs/RockOnNg/";
+	static final String ROCKON_SMALL_ALBUM_ART_PATH = ROCKON_STORAGE_PATH + "albumthumbs/RockOnNg/small/";
 	static final String ROCKON_UNKNOWN_ART_FILENAME = "_____unknown";
-	
+    static final String ROCKON_STORAGE_TYPE_FILENAME = ROCKON_BASE_PATH + "storage_type";
+    static final String ROCKON_EXTERNAL_DIRECTORIES_FILENAME = ROCKON_BASE_PATH + "ext_dirs";
+    static final String ROCKON_INTERNAL_DIRECTORIES_FILENAME = ROCKON_BASE_PATH + "int_dirs";
+    
 	/** Donation Parameters */
-	static final int	DONATION_INITIAL_INTERVAL = 8;
+	static final int	DONATION_INITIAL_INTERVAL = 20;
 	static final int	DONATION_STANDARD_INTERVAL = 30;
-	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 10000;
+	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 100000;
 	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mBrowseCatMode = "mBrowseCatMode";

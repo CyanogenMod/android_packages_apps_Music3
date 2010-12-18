@@ -473,21 +473,36 @@ public class RockOnNextGenService extends Service {
             // To deal with this, try querying for the current file, and if
             // that fails, wait a while and try again. If that too fails,
             // assume there is a problem and don't restore the state.
-            Cursor crsr = getContentResolver().query(
+            Cursor crsr = null;
+            if(DirectoryFilter.usesExternalStorage()) {
+            	crsr = getContentResolver().query(
             		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
             		new String [] {"_id"},
             		"_id=" + mPlayList[mPlayPos], 
             		null, 
             		null); 
+            } else {
+            	crsr = getContentResolver().query(
+                		MediaStore.Audio.Media.INTERNAL_CONTENT_URI, 
+                		new String [] {"_id"},
+                		"_id=" + mPlayList[mPlayPos], 
+                		null, 
+                		null);
+            }
 //            	MusicUtils.query(this,
 //                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 //                        new String [] {"_id"}, "_id=" + mPlayList[mPlayPos] , null, null);
             if (crsr == null || crsr.getCount() == 0) {
                 // wait a bit and try again
                 SystemClock.sleep(3000);
-                crsr = getContentResolver().query(
+                if(DirectoryFilter.usesExternalStorage())
+                	crsr = getContentResolver().query(
                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         mCursorCols, "_id=" + mPlayList[mPlayPos] , null, null);
+                else
+                	crsr = getContentResolver().query(
+                            MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                             mCursorCols, "_id=" + mPlayList[mPlayPos] , null, null);
             }
             if (crsr != null) {
                 crsr.close();
@@ -1161,12 +1176,21 @@ public class RockOnNextGenService extends Service {
 
             String id = String.valueOf(mPlayList[mPlayPos]);
             
-            mCursor = getContentResolver().query(
+            boolean external = DirectoryFilter.usesExternalStorage();
+            if(external)
+            	mCursor = getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     mCursorCols, "_id=" + id , null, null);
-            if (mCursor != null) {
+            else
+            	mCursor = getContentResolver().query(
+                        MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                        mCursorCols, "_id=" + id , null, null);
+            if (mCursor != null && mCursor.getCount() > 0) {
                 mCursor.moveToFirst();
-                open(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id, false);
+                if(external)
+                	open(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/" + id, false);
+                else
+                	open(MediaStore.Audio.Media.INTERNAL_CONTENT_URI + "/" + id, false);
                 // go to bookmark if needed
 //                if (isPodcast()) {
 //                    long bookmark = getBookmark();
@@ -1805,14 +1829,22 @@ public class RockOnNextGenService extends Service {
         ContentResolver res = getContentResolver();
         Cursor c = null;
         try {
-            c = res.query(
+        	if(DirectoryFilter.usesExternalStorage())
+        		c = res.query(
             		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     new String[] {MediaStore.Audio.Media._ID}, 
                     MediaStore.Audio.Media.IS_MUSIC + "=1",
                     null,
                     null);
-            if (c == null || c.getCount() == 0) {
-                return false;
+        	else
+            	c = res.query(
+                		MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+                        new String[] {MediaStore.Audio.Media._ID}, 
+                        MediaStore.Audio.Media.IS_MUSIC + "=1",
+                        null,
+                        null);
+        	if (c == null || c.getCount() == 0) {
+            	return false;
             }
             int len = c.getCount();
             long [] list = new long[len];
@@ -1823,6 +1855,7 @@ public class RockOnNextGenService extends Service {
             mAutoShuffleList = list;
             return true;
         } catch (RuntimeException ex) {
+        	ex.printStackTrace();
         } finally {
             if (c != null) {
                 c.close();
