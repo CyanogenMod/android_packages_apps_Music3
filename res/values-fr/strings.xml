@@ -70,7 +70,7 @@
 <string name="song_deleted_toast">Chanson effacée!</string>
 
 <!-- SEARCH -->
-<string name="search_hint">Nom de l\'artiste ou de l\'album:</string>
+<string name="search_hint">Nom de l\'artiste ou de la chanson:</string>
 
 <!-- PLAY QUEUE -->
 <string name="play_queue_title">Lire playlist</string>
@@ -136,7 +136,7 @@
 <!-- THEME PROCESSING MESSAGES -->
 <string name="art_processing_progress_title">Traitement des pochettes</string>
 <string name="art_processing_cancel">Annuler</string>
-<string name="art_processing_go_background">Le faire en second plan</string>
+<string name="art_processing_go_background">Le faire en segond plan</string>
 <string name="art_processing_progress_initial_message">Recherche de pochettes...</string>
 
 <!-- HALF TONE DIALOG -->
@@ -150,7 +150,7 @@ Le thème Mi Ton necessite de taiter tes pochettes. C\'est une tâche intensive 
 <!-- EARTHQUAKE DIALOG -->
 <string name="earthquake_dialog_title">Tremblement de Terre</string>
 <string name="earthquake_dialog_message">
-Le thème Tremblement de Terre necessite de taiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
+Le thème Tremblement de Terre necessite de traiter tes pochettes. C\'est une tâche intensive qui peut prendre du temps (~1 minute chaque 30 albums).
 </string>
 <string name="earthquake_dialog_yes">Accepter!</string>
 <string name="earthquake_dialog_no">Annuler!</string>
@@ -178,7 +178,7 @@ Le thème Tremblement de Terre necessite de taiter tes pochettes. C\'est une tâ
 
 <!-- DONATE MSG -->
 <string name="donate_title">Faire un don</string>
-<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaîs, tu peux me faire un don afin que je puisse l\'améliorer.</string>
+<string name="donate_msg">³ est une application gratuite, open source et totalment développée sur mon temps libre. Si elle te plaît, tu peux me faire un don afin que je puisse l\'améliorer.</string>
 <string name="donate_using">Donner par le biais de: </string>
 <string name="donate_back_to_app">Revenir à </string>
 
