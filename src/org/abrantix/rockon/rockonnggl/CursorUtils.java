@@ -628,16 +628,10 @@ public class CursorUtils{
 	
 	Cursor	getSongsFromPlaylistWithConstraint(int playlistId, String constraint, boolean usePlaylistSorting){
 		String sqlDirFilter = null;
-
-		Log.i(TAG, "YAY");
-
 		if(DirectoryFilter.usesExternalStorage())
 			sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.EXTERNAL_STORAGE);
 		else
 			sqlDirFilter = DirectoryFilter.getFolderSqlStatement(ctx, DirectoryFilter.INTERNAL_STORAGE);
-		
-		Log.i(TAG, "YAY twice");
-
 		String finalConstraint = null;
 		if(sqlDirFilter != null){
 			if(constraint != null)
@@ -647,9 +641,6 @@ public class CursorUtils{
 		} else {
 			finalConstraint = constraint;
 		}
-		
-		Log.i(TAG, finalConstraint);
-		
 		Cursor c = null;
 		/* ALL SONGS */
 		if(playlistId == Constants.PLAYLIST_ALL)

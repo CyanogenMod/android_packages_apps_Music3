@@ -43,12 +43,15 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 import java.util.jar.Pack200.Unpacker;
 
 import org.abrantix.rockon.rockonnggl.IRockOnNextGenService;
 import org.abrantix.rockon.rockonnggl.R;
+
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 /**
  * Provides "background" audio playback capabilities, allowing the
@@ -72,6 +75,8 @@ public class RockOnNextGenService extends Service {
     private int mRockOnShuffleMode = Constants.SHUFFLE_NONE;
     private int mRockOnRepeatMode = Constants.REPEAT_NONE;
     private int mPlaylistId = Constants.PLAYLIST_UNKNOWN;
+    
+    GoogleAnalyticsTracker	mAnalytics;
     
     private MultiPlayer mPlayer;
     private String mFileToPlay;
@@ -257,6 +262,10 @@ public class RockOnNextGenService extends Service {
     public void onCreate() {
         super.onCreate();
         
+        mAnalytics = GoogleAnalyticsTracker.getInstance();
+        mAnalytics.start("UA-20349033-2", 6*60*60 /* every 6 hours */, this);
+//        mAnalytics.start("UA-20349033-2", this); 
+
         Log.i(TAG, "SERVICE onCreate");
         
 //        mPreferences = getSharedPreferences("Music", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
@@ -330,6 +339,8 @@ public class RockOnNextGenService extends Service {
         
         unregisterScreenOnReceiver();
        
+        if(mAnalytics != null)
+        	mAnalytics.stop();
         mWakeLock.release();
         super.onDestroy();
     }
@@ -645,17 +656,72 @@ public class RockOnNextGenService extends Service {
         }
     }
     
+    ArrayList<Double> mBindingTimes = new ArrayList<Double>();
     @Override
     public IBinder onBind(Intent intent) {
-        mDelayedStopHandler.removeCallbacksAndMessages(null);
+    	if(mAnalytics != null) {
+	    	double start = System.currentTimeMillis();
+	    	mBindingTimes.add(new Double(System.currentTimeMillis()));
+        	mAnalytics.trackPageView("/Bind");
+            Log.i(TAG, "Time spent analysing: "+(System.currentTimeMillis()-start));
+    	}
+	    mDelayedStopHandler.removeCallbacksAndMessages(null);
         mServiceInUse = true;
         return mBinder;
     }
 
     @Override
     public void onRebind(Intent intent) {
-        mDelayedStopHandler.removeCallbacksAndMessages(null);
-        mServiceInUse = true;
+    	if(mAnalytics != null) {
+	    	double start = System.currentTimeMillis();
+	    	mBindingTimes.add(new Double(System.currentTimeMillis()));
+	    	mAnalytics.trackPageView("/Rebind");
+	    	Log.i(TAG, "Time spent analysing: "+(System.currentTimeMillis()-start));
+    	}
+    	mDelayedStopHandler.removeCallbacksAndMessages(null);
+    	mServiceInUse = true;
+    }
+    
+    @Override
+    public boolean onUnbind(Intent intent) {
+    	/**********************
+    	 * ANALYTICS
+    	 **********************/
+    	if(mAnalytics != null) {
+	    	mAnalytics.trackPageView("/Unbind");
+	    	if(mBindingTimes.size() > 0) {
+		    	int duration = (int) (System.currentTimeMillis() - mBindingTimes.get(mBindingTimes.size()-1));
+		    	mBindingTimes.remove(mBindingTimes.size()-1);
+		    	mAnalytics.trackEvent("Duration", "Time bound", "From UI?", duration);
+		    	mAnalytics.dispatch();
+	    	}
+    	}
+    	/**********************/
+    	
+        mServiceInUse = false;
+
+        // Take a snapshot of the current playlist
+        saveQueue(true);
+
+        if (isPlaying() || mResumeAfterCall) {
+            // something is currently playing, or will be playing once 
+            // an in-progress call ends, so don't stop the service now.
+            return true;
+        }
+        
+        // If there is a playlist but playback is paused, then wait a while
+        // before stopping the service, so that pause/resume isn't slow.
+        // Also delay stopping the service if we're transitioning between tracks.
+        if (mPlayListLen > 0  || mMediaplayerHandler.hasMessages(TRACK_ENDED)) {
+            Message msg = mDelayedStopHandler.obtainMessage();
+            mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
+            return true;
+        }
+        
+        // No active playlist, OK to stop the service right now
+        setForeground(false);
+        stopSelf(mServiceStartId);
+        return true;
     }
     
     @Override
@@ -708,34 +774,6 @@ public class RockOnNextGenService extends Service {
         mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
         
         return Constants.START_STICKY;
-    }
-    
-    @Override
-    public boolean onUnbind(Intent intent) {
-        mServiceInUse = false;
-
-        // Take a snapshot of the current playlist
-        saveQueue(true);
-
-        if (isPlaying() || mResumeAfterCall) {
-            // something is currently playing, or will be playing once 
-            // an in-progress call ends, so don't stop the service now.
-            return true;
-        }
-        
-        // If there is a playlist but playback is paused, then wait a while
-        // before stopping the service, so that pause/resume isn't slow.
-        // Also delay stopping the service if we're transitioning between tracks.
-        if (mPlayListLen > 0  || mMediaplayerHandler.hasMessages(TRACK_ENDED)) {
-            Message msg = mDelayedStopHandler.obtainMessage();
-            mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
-            return true;
-        }
-        
-        // No active playlist, OK to stop the service right now
-        setForeground(false);
-        stopSelf(mServiceStartId);
-        return true;
     }
     
     private Handler mDelayedStopHandler = new Handler() {
@@ -1579,7 +1617,7 @@ public class RockOnNextGenService extends Service {
             	Log.i(TAG, "next - SHUFFLE_NORMAL - PlayListLen: "+mPlayListLen);
                 int numTracks = mPlayListLen;
                 int[] tracks = new int[numTracks+1];
-                for (int i=0;i < numTracks; i++) {
+                for (int i=0;i<numTracks; i++) {
                     tracks[i] = i;
                 }
                 // small rockon hack addon
@@ -1602,55 +1640,62 @@ public class RockOnNextGenService extends Service {
                 // been played, and 'tracks' contains the indices of those
                 // tracks.
                 if (numUnplayed <=0) {
-                	Log.i(TAG, "SHUFFLE NEXT - all songs in queue have been played!");
-                    // everything's already been played
-//                	if (mRepeatMode == Constants.REPEAT_ALL || force) {
-                	if (mRepeatMode == Constants.REPEAT_ALL) {
-                        //pick from full set
-                        numUnplayed = numTracks;
-                        for (int i=0;i < numTracks; i++) {
-                            tracks[i] = i;
-                        }
-                    } else {
-                    	CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
-                    	long audioId = cursorUtils.getNextPrevAudioId(
-                    			Constants.FIND_NEXT, 
-                    			getAudioId(), 
-                    			(int) getAlbumId(), 
-                    			mShuffleMode, 
-                    			mPlaylistId);
-//                    	Log.i(TAG, "CURRENT audioId: "+ getAudioId() + "NEXT audioId: "+audioId);
-                    	
-                    	// dont grow the playlist size indefinetly
-                    	if(mPlayListLen<Constants.REASONABLE_PLAY_QUEUE_SIZE){
-                    		Log.i(TAG, "List is less than max size, adding one item to the end...");
-                    		mPlayListLen++;
-                    		ensurePlayListCapacity(mPlayListLen);
-                    		mPlayList[mPlayListLen-1] = audioId;
-                        	tracks[numTracks] = mPlayListLen-1;
-                    	} else {
-                        	Log.i(TAG, "List already exceeds the resonable size!");
-                    		// FIXME: this may occasionally give BOGUS result
-                    		// remove the farthest element in the playlist
-                    		for(int i=0; i<mPlayListLen-1; i++)
-                    			mPlayList[i] = mPlayList[i+1];
-                    		mPlayList[mPlayListLen-1] = audioId;
-                    		// add the new song
-                        	tracks[numTracks-1] = mPlayListLen-1;
-                    		// updateHistory
-                    		while(mHistory.removeElement(Integer.valueOf(0))){
-//                    			Log.i(TAG, "removing history element pointing to index zero!");
-                    		}
-                    		for(int i=0; i<mHistory.size(); i++)
-                    			mHistory.set(i, Integer.valueOf(mHistory.get(i).intValue()-1));
-                    	}
-                    	
-                    	numUnplayed = 1;
-                		
-//                       // all done
-//                        gotoIdleState();
-//                        return;
-                    }
+                	if(mRepeatMode == Constants.REPEAT_ALL) {
+	                	mHistory.clear();
+	                	numUnplayed = numTracks;
+	                	for(int i=0; i<numTracks; i++)
+	                		tracks[i] = i;
+                	} else if(mRepeatMode == Constants.REPEAT_NONE) {
+	                	Log.i(TAG, "SHUFFLE NEXT - all songs in queue have been played!");
+//	                    // everything's already been played
+//	//                	if (mRepeatMode == Constants.REPEAT_ALL || force) {
+//	                	if (mRepeatMode == Constants.REPEAT_ALL) {
+//	                        //pick from full set
+//	                        numUnplayed = numTracks;
+//	                        for (int i=0;i < numTracks; i++) {
+//	                            tracks[i] = i;
+//	                        }
+//	                    } else {
+	                    	CursorUtils cursorUtils = new CursorUtils(getApplicationContext());
+	                    	long audioId = cursorUtils.getNextPrevAudioId(
+	                    			Constants.FIND_NEXT, 
+	                    			getAudioId(), 
+	                    			(int) getAlbumId(), 
+	                    			mShuffleMode, 
+	                    			mPlaylistId);
+	//                    	Log.i(TAG, "CURRENT audioId: "+ getAudioId() + "NEXT audioId: "+audioId);
+	                    	
+	                    	// dont grow the playlist size indefinetly
+	                    	if(mPlayListLen<Constants.REASONABLE_PLAY_QUEUE_SIZE){
+	                    		Log.i(TAG, "List is less than max size, adding one item to the end...");
+	                    		mPlayListLen++;
+	                    		ensurePlayListCapacity(mPlayListLen);
+	                    		mPlayList[mPlayListLen-1] = audioId;
+	                        	tracks[numTracks] = mPlayListLen-1;
+	                    	} else {
+	                        	Log.i(TAG, "List already exceeds the resonable size!");
+	                    		// FIXME: this may occasionally give BOGUS result
+	                    		// remove the farthest element in the playlist
+	                    		for(int i=0; i<mPlayListLen-1; i++)
+	                    			mPlayList[i] = mPlayList[i+1];
+	                    		mPlayList[mPlayListLen-1] = audioId;
+	                    		// add the new song
+	                        	tracks[numTracks-1] = mPlayListLen-1;
+	                    		// updateHistory
+	                    		while(mHistory.removeElement(Integer.valueOf(0))){
+	//                    			Log.i(TAG, "removing history element pointing to index zero!");
+	                    		}
+	                    		for(int i=0; i<mHistory.size(); i++)
+	                    			mHistory.set(i, Integer.valueOf(mHistory.get(i).intValue()-1));
+	                    	}
+	                    	
+	                    	numUnplayed = 1;
+	                		
+	//                       // all done
+	//                        gotoIdleState();
+	//                        return;
+//	                    }
+                	}
                 }
                 int skip = mRand.nextInt(numUnplayed);
                 int cnt = -1;
@@ -2133,9 +2178,40 @@ public class RockOnNextGenService extends Service {
         return mRockOnShuffleMode;
     }
 
-    
+    double oLastRepeatChange = System.currentTimeMillis();
     public void setRepeatMode(int repeatmode) {
         synchronized(this) {
+        	/********************
+        	 * 
+        	 * ANALYTICS
+        	 * 
+        	 ********************/
+        	int duration = (int) (System.currentTimeMillis()-oLastRepeatChange);
+        	switch(mRepeatMode) {
+        	case Constants.REPEAT_NONE:
+        		mAnalytics.trackEvent("Duration", "Repeat Mode", "NONE", duration);
+            	break;
+        	case Constants.REPEAT_ALL:
+        		mAnalytics.trackEvent("Duration", "Repeat Mode", "ALL", duration);
+            	break;
+        	case Constants.REPEAT_CURRENT:
+        		mAnalytics.trackEvent("Duration", "Repeat Mode", "CURRENT", duration);
+                break;
+        	}
+        	switch(repeatmode) {
+    		case Constants.REPEAT_NONE:
+        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "NONE", 0);
+        		break;
+        	case Constants.REPEAT_ALL:
+        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "ALL", 0);
+        		break;
+        	case Constants.REPEAT_CURRENT:
+        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "CURRENT", 0);
+        		break;
+        	}
+        	oLastRepeatChange = System.currentTimeMillis();
+        	/***********************/
+        	
             mRepeatMode = repeatmode;
             // let our widgets refresh
             if(mRepeatMode == Constants.REPEAT_NONE)

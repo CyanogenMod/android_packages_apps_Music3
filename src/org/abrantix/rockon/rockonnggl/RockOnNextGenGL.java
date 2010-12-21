@@ -11,6 +11,8 @@ import javax.microedition.khronos.egl.EGLDisplay;
 
 import org.abrantix.rockon.rockonnggl.R;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -83,7 +85,7 @@ public class RockOnNextGenGL extends Activity {
     boolean											mIsSdCardPresentAndHasMusic = true;
     String											mNewPlaylistName;
     NavScrollerView									mNavScroller;
-
+    
     /** Dialogs */
     private	AlertDialog.Builder					mPlaylistDialog;
     private	AlertDialog.Builder					mViewModeDialog;
@@ -195,13 +197,23 @@ public class RockOnNextGenGL extends Activity {
     /*********************************************************
      *********************************************************/
     
-    
+    GoogleAnalyticsTracker mAnalytics;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-               
 
+//        /****************
+//         * DEBUG ONLY
+//         ****************/
+//        mAnalytics = GoogleAnalyticsTracker.getInstance();
+////      mAnalytics.start("UA-20349033-2", 6*60 /* *60 */ /* every 6 hours */, this);
+//        mAnalytics.start("UA-20349033-2", this); 
+//
+//        mAnalytics.trackPageView("/RockOnNextGenGL");
+//        mAnalytics.dispatch();
+//        mAnalytics.stop();
+        
         /* set up our default exception handler */
         mDefaultExceptionHandler = 
         	new RockOnNextGenDefaultExceptionHandler(

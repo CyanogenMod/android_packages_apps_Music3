@@ -193,7 +193,7 @@ public class DirectoryFilter {
 							+ getInternalStorageRoot(ctx) 
 							+ "/" + stmtArray[i] + "%'");
 				}
-				Log.i(TAG, i + " --- " + stmt);
+//				Log.i(TAG, i + " --- " + stmt);
 			}
 			return stmt;
 		} else {
