@@ -1645,7 +1645,6 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 			    					Math.abs(mTargetPositionY-mPositionY), 
 			    					5.5f);
 			    			// TODO: trigger rotation
-			    			Log.d("TaoTest", "Tat Test Msg");
 			    			this.renderNow();
 			    			return i;
 			    		}
