@@ -1230,7 +1230,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    	try
 	    	{
 	    		if(mCursor != null){
-		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+		    		for(int i = 0; i < mCursor.getCount(); i++){
 			    		mCursor.moveToPosition(i);
 			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) == albumId){
 			    			mTargetPositionY = i;
@@ -1273,7 +1273,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    	try
 	    	{
 	    		if(mCursor != null){
-		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+		    		for(int i = 0; i < mCursor.getCount(); i++){
 			    		mCursor.moveToPosition(i);
 			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)) == artistId){
 			    			mTargetPositionY = i;
@@ -1314,7 +1314,7 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    	try
 	    	{
 	    		if(mCursor != null){
-		    		for(int i = 0; i < mCursor.getCount()-1; i++){
+		    		for(int i = 0; i < mCursor.getCount(); i++){
 			    		mCursor.moveToPosition(i);
 			    		if(mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)) == songId){
 			    			mTargetPositionY = i;
