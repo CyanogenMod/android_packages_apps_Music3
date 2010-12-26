@@ -1217,7 +1217,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(albumId >= 0)
     	{
 	    	if(mCursor != null){
-		    	for(int i = 0; i < mCursor.getCount()-1; i++){
+		    	for(int i = 0; i < mCursor.getCount(); i++){
 		    		mCursor.moveToPosition(i);
 		    		try
 		    		{
@@ -1258,7 +1258,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	if(artistId >= 0)
     	{
 	    	if(mCursor != null){
-		    	for(int i = 0; i < mCursor.getCount()-1; i++){
+		    	for(int i = 0; i < mCursor.getCount(); i++){
 		    		mCursor.moveToPosition(i);
 		    		try
 		    		{
