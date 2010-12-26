@@ -3,12 +3,16 @@ package org.abrantix.rockon.rockonnggl;
 import org.abrantix.rockon.rockonnggl.R;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -23,6 +27,7 @@ import android.widget.SimpleAdapter;
 public class RockOnNextGenPreferences extends PreferenceActivity{
 	
 	protected static final String TAG = "RockOnNextGenPreferences";
+	IRockOnNextGenService	mService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -48,7 +53,39 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
          * Initialize screen
          */
         initPreferences();
+        
+        /**
+         * Connect to service
+         */
+        Intent i = new Intent(this, RockOnNextGenService.class);
+    	startService(i);
+    	bindService(i, mServiceConnection, BIND_AUTO_CREATE);
 	}
+	
+	@Override
+	public void onDestroy() {
+		if(mService != null)
+			unbindService(mServiceConnection);
+		super.onDestroy();
+	}
+	
+	private ServiceConnection mServiceConnection = new ServiceConnection() {
+	    @Override
+		public void onServiceConnected(ComponentName classname, IBinder obj) {
+	        try{
+		    	mService = IRockOnNextGenService.Stub.asInterface(obj);
+		         mService.trackPage(Constants.ANALYTICS_PREFERENCES_PAGE);
+	        } catch(RemoteException e) {
+	        	e.printStackTrace();
+	        }
+	    }
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 	
 	private void initPreferences(){
 		/* Use headset */
@@ -202,8 +239,10 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 				+ " (" + DirectoryFilter.getStorageReadableAvailable(getApplicationContext(), storageType) 
 				+ " " + getString(R.string.preference_storage_free)
 				+ ").";
+				setDirFilter(true);
 			} else {
 				summary = getString(R.string.preference_storage_media_not_mounted);
+				setDirFilter(false);
 			}
 			Log.i(TAG, Environment.getExternalStorageState());
 		} else if (DirectoryFilter.getStorageType() == DirectoryFilter.INTERNAL_STORAGE) {
@@ -212,10 +251,21 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 			+ " (" + DirectoryFilter.getStorageReadableAvailable(getApplicationContext(), storageType) 
 			+ " " + getString(R.string.preference_storage_free)
 			+ ").";
+			setDirFilter(false);
 		}
 
 		pref.setTitle(title);
 		pref.setSummary(summary);
+	}
+	
+	private void setDirFilter(boolean enabled) {
+		Preference dirPref = ((Preference)findPreference(getString(R.string.preference_key_directory_filter)));
+		dirPref.setEnabled(enabled);
+		if(enabled) {
+			// stuff...
+		} else {
+			// something else
+		}
 	}
 	
 	OnClickListener mChosenStorageTypeListener = new OnClickListener() {

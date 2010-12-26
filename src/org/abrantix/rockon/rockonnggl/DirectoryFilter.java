@@ -167,7 +167,8 @@ public class DirectoryFilter {
 							return false;
 					}
 				});
-		Arrays.sort(dirs, mFileNameComparator);
+		if(dirs != null)
+			Arrays.sort(dirs, mFileNameComparator);
 		return dirs;
 	}
 			
@@ -184,14 +185,14 @@ public class DirectoryFilter {
 				}
 				if(storageType == EXTERNAL_STORAGE) {
 					stmt += (MediaStore.Audio.Media.DATA
-							+ " like '" //'%"
+							+ " like \"" //'%"
 							+ Environment.getExternalStorageDirectory().getAbsolutePath() 
-							+ "/" + stmtArray[i] + "%'");
+							+ "/" + stmtArray[i] + "%\"");
 				} else {
 					stmt += (MediaStore.Audio.Media.DATA
-							+ " like '" //'%"
+							+ " like \"" //'%"
 							+ getInternalStorageRoot(ctx) 
-							+ "/" + stmtArray[i] + "%'");
+							+ "/" + stmtArray[i] + "%\"");
 				}
 //				Log.i(TAG, i + " --- " + stmt);
 			}

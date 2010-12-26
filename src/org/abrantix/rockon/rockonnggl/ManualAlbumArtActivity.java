@@ -4,14 +4,18 @@ import org.abrantix.rockon.rockonnggl.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.PixelFormat;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,6 +36,7 @@ public class ManualAlbumArtActivity extends Activity{
 	boolean					mManualSearch = false;
 	static String			mManualArtist;
 	static String			mManualAlbum;
+	IRockOnNextGenService	mService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +54,30 @@ public class ManualAlbumArtActivity extends Activity{
 			showAlbumChooser();
 			attachListeners();
 		}
-	}
+		
+		Intent i = new Intent(this, RockOnNextGenService.class);
+    	startService(i);
+    	bindService(i, mServiceConnection, BIND_AUTO_CREATE);
+    }
 	
+	private ServiceConnection mServiceConnection = new ServiceConnection() {
+	    @Override
+		public void onServiceConnected(ComponentName classname, IBinder obj) {
+	        try{ 
+	        	mService = IRockOnNextGenService.Stub.asInterface(obj);
+	        	mService.trackPage(Constants.ANALYTICS_MANUAL_ART_PAGE);
+	        } catch(RemoteException e) {
+	        	e.printStackTrace();
+	        }
+	    }
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	 
 	@Override
 	protected void onStart() {
 		// TODO Auto-generated method stub
@@ -60,6 +87,7 @@ public class ManualAlbumArtActivity extends Activity{
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
+		
 		super.onResume();
 	}
 	
@@ -80,6 +108,8 @@ public class ManualAlbumArtActivity extends Activity{
 		// TODO Auto-generated method stub
 		if(mChooserAdapter != null)
 			mChooserAdapter.stopAndClean();
+		if(mService != null)
+			unbindService(mServiceConnection);
 		super.onDestroy();
 	}
 	

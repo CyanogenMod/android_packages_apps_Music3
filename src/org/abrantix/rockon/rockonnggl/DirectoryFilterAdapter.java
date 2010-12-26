@@ -37,12 +37,17 @@ public class DirectoryFilterAdapter extends BaseAdapter{
 	
 	@Override
 	public int getCount() {
-		return mAllDirs.length;
+		if(mAllDirs != null)
+			return mAllDirs.length;
+		else 
+			return 0;
 	}
 
 	@Override
 	public Object getItem(int arg0) {
-		return mAllDirs[arg0];
+		if(mAllDirs != null)
+			return mAllDirs[arg0];
+		else return null;
 	}
 
 	@Override

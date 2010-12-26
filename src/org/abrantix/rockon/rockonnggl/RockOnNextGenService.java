@@ -688,12 +688,12 @@ public class RockOnNextGenService extends Service {
     	 * ANALYTICS
     	 **********************/
     	if(mAnalytics != null) {
-	    	mAnalytics.trackPageView("/Unbind");
+//	    	mAnalytics.trackPageView("/Unbind");
 	    	if(mBindingTimes.size() > 0) {
 		    	int duration = (int) (System.currentTimeMillis() - mBindingTimes.get(mBindingTimes.size()-1));
 		    	mBindingTimes.remove(mBindingTimes.size()-1);
 		    	mAnalytics.trackEvent("Duration", "Time bound", "From UI?", duration);
-		    	mAnalytics.dispatch();
+//		    	mAnalytics.dispatch();
 	    	}
     	}
     	/**********************/
@@ -2485,6 +2485,31 @@ public class RockOnNextGenService extends Service {
     }
     
     /**
+     * Analytics
+     * 
+     * @param pageName
+     */
+    public void trackPage(String pageName) {
+    	if(mAnalytics != null) {
+    		mAnalytics.trackPageView(pageName);
+    	}
+    }
+    
+    /**
+     * Analytics
+     * 
+     * @param cat
+     * @param action
+     * @param label
+     * @param val
+     */
+    public void trackEvent(String cat, String action, String label, int val) {
+    	if(mAnalytics != null) {
+    		mAnalytics.trackEvent(cat, action, label, val);
+    	}
+    }
+    
+    /**
      * Provides a unified interface for dealing with midi files and
      * other media files.
      */
@@ -2800,6 +2825,17 @@ public class RockOnNextGenService extends Service {
 			mService.get().unregisterScreenOnReceiver();
 		}
 
+		@Override 
+		public void trackPage(String pageName) throws RemoteException {
+			mService.get().trackPage(pageName);
+		}
+		
+		@Override
+	    public void trackEvent(String cat, String action, String label, int val) {
+			mService.get().trackEvent(cat, action, label, val);
+		}
+    
+		
     }
     
     private final IBinder mBinder = (IBinder) new ServiceStub(this);

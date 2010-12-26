@@ -429,6 +429,11 @@ public class Constants{
 	static final int	DONATION_STANDARD_INTERVAL = 30;
 	static final int	DONATION_AFTER_HAVING_DONATED_INTERVAL = 100000;
 	
+	/** Analytics */
+	static final String	ANALYTICS_MAIN_PAGE = "/RockOnNgGl";
+	static final String	ANALYTICS_MANUAL_ART_PAGE = "/ManualAlbumArt";
+	static final String ANALYTICS_PREFERENCES_PAGE = "/Preferences";
+	
 	/** Preference keys */ // could be set also in values/preference_strings.xml
 	static final String	prefkey_mBrowseCatMode = "mBrowseCatMode";
 	static final String	prefkey_mRendererMode = "mRendererMode";

@@ -3883,6 +3883,7 @@ public class RockOnNextGenGL extends Activity {
             try {
             	// need to pass preferences to service (service runs in separate process)
             	setPreferencesInService();
+            	mService.trackPage(Constants.ANALYTICS_MAIN_PAGE);
             	
             	/**
             	 * Now let us resume the state
@@ -3916,6 +3917,8 @@ public class RockOnNextGenGL extends Activity {
 //            }
 //            finish();
         }
+        
+        
         public void onServiceDisconnected(ComponentName classname) {
         }
 };

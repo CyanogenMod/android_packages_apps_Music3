@@ -50,5 +50,8 @@ interface IRockOnNextGenService
     void unregisterScreenOnReceiver();
     void prepareForCrash();
     
+    void trackPage(String pageName);
+    void trackEvent(String cat, String action, String label, int val);
+    
 }
 
