@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
 import android.app.KeyguardManager.OnKeyguardExitResult;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.inputmethodservice.Keyboard.Key;
 import android.os.Build;
@@ -58,6 +60,7 @@ public class LockScreen extends Activity{
 	public void onStart()
 	{
 		super.onStart();
+    	attachBroadcastReceivers();
 		Log.i(TAG, "START");
 	}
 	
@@ -441,6 +444,30 @@ public class LockScreen extends Activity{
 			e.printStackTrace();
 		}
 	}
+
+    /**
+     * attachBroadcastReceivers
+     */
+    private void attachBroadcastReceivers(){
+    	/* service play status update */
+        IntentFilter f = new IntentFilter();
+        f.addAction(Constants.PLAYSTATE_CHANGED);
+        f.addAction(Constants.META_CHANGED);
+        f.addAction(Constants.PLAYBACK_COMPLETE);
+        registerReceiver(mStatusListener, new IntentFilter(f));
+    }
+
+    private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+            	//don't need to worry about the type of intent - all the registered types have the same handling.
+            	updateFields();
+            } catch(Exception e){
+            	e.printStackTrace();
+            }
+        }
+    };
 	
 	ServiceConnection mServiceConnection = new ServiceConnection() {
 		
