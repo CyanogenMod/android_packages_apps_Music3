@@ -1264,6 +1264,39 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     	}
     }
     
+    int getElementId(int position){
+    	if(mCursor == null ||
+    		mCursor.isClosed() ||
+			/**
+			 * FIXME: this is a quick cursor overflow bugfix, unverified
+			 */
+    		position > mCursor.getCount() - 1 ||
+    		position < 0)
+    	{
+//    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
+    		return -1;
+    	}
+    	else{
+    		int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition(position);
+    		int id = -1;
+    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+    		{
+	    		id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Albums._ID));
+    		}
+    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+    		{
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Artists._ID));
+    		}
+    		mCursor.moveToPosition(tmpIndex);
+    		return id;
+    	}
+    }
+    
     /** get the current Album Name */
     String getShownAlbumName(float x, float y){
     	if(mTargetPositionY != mPositionY)
@@ -1277,6 +1310,16 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     		mCursor.moveToPosition(tmpIndex);
     		return albumName;
     	}	
+    }
+    
+    String getAlbumName(int position){
+		int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String albumName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ALBUM));
+		mCursor.moveToPosition(tmpIndex);
+		return albumName;	
     }
     
     /** get the current Album Name */
@@ -1294,8 +1337,23 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     	}
     }
     
+    String getAlbumArtistName(int position){
+		int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String artistName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ARTIST));
+		mCursor.moveToPosition(tmpIndex);
+		return artistName;
+    }
+    
     /** get the shown song name */
     String getShownSongName(float x, float y)
+    {
+    	return null;
+    }
+    
+    String getSongName(int position)
     {
     	return null;
     }

@@ -207,6 +207,8 @@ public class NavGLTouchListener implements OnTouchListener{
 								mMsg.what = Constants.SINGLE_CLICK;
 								mMsg.arg1 = (int) event.getX();
 								mMsg.arg2 = (int) event.getY();
+								int pos = mRenderer.getShownPosition(event.getX(), event.getY()); 
+								mMsg.obj = new Integer(pos);
 								mClickHandler.sendMessageDelayed(
 										mMsg, 
 										mRenderer.getClickActionDelay());
@@ -215,6 +217,7 @@ public class NavGLTouchListener implements OnTouchListener{
 	//									mRenderer.getClickActionDelay());
 	//									Constants.CLICK_ACTION_DELAY);
 								mRenderer.showClickAnimation(event.getX(), event.getY());
+								
 							}
 							return false;
 						} 

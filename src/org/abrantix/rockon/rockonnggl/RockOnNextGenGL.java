@@ -149,7 +149,7 @@ public class RockOnNextGenGL extends Activity {
     }
 
     private void registerRemoteControl() {
-        try {
+    	try {
             if (mRegisterMediaButtonEventReceiver == null) {
                 return;
             }
@@ -2890,15 +2890,21 @@ public class RockOnNextGenGL extends Activity {
 	Handler mAlbumClickHandler = new Handler(){
 		int	x;
 		int	y;
+		int position;
 		@Override
 		public void handleMessage(Message msg){
 			x = msg.arg1;
 			y = msg.arg2;
+			if(msg.obj != null)
+				position = (Integer)msg.obj;
+			else
+				position = mRockOnRenderer.getShownPosition(x, y);
 			if(msg.what == Constants.SINGLE_CLICK){
 				if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ALBUM)
 				{
 					/* song list cursor */
-					int albumId = mRockOnRenderer.getShownElementId(x, y);
+//					int albumId = mRockOnRenderer.getShownElementId(x, y);
+					int albumId = mRockOnRenderer.getElementId(position);
 					if(albumId < 0)
 					{
 						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
@@ -2908,13 +2914,16 @@ public class RockOnNextGenGL extends Activity {
 					showSongListDialogFromAlbum(
 							albumId, 
 							Constants.NO_SPECIFIC_ARTIST, // no specific artist
-							mRockOnRenderer.getShownAlbumArtistName(x, y),
-							mRockOnRenderer.getShownAlbumName(x, y));
+							mRockOnRenderer.getAlbumArtistName(position),
+							mRockOnRenderer.getAlbumName(position));
+//							mRockOnRenderer.getShownAlbumArtistName(x, y),
+//							mRockOnRenderer.getShownAlbumName(x, y));
 				}
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ARTIST)
 				{
 					/* song list cursor */
-					int artistId = mRockOnRenderer.getShownElementId(x, y);
+//					int artistId = mRockOnRenderer.getShownElementId(x, y);
+					int artistId = mRockOnRenderer.getElementId(position);
 					if(artistId < 0){
 						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 						return;
@@ -2922,13 +2931,15 @@ public class RockOnNextGenGL extends Activity {
 					
 					showAlbumListDialogFromArtist(
 							artistId,
-							mRockOnRenderer.getShownAlbumArtistName(x, y));
+							mRockOnRenderer.getAlbumArtistName(position));
+//							mRockOnRenderer.getShownAlbumArtistName(x, y));
 
 				}
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_SONG)
 				{
 					/* song list cursor */
-					int songId = mRockOnRenderer.getShownElementId(x, y);
+//					int songId = mRockOnRenderer.getShownElementId(x, y);
+					int songId = mRockOnRenderer.getElementId(position);
 					Log.i(TAG, "SongId: "+songId);
 					if(songId < 0){
 						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
@@ -2952,8 +2963,8 @@ public class RockOnNextGenGL extends Activity {
 				{
 					// start album chooser activity
 					Intent intent = new Intent(RockOnNextGenGL.this, ManualAlbumArtActivity.class);
-//					Log.i(TAG, "sending intent extra: "+mRockOnRenderer.getShownAlbumId(x, y));
-					intent.putExtra("albumId", (long)mRockOnRenderer.getShownElementId(x, y));
+//					intent.putExtra("albumId", (long)mRockOnRenderer.getShownElementId(x, y));
+					intent.putExtra("albumId", (long)mRockOnRenderer.getElementId(position));
 					startActivityForResult(intent, Constants.ALBUM_ART_CHOOSER_ACTIVITY_REQUEST_CODE);
 				}
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_ARTIST)
@@ -2968,13 +2979,15 @@ public class RockOnNextGenGL extends Activity {
 				else if(mRockOnRenderer.getBrowseCat() == Constants.BROWSECAT_SONG)
 				{
 					/* song options */
-					int songId = mRockOnRenderer.getShownElementId(x, y);
+//					int songId = mRockOnRenderer.getShownElementId(x, y);
+					int songId = mRockOnRenderer.getElementId(position);
 					if(songId < 0){
 						this.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 						return;
 					}
 					
-					String songName = mRockOnRenderer.getShownSongName(x,y);
+//					String songName = mRockOnRenderer.getShownSongName(x,y);
+					String songName = mRockOnRenderer.getSongName(position);
 					
 					// Show song options
 					showSongOptionsDialog(songId, songName);

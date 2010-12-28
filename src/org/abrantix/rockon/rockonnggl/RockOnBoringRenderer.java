@@ -1170,6 +1170,54 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	}
     }
     
+    int getElementId(int position){
+    	if(mCursor == null ||
+    		mCursor.isClosed() ||
+			/**
+			 * FIXME: this is a quick cursor overflow bugfix, unverified
+			 */
+    		position > mCursor.getCount() - 1 ||
+    		position < 0)
+//    		(int) mPositionY > mAlbumCursor.getCount() - 1)
+    	{
+//    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
+    		return -1;
+    	}
+    	else{
+    		int tmpIndex = mCursor.getPosition();
+    		
+    		// validate idx -- bug report
+    		mCursor.moveToPosition(position);
+//    		cursorIdxValidation = getPositionFromScreenCoordinates(x, y);
+//    		if(cursorIdxValidation < 0)
+//    			mAlbumCursor.moveToFirst();
+//    		else if(cursorIdxValidation >= mAlbumCursor.getCount())
+//    			mAlbumCursor.moveToLast();
+//    		else
+//    			mAlbumCursor.moveToPosition(cursorIdxValidation);
+
+    		int id = -1;
+    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+	    		id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Albums._ID));
+    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Artists._ID));
+    		else if(mBrowseCat == Constants.BROWSECAT_SONG)
+    			id = mCursor.getInt(
+	    				mCursor.getColumnIndexOrThrow(
+	    						MediaStore.Audio.Media._ID));
+    		
+    		// reinstate previous state
+    		mCursor.moveToPosition(tmpIndex);
+    		
+    		// answer with element id
+    		return id;
+    	}
+    }
+    
     /** get the current Album Name */
     String getShownAlbumName(float x, float y){
     	if(mTargetPositionY != mPositionY)
@@ -1185,6 +1233,17 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     	}	
     }
     
+    String getAlbumName(int position){
+		int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String albumName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ALBUM));
+		mCursor.moveToPosition(tmpIndex);
+		return albumName;
+    }
+    
+    
     /** get the current Album Name */
     String getShownAlbumArtistName(float x, float y){
     	if(mTargetPositionY != mPositionY)
@@ -1198,6 +1257,16 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     		mCursor.moveToPosition(tmpIndex);
     		return artistName;
     	}
+    }
+    
+    String getAlbumArtistName(int position){
+		int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String artistName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ARTIST));
+		mCursor.moveToPosition(tmpIndex);
+		return artistName;
     }
     
     /** Get the Clicked Song Name */
@@ -1215,6 +1284,23 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 	    		mCursor.moveToPosition(tmpIndex);
 	    		return songName;
 	    	}
+    	}
+    	else
+    	{
+    		return null;
+    	}
+    }
+    
+    String getSongName(int position){
+    	if(mBrowseCat == Constants.BROWSECAT_SONG)
+    	{
+	    	int tmpIndex = mCursor.getPosition();
+    		mCursor.moveToPosition(position);
+    		String songName = mCursor.getString(
+    				mCursor.getColumnIndexOrThrow(
+    						MediaStore.Audio.Media.TITLE));
+    		mCursor.moveToPosition(tmpIndex);
+    		return songName;
     	}
     	else
     	{

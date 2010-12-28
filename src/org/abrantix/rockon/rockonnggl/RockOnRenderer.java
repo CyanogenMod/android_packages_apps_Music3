@@ -115,6 +115,18 @@ public abstract class RockOnRenderer{
     
     /** get the shown song Name */
     abstract String getShownSongName(float x, float y);
+        
+    /** get the current Album/Artist/... Id */
+    abstract int getElementId(int position);
+    
+    /** get the shown Album Name */
+    abstract String getAlbumName(int position);
+    
+    /** get the shown Album Artist Name */
+    abstract String getAlbumArtistName(int position);
+    
+    /** get the shown song Name */
+    abstract String getSongName(int position);
     
     /** move navigator to the specified album Id */
     abstract int setCurrentByAlbumId(long albumId);
