@@ -1028,8 +1028,13 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     
     /* optimization */
     double itvlFromLastRender;
+	float MORPH_MIN_SCROLL;
+	float MORPH_SMOOTH;
+	float MORPH_MAX_SCROLL;
     private boolean updatePosition(boolean force){
-    	    	
+    	MORPH_MIN_SCROLL = 0.4f * Constants.MIN_SCROLL;
+    	MORPH_SMOOTH = 1.f * Constants.SCROLL_SPEED_SMOOTHNESS;
+    	MORPH_MAX_SCROLL = 0.9f * Constants.MAX_SCROLL;	    	
     	/** time independence */
     	itvlFromLastRender = 
     		Math.min(
@@ -1071,22 +1076,22 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
 					Math.min(
 						Math.max(
 								updateFraction
-									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+									* MORPH_SMOOTH * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* .2f * Constants.MIN_SCROLL)
+									* .2f * MORPH_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * 5.f *Constants.MAX_SCROLL);
+					, updateFraction * 5.f *MORPH_MAX_SCROLL);
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction
-								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+								* MORPH_SMOOTH * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* .2f * -Constants.MIN_SCROLL)
+								* .2f * -MORPH_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * 5.f * -Constants.MAX_SCROLL);
+					, updateFraction * 5.f * -MORPH_MAX_SCROLL);
 
 		/** are we outside the limits of the album list?*/
     	if(mCursor != null){
@@ -1226,7 +1231,10 @@ public class RockOnMorphRenderer extends RockOnRenderer implements GLSurfaceView
     
     /** get the current position */
     int	getShownPosition(float x, float y){
-    	return (int) mPositionY;
+    	if(mTargetPositionY > mPositionY)
+    		return (int) (mPositionY + 1);
+    	else
+    		return (int) mPositionY;
     }
     
     /** get the current Album Id */

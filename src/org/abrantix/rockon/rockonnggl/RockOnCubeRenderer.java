@@ -1126,8 +1126,14 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /* optimization */
     double itvlFromLastRender;
+    float CUBE_MIN_SCROLL;
+    float CUBE_SMOOTH;
+    float CUBE_MAX_SCROLL;
     private boolean updatePosition(boolean force){
-    	    	
+    	CUBE_MIN_SCROLL = 0.5f * Constants.MIN_SCROLL;
+    	CUBE_SMOOTH = 1.2f * Constants.SCROLL_SPEED_SMOOTHNESS;
+    	CUBE_MAX_SCROLL = 0.9f * Constants.MAX_SCROLL;
+    	
     	/** time independence */
     	itvlFromLastRender = 
     		Math.min(
@@ -1157,22 +1163,22 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 					Math.min(
 						Math.max(
 								updateFraction * 
-									Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
+									CUBE_SMOOTH * (mTargetPositionX-mPositionX), 
 								updateFraction * 
-									Constants.MIN_SCROLL)
+									CUBE_MIN_SCROLL)
 						, mTargetPositionX-mPositionX)
-					, updateFraction * Constants.MAX_SCROLL);
+					, updateFraction * CUBE_MAX_SCROLL);
 		else if(mTargetPositionX < mPositionX)
 			mPositionX	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction * 
-								Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionX-mPositionX), 
+								CUBE_SMOOTH * (mTargetPositionX-mPositionX), 
 							updateFraction * 
-								-Constants.MIN_SCROLL)
+								-CUBE_MIN_SCROLL)
 						, mTargetPositionX-mPositionX)
-					, updateFraction * -Constants.MAX_SCROLL);
+					, updateFraction * -CUBE_MAX_SCROLL);
 		/**
 		 * Finished scrolling X
 		 */
@@ -1224,22 +1230,22 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
 					Math.min(
 						Math.max(
 								updateFraction
-									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+									* CUBE_SMOOTH * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* Constants.MIN_SCROLL)
+									* CUBE_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * Constants.MAX_SCROLL);
+					, updateFraction * CUBE_MAX_SCROLL);
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction
-								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+								* CUBE_SMOOTH * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* -Constants.MIN_SCROLL)
+								* -CUBE_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * -Constants.MAX_SCROLL);
+					, updateFraction * -CUBE_MAX_SCROLL);
 
 		/** are we outside the limits of the album list?*/
     	if(mCursor != null){
@@ -1546,7 +1552,10 @@ public class RockOnCubeRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /** get the current position */
     int	getShownPosition(float x, float y){
-    	return (int) mPositionY;
+    	if(mTargetPositionY > mPositionY)
+    		return (int) (mPositionY + 1);
+    	else
+    		return (int) mPositionY;
     }
     
     /** get the current Album Id */

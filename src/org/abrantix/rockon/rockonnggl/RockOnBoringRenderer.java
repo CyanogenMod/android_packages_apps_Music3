@@ -945,8 +945,13 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
     
     /* optimization */
     double itvlFromLastRender;
+    float BORING_MIN_SCROLL;
+	float BORING_SMOOTH;
+	float BORING_MAX_SCROLL;
     private boolean updatePosition(boolean force){
-    	
+    	BORING_MIN_SCROLL = 0.2f * Constants.MIN_SCROLL;
+    	BORING_SMOOTH = 1.f * Constants.SCROLL_SPEED_SMOOTHNESS;
+    	BORING_MAX_SCROLL = 1.f * Constants.MAX_SCROLL;	  	
     	/** time independence */
     	itvlFromLastRender = 
     		Math.min(
@@ -980,22 +985,22 @@ public class RockOnBoringRenderer extends RockOnRenderer implements GLSurfaceVie
 					Math.min(
 						Math.max(
 								updateFraction
-									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+									* BORING_SMOOTH * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* .5f * Constants.MIN_SCROLL)
+									* .5f * BORING_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * Constants.MAX_SCROLL * 111112.f); // XXX *4.f is a HACK
+					, updateFraction * BORING_MAX_SCROLL * 12.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction
-								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+								* BORING_SMOOTH * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* .5f * -Constants.MIN_SCROLL)
+								* .5f * -BORING_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * -Constants.MAX_SCROLL * 11111112.f); // XXX *4.f is a HACK
+					, updateFraction * -BORING_MAX_SCROLL * 12.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
     	if(mCursor != null){

@@ -934,8 +934,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /* optimization */
     double itvlFromLastRender;
+    float WALL_MIN_SCROLL;
+    float WALL_SMOOTH;
+    float WALL_MAX_SCROLL;
     private boolean updatePosition(boolean force){
-    	
+    	WALL_MIN_SCROLL = 0.25f * Constants.MIN_SCROLL;
+    	WALL_SMOOTH = 1.f * Constants.SCROLL_SPEED_SMOOTHNESS;
+    	WALL_MAX_SCROLL = 1.f * Constants.MAX_SCROLL;
+    
     	/** time independence */
     	itvlFromLastRender = 
     		Math.min(
@@ -969,22 +975,22 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 					Math.min(
 						Math.max(
 								updateFraction
-									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+									* WALL_SMOOTH * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* .05f * Constants.MIN_SCROLL)
+									* .05f * WALL_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
+					, updateFraction * WALL_MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction
-								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+								* WALL_SMOOTH * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* .05f * -Constants.MIN_SCROLL)
+								* .05f * -WALL_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * -Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
+					, updateFraction * -WALL_MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
     	if(mCursor != null){
