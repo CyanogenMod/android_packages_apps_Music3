@@ -49,7 +49,4 @@
 	    android:textSize="16dp"
 	    android:textColor="#ffaaaaaa"
 	    />
-	    
-
-	
 </RelativeLayout>
