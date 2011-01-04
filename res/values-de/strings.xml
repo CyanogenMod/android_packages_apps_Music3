@@ -146,18 +146,18 @@
 	<!--    HALF TONE DIALOG -->
 	<string name="half_tone_dialog_title">Half Tone Theme</string>
 	<string name="half_tone_dialog_message">
-		Half tone muss die aktuellen Album-Cover aufbereiten. Dies ist eine Prozessor-intensive Aufgabe und wird einige Zeit benötigen (~1 Min. für je 30 Alben).
+		Half tone muss die aktuellen Album-Cover aufbereiten. Dies ist eine Prozessor-intensive Aufgabe und wird einige Zeit benötigen (ca. 1 Min. für je 30 Alben).
 	</string>
 	<string name="half_tone_dialog_yes">Mach es!</string>
-	<string name="half_tone_dialog_no">Sieht schwierig aus. Abbrechen!</string>
+	<string name="half_tone_dialog_no">Leiber nicht. Abbrechen!</string>
 	
 	<!--    EARTHQUAKE DIALOG -->
 	<string name="earthquake_dialog_title">Earthquake Theme</string>
 	<string name="earthquake_dialog_message">
-		Earthquake muss die aktuellen Album-Cover aufbereiten. Dies ist eine Prozessor-intensive Aufgabe und wird einige Zeit benötigen (~1 Min. für je 30 Alben).
+		Earthquake muss die aktuellen Album-Cover aufbereiten. Dies braucht etwas Zeit. (ca. 10 Sekunden für 100 Alben).
 	</string>
-	<string name="earthquake_dialog_yes">Mach es!</string>
-	<string name="earthquake_dialog_no">Sieht schwierig aus. Abbrechen!</string>
+	<string name="earthquake_dialog_yes">Ja</string>
+	<string name="earthquake_dialog_no">Lieber nicht. Abbrechen!</string>
 	
 	<!--	ACTIVITY INTENTS (some of them)-->
 	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
@@ -201,4 +201,17 @@
 <!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
 <!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
 <!--	</string>-->
+
+<!--	DIRECTORY FILTER	-->
+<string name="directories_on_sdcard">Deine SD-Karte enthält die folgenden Ordner:</string>
+<string name="select_all">Alle auswählen</string>
+<string name="unselect_all">Keine auswählen</string>
+
+<!--	GENERIC STUFF -->
+<string name="ok">OK</string>
+<string name="back">Zurück</string>
+<string name="all">Alle</string>
+<string name="none">Keine</string>
+
+
 </resources>
