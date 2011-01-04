@@ -380,19 +380,19 @@ public class LockScreen extends Activity{
 		public void onClick(View v) {
 			if(v.getId() == R.id.control_next_lock)
 			{
-				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				hapticFeedback(v);
 				doNext();
 				updateFields();
 			}
 			else if(v.getId() == R.id.control_play_lock)
 			{
-				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				hapticFeedback(v);
 				doPlayPause();
 				updateFields();
 			}
 			else if(v.getId() == R.id.control_prev_lock)
 			{
-				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+				hapticFeedback(v);
 				doPrevious();
 				updateFields();
 			}
@@ -449,6 +449,11 @@ public class LockScreen extends Activity{
 		}
 	}
 
+	private void hapticFeedback(View v)
+	{
+		if (android.os.Build.VERSION.SDK_INT >= 5)
+			v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+	}
     /**
      * attachBroadcastReceivers
      */
