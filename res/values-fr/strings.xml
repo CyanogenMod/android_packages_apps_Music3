@@ -26,19 +26,19 @@
 <string name="get_art_dialog_no">Non.</string>
 
 <!-- ART DOWNLOAD MESSAGES-->
-<string name="art_download_no_inet">Sans connexion internet!</string>
+<string name="art_download_no_inet">Il n\'y a pas de connexion internet!</string>
 <string name="art_download_progress_title">Téléchargement des pochettes</string>
 <string name="art_download_cancel">Annuler</string>
 <string name="art_download_progress_initial_message">Recherche de pochettes...</string>
 
 <!-- NO SDCARD MESSAGES -->
-<string name="no_sd_card_dialog_title">Pas d\'accès à la mémoire SD!</string>
-<string name="no_sd_card_dialog_message">Veuillez insérer une mémoire SD...</string>
+<string name="no_sd_card_dialog_title">Pas d\'accès à la carte mémoire!</string>
+<string name="no_sd_card_dialog_message">Veuillez insérer une carte mémoire...</string>
 <string name="no_sd_card_dialog_continue_anyway">Continuer quand même</string>
 <string name="no_sd_card_dialog_exit">Sortir</string>
 <!-- NO MUSIC MESSAGES -->
 <string name="no_music_dialog_title">Pas de musique dans cette playlist!</string>
-<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta mémoire SD, s\'il vous plaît redémarrer l\'application ou changer de playlist...</string>
+<string name="no_music_dialog_message">On a pas trouvé les chansons de cette playlist dans ta carte mémoire. S\'il te plaît, redémarre l\'application ou change de playlist...</string>
 <string name="no_music_dialog_continue_anyway">Continuer quand même</string>
 <string name="no_music_dialog_exit">Sortir</string>
 
@@ -48,14 +48,14 @@
 <string name="concert_app_install_dialog_message">Ceci requiert l\'installation de Concerts³. L\'installer maintenant?</string>
 <string name="concert_app_install_dialog_ok">Oui</string>
 <string name="concert_app_install_dialog_cancel">Non!</string>
-<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
+<string name="concert_app_install_no_market_app_msg">Il semble que tu n\'as pas le Android Market installé =S</string>
 
 <!-- DOWNLOAD RELEASES APP MESSAGES-->
 <string name="releases_app_install_dialog_title">Installer Releases³</string>
-<string name="releases_app_install_dialog_message">Ceci requiert l\'installation de Releases³. Le faire maintenant?</string>
+<string name="releases_app_install_dialog_message">Ceci requiert l\'installation de Releases³. L\'installer maintenant?</string>
 <string name="releases_app_install_dialog_ok">Oui</string>
 <string name="releases_app_install_dialog_cancel">Non!</string>
-<string name="releases_app_install_no_market_app_msg">Il semble que tu n\'ais pas le Market d\'installé =S</string>
+<string name="releases_app_install_no_market_app_msg">Il semble que tu n\'as pas le Android Market installé =S</string>
 
 <!-- TOASTER MESSAGES -->
 <string name="song_added_to_playlist">Chanson ajoutée à la playlist</string>
@@ -87,12 +87,12 @@
 
 <!-- DELETE SONG DIALOG -->
 <string name="song_delete_confirm_title">Effacer la chanson</string>
-<string name="song_delete_message">Etes vous sûr de vouloir effacer cette chanson? Cette opération n\'est pas réversible.</string>
+<string name="song_delete_message">Es-tu sûr de vouloir effacer cette chanson? Cette opération n\'est pas réversible.</string>
 <string name="song_delete_positive_button">Oui!</string>
 <string name="song_delete_negative_button">Non.</string>
 <!-- DELETE PLAYLIST DIALOG -->
 <string name="playlist_delete_confirm_title">Effacer la playlist</string>
-<string name="playlist_delete_message">Etes vous sûr de vouloir effacer cette playlist?</string>
+<string name="playlist_delete_message">Es-tu sûr de vouloir effacer cette playlist?</string>
 <string name="playlist_delete_positive_button">Oui!</string>
 <string name="playlist_delete_negative_button">Non.</string>
 
@@ -189,7 +189,7 @@ Le thème Tremblement de Terre necessite de traiter tes pochettes. C\'est une t�
 <string name="widget_app_start">Commencer ³</string>
 
 <!-- BUG REPORTS -->
-<string name="bug_report_intro_part_one">Ouch!\n\nRockOn v</string>
+<string name="bug_report_intro_part_one">Aille!\n\nRockOn v</string>
 <string name="bug_report_intro_part_two">Erreur! S\'il te plaît envois-moi un mail pour que je comprenne ce qu\'il s\'est passé, et le corriger.\n</string>
 
 <!-- <string name="bug_report_intro">-->
@@ -197,6 +197,18 @@ Le thème Tremblement de Terre necessite de traiter tes pochettes. C\'est une t�
 <!-- <xliff:g id="APP_VERSION">%s</xliff:g>-->
 <!-- \" Error! Por favor enviame un mail asi vea que paso, y pueda solucionarlo.\n"-->
 <!-- </string>-->
+
+	<!--	DIRECTORY FILTER	-->
+	<string name="directories_on_sdcard">Ta carte mémoire contient les répertoires suivants:</string>
+	<string name="select_all">Tout sélectionner</string>
+	<string name="unselect_all">Tout désélectionner</string>
+
+	<!--	GENERIC STUFF -->
+	<string name="ok">Ok</string>
+	<string name="back">Arrière</string>
+	<string name="all">Tous</string>
+	<string name="none">Aucun</string>
+
 </resources>
 
 
