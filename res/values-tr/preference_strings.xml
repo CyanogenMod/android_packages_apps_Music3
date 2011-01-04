@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--	VERSION	-->
+    <string name="preference_key_version">Version</string>
+    
+	<!--	DOWNLOAD STATE    -->
+    <string name="preference_key_downloading_art_state">DownloadingArt</string>
+    
+	<!--	PLAYLIST STATE    -->
+<!--    <string name="preference_key_playlist_id">mPlaylistId</string>-->
+        
+	<!--	HEADSET BUTTONS    -->
+    <string name="preference_key_use_headset_buttons">UseHeadset</string>
+    <string name="preference_title_use_headset_buttons">Kulaklık kullan</string>
+    <string name="preference_summary_use_headset_buttons">Kulaklığınızdaki tuşlardan çalma, duraklatma ya da şarkıyı geçme gibi komutları yakalar.</string>
+
+	<!--	LOCK PORTRAIT    -->
+    <string name="preference_key_lock_portrait">LockPortrait</string>
+    <string name="preference_title_lock_portrait">Dikeye kilitle</string>
+    <string name="preference_summary_lock_portrait">Yatay ekrana uymayı engeller.</string>
+
+	<!--	LOCK SCREEN    -->
+    <string name="preference_key_lock_screen">LockScreen</string>
+    <string name="preference_title_lock_screen">Kilitli Ekran</string>
+    <string name="preference_summary_lock_screen">Ekran kilitliyken de kontrolleri gösterir.</string>
+
+	<!--	FULL SCREEN    -->
+    <string name="preference_key_full_screen">mFullScreen</string>
+    <string name="preference_title_full_screen">Tam ekran</string>
+    <string name="preference_summary_full_screen">Oynatıcıyı tam ekran çalıştır.</string>
+
+	<!--	CONTROLS ON BOTTOM    -->
+    <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
+    <string name="preference_title_controls_on_bottom">Baş parmak kontrolü</string>
+    <string name="preference_summary_controls_on_bottom">Kontrolleri ekranın alt tarafına yerleştirir.</string>
+
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">Dokununca sıraya koy</string>
+	<string name="preference_summary_queue_on_click">Şarkı seçildiğinde, hemen çalmak yerine sıraya koyar</string>
+
+	<!--	PREFER ARTIST SORTING    -->
+    <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
+    <string name="preference_title_prefer_artist_sorting">Sanatçı adına göre sırala</string>
+    <string name="preference_summary_prefer_artist_sorting">Şarkıları albüm adına göre değil, sanatçı adına göre sıralar.</string>
+
+	<!--	PREFERENCE CATEGORIES    -->
+    <string name="preference_category_general">Genel</string>
+    <string name="preference_category_sorting">Sıralama</string>
+    <string name="preference_category_album_art">Albüm resmi</string>
+    <string name="preference_category_other">Diğer</string>
+    
+	<!--	EMBEDDED ALBUM ART ONLY    -->
+	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
+    <string name="preference_title_embedded_album_art">Her zaman ID3 resmini kullan</string>
+    <string name="preference_summary_embedded_album_art">Düşük çözünürlükte de olsa, gömülü resim kullanılır.</string>
+
+    <!--    SCROBBLING -->
+    <string name="preference_scrobble_list_key">scrobbling</string>
+    <string name="preference_scrobble_list_title">Last.fm Scrobbling</string>
+    <string name="preference_scrobble_list_summary">Kullanılacak Scrobbler seç</string>
+    
+    <string name="preference_scrobble_name_dont">Scrobble yapma</string>
+    <string name="preference_scrobble_name_sls">Basit Last.fm Scrobbler</string>
+    <string name="preference_scrobble_name_sd">Scrobble Droid</string>
+    <string name="preference_scrobble_value_dont">no</string>
+    <string name="preference_scrobble_value_sls">sls</string>
+    <string name="preference_scrobble_value_sd">sd</string>
+    
+	<!--	CLEAR ALBUM ART    -->
+	<string name="preference_key_clear_album_art">clearAlbumArtKey</string>
+    <string name="preference_title_clear_album_art">Albüm resmini temizle</string>
+    <string name="preference_summary_clear_album_art">Albüm resmi yanlış albüme/sanatçıya atanmışsa kullanın</string>
+    <string name="preference_dialog_title_clear_album_art">Albüm resmi temizle</string>
+    <string name="preference_dialog_message_clear_album_art">Albüm resmi yanlış albüme/sanatçıya atanmışsa kullanın. Bu işlem /sdcard/albumthumbs/RockOnNg yolunu silecek. Bunu kullandıktan sonra \'Resim al\' menüsünü kullanmayı unutmayın.</string>
+    <string name="preference_dialog_positive_text_clear_album_art">Yap!</string>
+    <string name="preference_dialog_negative_text_clear_album_art">Hayır... Böyle iyi.</string>
+    
+	<!--	DONATE    -->
+    <string name="preference_key_donate">donate</string>
+    <string name="preference_title_donate">Bağış yapın</string>
+    
+	<!--	ADDITIONAL PREFERENCE CATEGORIES    -->
+    <string name="preference_category_storage">Depolama</string>
+    
+    <!--	STORAGE TYPE    -->
+    <string name="preference_key_storage_type">mStorageType</string>
+    <string name="preference_title_storage_type"></string>
+    <string name="preference_title_storage_type_internal">Dahili</string>
+    <string name="preference_title_storage_type_external">Harici</string>
+    <string name="preference_summary_storage_type"></string>
+    <string name="preference_storage_free">boş</string>
+    <string name="preference_storage_dialog_title">Depolama tipi</string>
+    <string name="preference_storage_media_not_mounted">Ortam takılı değil.</string>
+    
+    <!--	DIRECTORY FILTER    -->
+    <string name="preference_key_directory_filter">mDirectoryFilter</string>
+    <string name="preference_title_directory_filter">Dizin filtresi</string>
+    <string name="preference_summary_directory_filter">Müziklerinizin olduğu klasörleri seçin.</string>
+</resources>

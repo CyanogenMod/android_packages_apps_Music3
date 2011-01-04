@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!--	BROWSING CATEGORIES-->
+	<string name="browse_cat_album">Albümler</string>
+	<string name="browse_cat_artists">Sanatçılar</string>
+	<string name="browse_cat_songs">Şarkılar</string>
+
+	<!--	GENERAL STUFF -->
+	<string name="album">Albüm</string>
+	<string name="albums">Albümler</string>
+
+
+	<!--	INTRO SCREEN-->
+    <string name="intro_text_1">Rock</string>
+    <string name="intro_text_2">On</string>
+    <string name="intro_text_3">NextGen</string>
+    <string name="app_name">³</string>
+    
+	<!--    ALBUM ART MESSAGES-->
+	<string name="get_art_dialog_title">³ Albüm Resmi</string>
+	<string name="get_art_dialog_message">
+		³ internetten eksik albüm resimlerini indirebilir.Şimdi yapmak ister misiniz?(Her 10 albüm için ~1 dk sürecek ve bir wifi bağlantısıyla yapılması tavsiye edilir).
+	</string>
+	<string name="get_art_dialog_yes">Evet!</string>
+	<string name="get_art_dialog_no">Sonra Yaparım</string>
+
+	<!--	ART DOWNLOAD MESSAGES-->
+	<string name="art_download_no_inet">Internet bağlantısı yok!</string>
+	<string name="art_download_progress_title">Albüm Resmi İniyor</string>
+	<string name="art_download_cancel">İptal</string>
+	<string name="art_download_progress_initial_message">Albüm resmi aranıyor...</string>
+
+	<!--	NO SDCARD MESSAGES -->
+	<string name="no_sd_card_dialog_title">SD kart yok!</string>
+	<string name="no_sd_card_dialog_message">Lütfen bir SD kart takın...</string>
+	<string name="no_sd_card_dialog_continue_anyway">Yine de devam et</string>
+	<string name="no_sd_card_dialog_exit">Çık</string>
+	<!--	NO MUSIC MESSAGES -->
+	<string name="no_music_dialog_title">Çalma listesinde müzik yok!</string>
+	<string name="no_music_dialog_message">SD kartınızda müzik bulunamadı, lütfen uygulamayı tekrar çalıştırın ya da çalma listesini değiştirin...</string>
+	<string name="no_music_dialog_continue_anyway">Yine de devam et</string>
+	<string name="no_music_dialog_exit">Çık</string>
+
+	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
+	<string name="concert_app_install_dialog_title">Concerts³\'ü yükle</string>
+	<string name="concert_app_install_dialog_message">Bu özellik Concerts³\'ü yüklemeyi gerektirir. Şimdi yapmak istiyor musunuz?</string>
+	<string name="concert_app_install_dialog_ok">Evet</string>
+	<string name="concert_app_install_dialog_cancel">Hayır. Böyle kalsın!</string>
+	<string name="concert_app_install_no_market_app_msg">Ooops! Yüklü Market uygulaması bulunamadı.</string>
+
+	<!--	DOWNLOAD RELEASES APP MESSAGES-->
+	<string name="releases_app_install_dialog_title">Releases³\'ü yükle</string>
+	<string name="releases_app_install_dialog_message">Bu özellik Releases³\'ü yüklemeyi gerektirir. Şimdi yapmak istiyor musunuz?</string>
+	<string name="releases_app_install_dialog_ok">Evet</string>
+	<string name="releases_app_install_dialog_cancel">Hayır. Böyle kalsın!</string>
+	<string name="releases_app_install_no_market_app_msg">Ooops! Yüklü Market uygulaması bulunamadı.</string>
+
+	<!--	TOASTER MESSAGES	-->
+	<string name="song_added_to_playlist">Şarkı sıraya eklendi</string>
+	<string name="song_removed_from_playlist">Şarkı çıkartıldı</string>
+	<string name="album_art_changed">Albüm resmi değiştirildi</string>
+	<string name="playlist_empty_toast">Hata! Çalma listesi boş!</string>
+	<string name="playqueue_empty_toast">Şarkı sırası boş!</string>
+	<string name="not_an_album_toast">Üzgünüm, bu bir sanatçı, albüm değil!</string>
+	<string name="playlist_queued_toast">Çalma listesi eklendi</string>
+	<string name="generic_error_toast">Hata!</string>
+	<string name="playlist_deleted_toast">Çalma listesi silindi!</string>
+	<string name="song_deleted_toast">Şarkı silindi!</string>
+
+	<!-- 	SEARCH -->
+	<string name="search_hint">Şarkı ya da Sanatçı Adı</string>
+
+	<!--	PLAY QUEUE	-->
+	<string name="play_queue_title">Sırayı Çal</string>
+	<string name="clear_playlist_dialog_option">Temizle</string>
+	<string name="create_playlist_dialog_option">Kaydet</string>
+
+	<!--	SONG LISTS MORE RESULTS -->
+	<string name="song_list_more_results">şarkı...</string>
+
+	<!--	CREATE PLAYLIST DIALOG -->
+	<string name="create_playlist_dialog_title">Çalma Listesi Adı Seç</string>
+	<string name="create_playlist_dialog_save_option">Kaydet</string>
+	<string name="create_playlist_dialog_text_hint">Çalma listesi adını yazın...</string>
+
+	<!--	DELETE SONG DIALOG	-->
+	<string name="song_delete_confirm_title">Şarkıyı sil</string>
+	<string name="song_delete_message">Şarkıyı silmek istediğinizden emin misiniz? Bu işlem geri döndürülemez.</string>
+	<string name="song_delete_positive_button">Evet!</string>
+	<string name="song_delete_negative_button">Hayır.</string>
+
+	<!--	DELETE PLAYLIST DIALOG	-->
+	<string name="playlist_delete_confirm_title">Çalma listesini sil</string>
+	<string name="playlist_delete_message">Çalma listesini silmek istediğinizden emin misiniz?</string>
+	<string name="playlist_delete_positive_button">Evet!</string>
+	<string name="playlist_delete_negative_button">Hayır.</string>
+
+	<!--	CREATE PLAYLIST TOASTER	-->
+	<string name="create_playlist_toaster_added_part_1">Şarkılar çalma listesine eklendi</string>
+	<string name="create_playlist_toaster_failed">Çalma listesi oluşturulamadı!</string>
+	<string name="create_playlist_toaster_name_required">Liste adı gerekiyor...</string>
+
+	<!--	-->
+
+	<!--	ALBUM SONG LIST DIALOG -->
+	<string name="album_song_list_play_all">Hepsini çal</string>
+	<string name="album_song_list_queue_all">Hepsini sırala</string>
+
+	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_play_now">Şimdi çal</string>
+	<string name="song_option_add_to_queue">Sıraya ekle</string>
+	<string name="song_option_delete">Sil</string>
+
+	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_play_now">Şimdi çal</string>
+	<string name="playlist_option_add_to_queue">Sıraya ekle</string>
+	<string name="playlist_option_delete">Sil</string>
+
+	<!--	PLAYLIST DIALOG		-->
+	<string name="playlist_dialog_title">Şarkı listesi seç</string>
+	<string name="playlist_dialog_cancel">İptal</string>
+	<string name="playlist_all_title">Hepsini çal</string>
+	<string name="playlist_most_recent_title">Son zamanlar</string>
+	<string name="playlist_most_played_title">En çok çalınanlar</string>
+
+	<!-- 	VIEW MODES DIALOG -->
+	<string name="view_mode_cube">³</string>
+	<string name="view_mode_wall">Wall</string>
+	<string name="view_mode_boring">Boring</string>
+	<string name="view_mode_morph">Morph Flow</string>
+
+	<!-- 	THEMES DIALOG -->
+	<string name="theme_normal">Normal</string>
+	<string name="theme_halftone">Half tone</string>
+	<string name="theme_earthquake">Earthquake</string>
+
+	<!--	THEME PROCESSING MESSAGES	-->
+	<string name="art_processing_progress_title">Albüm Resmi İşleniyor</string>
+	<string name="art_processing_cancel">İptal</string>
+	<string name="art_processing_go_background">Arka planda yap</string>
+	<string name="art_processing_progress_initial_message">Albüm resmi aranıyor...</string>
+
+	<!--    HALF TONE DIALOG -->
+	<string name="half_tone_dialog_title">Half Tone Theme</string>
+	<string name="half_tone_dialog_message">
+		Half tone albüm resimlerinizi işlemelidir. Yoğun işlemci gerektirir ve bir süre alır (her 30 albüm için ~1 dk).
+	</string>
+	<string name="half_tone_dialog_yes">Yap!</string>
+	<string name="half_tone_dialog_no">Sorun gibi göründü. Çık!</string>
+
+	<!--    EARTHQUAKE DIALOG -->
+	<string name="earthquake_dialog_title">Earthquake Theme</string>
+	<string name="earthquake_dialog_message">
+		Earthquake albüm resimlerinizi işlemelidir. Ama bu daha kısa sürer, endişelenmeyin (100 albüm için 10 saniye).
+	</string>
+	<string name="earthquake_dialog_yes">Yap!</string>
+	<string name="earthquake_dialog_no">Sorun gibi göründü. Çık!</string>
+
+
+	<!--	ACTIVITY INTENTS (some of them)-->
+	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+
+	<!--	NOTIFICATION STRINGS -->
+	<string name="unknown_album_name">Bilinmeyen Albüm</string>
+	<string name="unknown_artist_name">Bilinmeyen Sanatçı</string>
+
+	<!-- 	MANUAL ALBUM ART MSGS -->
+	<string name="manual_albumart_error">Hata</string>
+	<string name="manual_albumart_no_album_specified">Albüm ismi belirtilmedi!</string>
+	<string name="manual_albumart_source">Kaynak</string>
+	<string name="manual_albumart_source_local">yerel</string>
+	<string name="manual_albumart_source_internet">internet</string>
+	<string name="manual_albumart_resolution_loading">yükleniyor...</string>
+	<string name="manual_albumart_resolution_unavailable">uygun değil</string>
+
+	<string name="manual_input_enable">Manuel arama</string>
+	<string name="manual_input_artist">Sanatçı</string>
+	<string name="manual_input_album">Albüm</string>
+
+	<!--	DONATE MSG	-->
+	<string name="donate_title">Bağış Yapın</string>
+	<string name="donate_msg">³ bedavadır ve boş zamanlarımda yazılmış bir çalıcıdır. Eğer sevdiyseniz, gelişmesi için bağışta bulunabilirsiniz. Aşağıdaki seçeneklerden biriyle bunu yapabilirsiniz:</string>
+	<string name="donate_using">Şu şekilde bağış yap</string>
+	<string name="donate_back_to_app">Geri dön</string>
+
+	<!--	UNLOCK SCREEN	-->
+	<string name="unlock_screen">Kilitle</string>
+
+	<!--	WIDGET STRINGS	-->
+	<string name="widget_app_start">³\'ü başlat</string>
+
+	<!--	BUG REPORTS	-->
+	<string name="bug_report_intro_part_one">Üzgünüm!\n\n3 (Cubed) v</string>
+	<string name="bug_report_intro_part_two">çöktü! Lütfen e-posta atın, böylece durumu analiz edip düzeltebilelim.\n</string>
+
+<!--	<string name="bug_report_intro">-->
+<!--		"Sorry!\n\nRockOn v\"-->
+<!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
+<!--	</string>-->
+
+	<!--	DIRECTORY FILTER	-->
+	<string name="directories_on_sdcard">SD kartınızda şu dizinler var:</string>
+	<string name="select_all">Hepsini seç</string>
+	<string name="unselect_all">Hiçbirini seçme</string>
+
+	<!--	GENERIC STUFF -->
+	<string name="ok">Tamam</string>
+	<string name="back">Geri</string>
+	<string name="all">Hepsi</string>
+	<string name="none">Hiçbiri</string>
+
+</resources>

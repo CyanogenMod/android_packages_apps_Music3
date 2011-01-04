@@ -526,6 +526,7 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     }
 
     /* optimization */
+    float offsetY;
     int rowFromY;
     int columnFromX;
     /**
@@ -536,7 +537,8 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
      */
     int	getPositionFromScreenCoordinates(float x, float y)
     {
-    	rowFromY = (int) (y / (mHeight*.25f));
+    	offsetY = mPositionY - flooredPositionY;
+    	rowFromY = (int) ((y / (mHeight*.25f))+offsetY);
     	if(rowFromY == 2) rowFromY--;
     	else if(rowFromY == 3) rowFromY--;
     	
@@ -932,8 +934,14 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     
     /* optimization */
     double itvlFromLastRender;
+    float WALL_MIN_SCROLL;
+    float WALL_SMOOTH;
+    float WALL_MAX_SCROLL;
     private boolean updatePosition(boolean force){
-    	
+    	WALL_MIN_SCROLL = 0.25f * Constants.MIN_SCROLL;
+    	WALL_SMOOTH = 1.f * Constants.SCROLL_SPEED_SMOOTHNESS;
+    	WALL_MAX_SCROLL = 1.f * Constants.MAX_SCROLL;
+    
     	/** time independence */
     	itvlFromLastRender = 
     		Math.min(
@@ -967,22 +975,22 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
 					Math.min(
 						Math.max(
 								updateFraction
-									* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+									* WALL_SMOOTH * (mTargetPositionY-mPositionY), 
 								updateFraction 
-									* .05f * Constants.MIN_SCROLL)
+									* .05f * WALL_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
+					, updateFraction * WALL_MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 		else if(mTargetPositionY < mPositionY)
 			mPositionY	 += 
 				Math.max(
 					Math.max(
 						Math.min(
 							updateFraction
-								* Constants.SCROLL_SPEED_SMOOTHNESS * (mTargetPositionY-mPositionY), 
+								* WALL_SMOOTH * (mTargetPositionY-mPositionY), 
 							updateFraction 
-								* .05f * -Constants.MIN_SCROLL)
+								* .05f * -WALL_MIN_SCROLL)
 						, mTargetPositionY-mPositionY)
-					, updateFraction * -Constants.MAX_SCROLL * 3.f); // XXX *4.f is a HACK
+					, updateFraction * -WALL_MAX_SCROLL * 3.f); // XXX *4.f is a HACK
 
 		/** are we outside the limits of the album list?*/
     	if(mCursor != null){
@@ -1175,6 +1183,51 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    synchronized int getElementId(int position){
+    	if(mCursor == null ||
+    		mCursor.isClosed() ||
+			/**
+			 * FIXME: this is a quick cursor overflow bugfix, unverified
+			 */
+    		position > mCursor.getCount() - 1 ||
+    		position < 0)
+//    		(int) mPositionY > mAlbumCursor.getCount() - 1)
+    	{
+//    		Log.i(TAG, "Target was not reached yet: "+mTargetPosition+" - "+mPosition);
+    		return -1;
+    	}
+    	else{
+    		try
+    		{
+	    		int tmpIndex = mCursor.getPosition();
+	    		
+	    		mCursor.moveToPosition(position);
+	
+	    		int id = -1;
+	    		if(mBrowseCat == Constants.BROWSECAT_ALBUM)
+		    		id = mCursor.getInt(
+		    				mCursor.getColumnIndexOrThrow(
+		    						MediaStore.Audio.Albums._ID));
+	    		else if(mBrowseCat == Constants.BROWSECAT_ARTIST)
+	    			id = mCursor.getInt(
+		    				mCursor.getColumnIndexOrThrow(
+		    						MediaStore.Audio.Artists._ID));
+	    		mCursor.moveToPosition(tmpIndex);
+	    		return id;
+    		}
+    		catch(NullPointerException e)
+    		{
+    			e.printStackTrace();
+    			return -1;
+    		}
+    		catch(CursorIndexOutOfBoundsException e)
+    		{
+    			e.printStackTrace();
+    			return -1;
+    		}
+    	}
+    }
+    
     /** get the current Album Name */
     String getShownAlbumName(float x, float y){
     	if(mTargetPositionY != mPositionY)
@@ -1188,6 +1241,16 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     		mCursor.moveToPosition(tmpIndex);
     		return albumName;
     	}	
+    }
+    
+    String getAlbumName(int position){
+    	int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String albumName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ALBUM));
+		mCursor.moveToPosition(tmpIndex);
+		return albumName;
     }
     
     /** get the current Album Name */
@@ -1205,12 +1268,27 @@ public class RockOnWallRenderer extends RockOnRenderer implements GLSurfaceView.
     	}
     }
     
+    String getAlbumArtistName(int position){
+		int tmpIndex = mCursor.getPosition();
+		mCursor.moveToPosition(position);
+		String artistName = mCursor.getString(
+				mCursor.getColumnIndexOrThrow(
+						MediaStore.Audio.Albums.ARTIST));
+		mCursor.moveToPosition(tmpIndex);
+		return artistName;
+    }
+    
     /** get the shown song name */
     String getShownSongName(float x, float y)
     {
     	return null;
     }
 
+    String getSongName(int position)
+    {
+    	return null;
+    }
+    
     /** move navigator to the specified album Id */
     synchronized int setCurrentByAlbumId(long albumId){
 

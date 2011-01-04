@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_option_title_get_art">
+		Resim Al
+	</string>
+	<string name="menu_option_title_preferences">
+		Tercihler
+	</string>
+	<string name="menu_option_title_playlist_id">
+		Çalma Listeleri
+	</string>
+	<string name="menu_option_title_concerts">
+		Konserler
+	</string>
+	<string name="menu_option_title_releases">
+		Albümler
+	</string>
+	<string name="menu_option_title_view_mode">
+		Görüntü Modu
+	</string>
+	<string name="menu_option_title_theme">
+		Tema
+	</string>
+</resources>
