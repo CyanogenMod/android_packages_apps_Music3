@@ -94,6 +94,7 @@
 		        android:src="@drawable/ic_appwidget_music_prev"
 		        android:background="@drawable/appwidget_button_right"
 		        android:scaleType="center"
+				android:hapticFeedbackEnabled="true"
 		        />
 <!--			<ImageView-->
 <!--		        android:layout_width="1dip"-->
@@ -110,6 +111,7 @@
 		        android:src="@drawable/ic_appwidget_music_play"
 		        android:background="@drawable/appwidget_button_center"
 		        android:scaleType="center"
+				android:hapticFeedbackEnabled="true"
 		        />
 <!--		 	<ImageView-->
 <!--		        android:layout_width="1dip"-->
@@ -125,6 +127,7 @@
 		        android:src="@drawable/ic_appwidget_music_next"
 		        android:background="@drawable/appwidget_button_right"
 		        android:scaleType="center"
+				android:hapticFeedbackEnabled="true"
 		        />
 		</LinearLayout>
 			

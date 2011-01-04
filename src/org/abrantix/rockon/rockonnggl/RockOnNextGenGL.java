@@ -43,6 +43,7 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -2486,6 +2487,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPlayPauseClickHandler.hasMessages(0)){
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				try{
 					if(mService.isPlaying()){
 						setPlayButton();
@@ -2575,6 +2577,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mNextClickHandler.hasMessages(0))
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				mNextClickHandler.sendEmptyMessage(0);
 //				mNextClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
@@ -2598,6 +2601,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPreviousClickHandler.hasMessages(0))
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				mPreviousClickHandler.sendEmptyMessage(0);
 //				mPreviousClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
@@ -2619,6 +2623,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mRepeatClickHandler.hasMessages(0))
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				mRepeatClickHandler.sendEmptyMessage(0);
 //				mRepeatClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
@@ -2650,6 +2655,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mShuffleClickHandler.hasMessages(0))
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				mShuffleClickHandler.sendEmptyMessage(0);
 //				mShuffleClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 		}
@@ -2680,6 +2686,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mSearchClickHandler.hasMessages(0)){
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				if(findViewById(R.id.search_container) ==  null)
 					showSearch();
 				else
@@ -2703,6 +2710,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPlayQueueClickHandler.hasMessages(0)){
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				mPlayQueueClickHandler.sendEmptyMessage(0);
 //				mPlayQueueClickHandler.sendEmptyMessageDelayed(
 //						0, 

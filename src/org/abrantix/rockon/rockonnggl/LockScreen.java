@@ -23,6 +23,7 @@ import android.os.RemoteException;
 import android.os.PowerManager.WakeLock;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -379,16 +380,19 @@ public class LockScreen extends Activity{
 		public void onClick(View v) {
 			if(v.getId() == R.id.control_next_lock)
 			{
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				doNext();
 				updateFields();
 			}
 			else if(v.getId() == R.id.control_play_lock)
 			{
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				doPlayPause();
 				updateFields();
 			}
 			else if(v.getId() == R.id.control_prev_lock)
 			{
+				v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 				doPrevious();
 				updateFields();
 			}

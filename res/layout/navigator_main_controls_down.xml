@@ -22,7 +22,9 @@
     		android:src="@drawable/search_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		android:paddingTop="@dimen/button_large_padding"-->
 <!--    		android:paddingBottom="@dimen/button_large_padding"-->
     		
@@ -46,7 +48,9 @@
     		android:src="@drawable/play_queue_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		android:paddingTop="@dimen/button_large_padding"-->
 <!--    		android:paddingBottom="@dimen/button_large_padding"-->
     		
@@ -71,7 +75,9 @@
     		android:src="@drawable/previous_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		android:paddingTop="@dimen/button_small_padding"-->
 <!--    		android:paddingBottom="@dimen/button_small_padding"-->
     		
@@ -82,7 +88,9 @@
     		android:layout_weight="1"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		    		android:src="@drawable/repeat_none_selector"-->
 <!--    		android:paddingTop="@dimen/button_medium_padding"-->
 <!--    		android:paddingBottom="@dimen/button_medium_padding"-->
@@ -94,7 +102,9 @@
     		android:layout_weight="1"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		    		android:src="@drawable/play_selector"-->
 <!--    		android:paddingTop="@dimen/button_large_padding"-->
 <!--    		android:paddingBottom="@dimen/button_large_padding"-->
@@ -107,7 +117,9 @@
     		android:layout_weight="1"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		    		android:src="@drawable/shuffle_selector"-->
 <!--    		android:paddingTop="@dimen/button_medium_padding"-->
 <!--    		android:paddingBottom="@dimen/button_medium_padding"-->
@@ -120,7 +132,9 @@
     		android:src="@drawable/next_selector"
     		android:dither="true"
     		android:scaleType="fitCenter"
-    		android:background="#00000000"/>
+    		android:background="#00000000"
+			android:hapticFeedbackEnabled="true"
+    		/>
 <!--    		android:paddingTop="@dimen/button_small_padding"-->
 <!--    		android:paddingBottom="@dimen/button_small_padding"-->
     		
