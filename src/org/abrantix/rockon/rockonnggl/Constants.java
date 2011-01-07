@@ -380,7 +380,7 @@ public class Constants{
     static final String RELEASES_APP_MAIN_ACTIVITY = "org.abrantix.releases.Releases";
     
     /* Widget Stuff */
-    static final String WIDGET_COMPONENT_PACKAGE = "org.abrantix.rockon.rockonnggl";
+    static final String WIDGET_COMPONENT_PACKAGE = "org.abrantix.rockon.rockonnggl.cm";
     static final String WIDGET_COMPONENT = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider";
     static final String WIDGET_COMPONENT_3x3 = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider3x3";
     static final String WIDGET_COMPONENT_4x4 = "org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x4";
