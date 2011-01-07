@@ -3,7 +3,7 @@ package org.abrantix.rockon.rockonnggl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

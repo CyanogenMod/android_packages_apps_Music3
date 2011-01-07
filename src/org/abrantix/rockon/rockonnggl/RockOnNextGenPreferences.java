@@ -1,6 +1,6 @@
 package org.abrantix.rockon.rockonnggl;
 
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;

@@ -1,5 +1,7 @@
 package org.abrantix.rockon.rockonnggl;
 
+import org.abrantix.rockon.rockonnggl.cm.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
