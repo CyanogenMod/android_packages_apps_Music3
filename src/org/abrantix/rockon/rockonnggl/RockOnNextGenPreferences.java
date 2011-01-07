@@ -16,6 +16,7 @@ import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -103,15 +104,22 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 					getBoolean(getString(R.string.preference_key_lock_portrait), false));
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_portrait))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
-		
+
 		/* Lock Screen */
-		((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
-			setChecked(
-				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-					getBoolean(getString(R.string.preference_key_lock_screen), false));
-		((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
-			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
-		
+		if (getResources().getBoolean(R.bool.config_enableLockScreen)) {
+		    ((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
+			    setChecked(
+			            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
+			            getBoolean(getString(R.string.preference_key_lock_screen), false));
+		    ((CheckBoxPreference)findPreference(getString(R.string.preference_key_lock_screen))).
+			    setOnPreferenceChangeListener(booleanPreferenceChangeListener);
+		}
+		else {
+		    /* Disable the lock screen option entirely */
+		    PreferenceCategory general = (PreferenceCategory)findPreference(Constants.prefkey_mParent);
+		    general.removePreference(findPreference(getString(R.string.preference_key_lock_screen)));
+		}
+
 		/* Full screen */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_full_screen))).
 			setChecked(
@@ -124,10 +132,10 @@ public class RockOnNextGenPreferences extends PreferenceActivity{
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
 			setChecked(
 				PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-					getBoolean(getString(R.string.preference_key_controls_on_bottom), false));
+					getBoolean(getString(R.string.preference_key_controls_on_bottom), getResources().getBoolean(R.bool.config_controlsOnBottom)));
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_controls_on_bottom))).
 			setOnPreferenceChangeListener(booleanPreferenceChangeListener);
-	
+
 		/* Queue on click */
 		((CheckBoxPreference)findPreference(getString(R.string.preference_key_queue_on_click))).
 			setChecked(

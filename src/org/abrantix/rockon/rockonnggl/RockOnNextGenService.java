@@ -75,9 +75,10 @@ public class RockOnNextGenService extends Service {
     private int mRockOnShuffleMode = Constants.SHUFFLE_NONE;
     private int mRockOnRepeatMode = Constants.REPEAT_NONE;
     private int mPlaylistId = Constants.PLAYLIST_UNKNOWN;
-    
+
+    private boolean mUseAnalytics = true;
     GoogleAnalyticsTracker	mAnalytics;
-    
+
     private MultiPlayer mPlayer;
     private String mFileToPlay;
     private int mShuffleMode = Constants.SHUFFLE_NONE;
@@ -261,15 +262,19 @@ public class RockOnNextGenService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        
-        mAnalytics = GoogleAnalyticsTracker.getInstance();
-        mAnalytics.start("UA-20349033-2", 6*60*60 /* every 6 hours */, this);
-//        mAnalytics.start("UA-20349033-2", this); 
+
+        mUseAnalytics = getResources().getBoolean(R.bool.config_isMarketVersion);
+        if (mUseAnalytics)
+        {
+            mAnalytics = GoogleAnalyticsTracker.getInstance();
+            mAnalytics.start("UA-20349033-2", 6*60*60 /* every 6 hours */, this);
+//          mAnalytics.start("UA-20349033-2", this);
+        }
 
         Log.i(TAG, "SERVICE onCreate");
-        
+
 //        mPreferences = getSharedPreferences("Music", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
-        mPreferences = getSharedPreferences("CubedMusic", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE); 
+        mPreferences = getSharedPreferences("CubedMusic", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
         	//PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         
         mCardId = 0; // should be the serial number of the sd card
@@ -2187,31 +2192,34 @@ public class RockOnNextGenService extends Service {
         	 * 
         	 ********************/
         	int duration = (int) (System.currentTimeMillis()-oLastRepeatChange);
-        	switch(mRepeatMode) {
-        	case Constants.REPEAT_NONE:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "NONE", duration);
-            	break;
-        	case Constants.REPEAT_ALL:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "ALL", duration);
-            	break;
-        	case Constants.REPEAT_CURRENT:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "CURRENT", duration);
-                break;
-        	}
-        	switch(repeatmode) {
-    		case Constants.REPEAT_NONE:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "NONE", 0);
-        		break;
-        	case Constants.REPEAT_ALL:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "ALL", 0);
-        		break;
-        	case Constants.REPEAT_CURRENT:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "CURRENT", 0);
-        		break;
+        	if (mAnalytics != null)
+        	{
+        	    switch(mRepeatMode) {
+        	        case Constants.REPEAT_NONE:
+        	            mAnalytics.trackEvent("Duration", "Repeat Mode", "NONE", duration);
+        	            break;
+        	        case Constants.REPEAT_ALL:
+        	            mAnalytics.trackEvent("Duration", "Repeat Mode", "ALL", duration);
+        	            break;
+        	        case Constants.REPEAT_CURRENT:
+        	            mAnalytics.trackEvent("Duration", "Repeat Mode", "CURRENT", duration);
+        	            break;
+        	    }
+        	    switch(repeatmode) {
+        	        case Constants.REPEAT_NONE:
+        	            mAnalytics.trackEvent("User action", "Changed Repeat Mode", "NONE", 0);
+        	            break;
+        	        case Constants.REPEAT_ALL:
+        	            mAnalytics.trackEvent("User action", "Changed Repeat Mode", "ALL", 0);
+        	            break;
+        	        case Constants.REPEAT_CURRENT:
+        	            mAnalytics.trackEvent("User action", "Changed Repeat Mode", "CURRENT", 0);
+        	            break;
+        	    }
         	}
         	oLastRepeatChange = System.currentTimeMillis();
         	/***********************/
-        	
+
             mRepeatMode = repeatmode;
             // let our widgets refresh
             if(mRepeatMode == Constants.REPEAT_NONE)
