@@ -2,7 +2,7 @@ package org.abrantix.rockon.rockonnggl;
 
 import java.io.File;
 
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 
 import android.os.Environment;
 import android.provider.MediaStore;

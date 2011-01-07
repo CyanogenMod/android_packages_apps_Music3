@@ -5,7 +5,7 @@
 package org.abrantix.rockon.rockonnggl;
 
 //import android.bluetooth.BluetoothA2dp;
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 
 import android.content.Context;
 import android.content.Intent;

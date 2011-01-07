@@ -49,7 +49,7 @@ import java.util.Vector;
 import java.util.jar.Pack200.Unpacker;
 
 import org.abrantix.rockon.rockonnggl.IRockOnNextGenService;
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 

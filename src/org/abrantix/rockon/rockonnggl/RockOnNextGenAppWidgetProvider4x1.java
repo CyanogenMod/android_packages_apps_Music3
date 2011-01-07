@@ -4,6 +4,8 @@
 
 package org.abrantix.rockon.rockonnggl;
 
+import org.abrantix.rockon.rockonnggl.cm.R;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;

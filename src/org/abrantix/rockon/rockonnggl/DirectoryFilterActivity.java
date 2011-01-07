@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.abrantix.rockon.rockonnggl.R;
+import org.abrantix.rockon.rockonnggl.cm.R;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;

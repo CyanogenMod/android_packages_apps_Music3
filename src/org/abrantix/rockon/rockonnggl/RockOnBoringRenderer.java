@@ -4,6 +4,8 @@
 
 package org.abrantix.rockon.rockonnggl;
 
+import org.abrantix.rockon.rockonnggl.cm.R;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
