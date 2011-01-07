@@ -6,10 +6,10 @@
     <application 
     		android:icon="@drawable/icon_dice" 
     		android:label="@string/app_name">
-    		
+
 		<!-- 	MAIN ACTIVITY	-->
-        <activity 
-        	android:name=".RockOnNextGenGL"
+        <activity
+        	android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenGL"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -24,34 +24,34 @@
         
 		<!--	PREFERENCE ACTIVITY	-->
 		<activity
-			android:name="RockOnNextGenPreferences"
-			android:label="@string/app_name"/>	
-        
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenPreferences"
+			android:label="@string/app_name"/>
+
         <!--	MANUAL ART CHOOSER ACTIVITY	-->
 		<activity
-			android:name="ManualAlbumArtActivity"
-			android:label="@string/app_name"	
+			android:name="org.abrantix.rockon.rockonnggl.ManualAlbumArtActivity"
+			android:label="@string/app_name"
             android:launchMode="singleTask"/>
-            
+
         <!--	DONATE ACTIVITY	-->
 		<activity
-			android:name="DonateActivity"
-			android:label="@string/app_name"	
+			android:name="org.abrantix.rockon.rockonnggl.DonateActivity"
+			android:label="@string/app_name"
             android:launchMode="singleTask"/>
-        
+
         <!--	DIRECTORY FILTER ACTIVITY	-->
 		<activity
-			android:name="DirectoryFilterActivity"
-			android:label="@string/app_name"	
+			android:name="org.abrantix.rockon.rockonnggl.DirectoryFilterActivity"
+			android:label="@string/app_name"
             android:launchMode="singleTask"/>
-        
+
         <!--	LOCK SCREEN ACTIVITY	-->
 		<activity
 			android:theme="@android:style/Theme.Wallpaper"
 			android:windowNoTitle="true"
 			android:screenOrientation="portrait"
-			android:name="LockScreen"
-			android:label="@string/app_name"	
+			android:name="org.abrantix.rockon.rockonnggl.LockScreen"
+			android:label="@string/app_name"
             android:launchMode="singleTop"
             android:taskAffinity="org.abrantix.rockon.none"
             android:excludeFromRecents="true">
@@ -61,13 +61,13 @@
 <!--        android:theme="@android:style/Theme.Translucent"-->
 			
 		<!--	SERVICE	-->
-        <service 
-        		android:name="RockOnNextGenService" 
+        <service
+        		android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenService"
         		android:exported="true"
         		android:process="org.abrantix.rockon.rockonnggl.serviceprocess"/>
-        
+
 		<!-- 	MEDIA BUTTON RECEIVER	-->
-    	<receiver android:name="MediaButtonIntentReceiver">
+    	<receiver android:name="org.abrantix.rockon.rockonnggl.MediaButtonIntentReceiver">
 			<intent-filter
 				android:priority="3" >
 				<action	android:name="android.intent.action.MEDIA_BUTTON"/>
@@ -82,40 +82,40 @@
 <!--				<action android:name="android.intent.action.SCREEN_ON"/>-->
 <!--			</intent-filter>-->
 <!--		</receiver>-->
-		
+
 		<!--	WIDGET	-->
-		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider"
+		<receiver
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider"
 			android:label="³ Small">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info"/>
 		</receiver>
-		
+
 		<!--	WIDGET	3x3 -->
-		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider3x3"
+		<receiver
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider3x3"
 			android:label="³ Medium">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_3x3"/>
 		</receiver>
-		
+
 		<!--	WIDGET	4x4 -->
-		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider4x4"
+		<receiver
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x4"
 			android:label="³ Large">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info_4x4"/>
 		</receiver>
-		
+
 		<!--	WIDGET	4x1 -->
-		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider4x1"
+		<receiver
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x1"
 			android:label="³ Classic">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -147,4 +147,4 @@
 	<!--<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>-->
 
 
-</manifest> 
+</manifest>
