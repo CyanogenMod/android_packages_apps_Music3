@@ -2564,6 +2564,7 @@ public class RockOnNextGenService extends Service {
     void enableEq() {
 //    	mEqualizerWrapper.mSettings.setEnabled();
     	mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+		
     	try {
 			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
 			mPreferences.edit().putBoolean(Constants.prefKey_mEqualizerEnabled, true); // a little dupe
@@ -2576,7 +2577,7 @@ public class RockOnNextGenService extends Service {
      * EQ
      */
 	void disableEq() {
-    	mEqualizerWrapper.disable();
+		mEqualizerWrapper.disable();
     	try {
 			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
 			mPreferences.edit().putBoolean(Constants.prefKey_mEqualizerEnabled, false); // a little dupe

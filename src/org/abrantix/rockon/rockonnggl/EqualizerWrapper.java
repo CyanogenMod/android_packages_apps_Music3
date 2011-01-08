@@ -57,7 +57,7 @@ public class EqualizerWrapper {
 		// HOW TO DISABLE THIS? Just make everything flat?
 		// ... yeah, making everything flat
 		for(short i=0; i<getNumberOfBands(); i++) {
-			setBandLevel(i, (short) (getBandLevelRange()[0] + (getBandLevelRange()[1]-getBandLevelRange()[0])/2));
+			setBandLevel(i, (short) (getBandLevelRange()[0] + (getBandLevelRange()[1]-getBandLevelRange()[0])/2), true);
 		}
 	}
 	
@@ -190,11 +190,16 @@ public class EqualizerWrapper {
 	}
 	
 	public void 	setBandLevel(short band, short level) {
+		setBandLevel(band, level, false);
+	}
+
+	private void 	setBandLevel(short band, short level, boolean keepSettings) {
 		if(mEqualizer != null) {
 			try {
 				Method m = mEqualizer.getClass().getMethod("setBandLevel", new Class[]{short.class, short.class});
 				m.invoke(mEqualizer, new Object[]{band, level});
-				mSettings.mBandLevels[band] = level;
+				if(!keepSettings)
+					mSettings.mBandLevels[band] = level;
 			} catch (SecurityException e) {
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
@@ -223,6 +228,7 @@ public class EqualizerWrapper {
 		// Set each band level
 		for(short i=0; i<settings.mNumBands; i++) {
 			setBandLevel(i, (short)settings.mBandLevels[i]);
+			Log.i(TAG, "Setting band "+i+"+ from cache: "+(short)settings.mBandLevels[i]);
 		}
 		
 		// Set the preset
