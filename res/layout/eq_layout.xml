@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    >
+    <org.abrantix.rockon.rockonnggl.EqView
+    	android:id="@+id/eq_view"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_weight="1"/>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="fill_parent"
+	    android:layout_height="48dp"
+	    android:orientation="horizontal"
+	    >
+	    <TextView
+	    	android:id="@+id/eq_on_off"
+	    	android:layout_width="48dp"
+	    	android:layout_height="fill_parent"
+	    	android:gravity="center"
+	    	android:textSize="20dp"/>
+<!--	    	android:shadowColor="#ddd"-->
+<!--	    	android:shadowDx="0"-->
+<!--	    	android:shadowDy="0"-->
+<!--	    	android:shadowRadius="0"-->
+	    <ImageView
+	    	android:id="@+id/eq_preset"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="fill_parent"
+	    	android:layout_weight="1"/>
+	    <ImageView
+	    	android:id="@+id/eq_audiofx"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="fill_parent"
+	    	android:layout_weight="1"/>
+	</LinearLayout>
+    
+</LinearLayout>
