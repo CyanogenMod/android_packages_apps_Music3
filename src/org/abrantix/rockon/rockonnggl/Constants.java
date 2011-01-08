@@ -455,6 +455,8 @@ public class Constants{
 	static final String prefkey_mAppCreateCount = "mAppCreateCount";
 	static final String prefkey_mAppCreateCountForDonation = "mAppCreateCountForDonation";
 	static final String prefkey_mAppHasDonated = "mAppHasDonated";
+	static final String prefkey_mParent = "parent";
 	static final String prefKey_mEqualizerEnabled = "mEqualizerEnabled";
-	static final String prefKey_mEqualizerSettings = "mEqualizerSettings";
+	
+	static final String prefKey_mEqualizerSettings = "mEqualizerSettings";	
 }

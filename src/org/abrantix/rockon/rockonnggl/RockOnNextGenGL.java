@@ -744,7 +744,8 @@ public class RockOnNextGenGL extends Activity {
 		
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
-    	if(appCreateCount >= appCreateCountForDonation)
+    	if(getResources().getBoolean(R.bool.config_isMarketVersion)
+    		&& appCreateCount >= appCreateCountForDonation)
     	{    			
     		if(hasDonated)
     			appCreateCountForDonation += Constants.DONATION_AFTER_HAVING_DONATED_INTERVAL;
@@ -1961,7 +1962,7 @@ public class RockOnNextGenGL extends Activity {
     	/** Check which layout to use */
     	oBottomControls = 
     		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getBoolean(Constants.prefkey_mControlsOnBottom, false);
+    			getBoolean(Constants.prefkey_mControlsOnBottom, getResources().getBoolean(R.bool.config_controlsOnBottom));
     	if(!oBottomControls)
     		setContentView(R.layout.navigator_main);
     	else
@@ -2013,7 +2014,7 @@ public class RockOnNextGenGL extends Activity {
         mRendererMode = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
-        			getInt(Constants.prefkey_mRendererMode, Constants.RENDERER_CUBE);
+        			getInt(Constants.prefkey_mRendererMode, getResources().getInteger(R.integer.config_defaultRenderer));
         mTheme = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).

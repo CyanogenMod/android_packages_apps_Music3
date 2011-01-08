@@ -9,7 +9,7 @@
     		
 		<!-- 	MAIN ACTIVITY	-->
         <activity 
-        	android:name=".RockOnNextGenGL"
+        	android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenGL"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -24,31 +24,31 @@
         
 		<!--	PREFERENCE ACTIVITY	-->
 		<activity
-			android:name="RockOnNextGenPreferences"
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenPreferences"
 			android:label="@string/app_name"/>	
         
         <!--	MANUAL ART CHOOSER ACTIVITY	-->
 		<activity
-			android:name="ManualAlbumArtActivity"
+			android:name="org.abrantix.rockon.rockonnggl.ManualAlbumArtActivity"
 			android:label="@string/app_name"	
             android:launchMode="singleTask"/>
         
         <!--	EQAULIZER	-->
 		<activity
-			android:name="EqualizerActivity"
+			android:name="org.abrantix.rockon.rockonnggl.EqualizerActivity"
 			android:label="@string/app_name"	
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
             
         <!--	DONATE ACTIVITY	-->
 		<activity
-			android:name="DonateActivity"
+			android:name="org.abrantix.rockon.rockonnggl.DonateActivity"
 			android:label="@string/app_name"	
             android:launchMode="singleTask"/>
         
         <!--	DIRECTORY FILTER ACTIVITY	-->
 		<activity
-			android:name="DirectoryFilterActivity"
+			android:name="org.abrantix.rockon.rockonnggl.DirectoryFilterActivity"
 			android:label="@string/app_name"	
             android:launchMode="singleTask"/>
         
@@ -57,7 +57,7 @@
 			android:theme="@android:style/Theme.Wallpaper"
 			android:windowNoTitle="true"
 			android:screenOrientation="portrait"
-			android:name="LockScreen"
+			android:name="org.abrantix.rockon.rockonnggl.LockScreen"
 			android:label="@string/app_name"	
             android:launchMode="singleTop"
             android:taskAffinity="org.abrantix.rockon.none"
@@ -69,12 +69,12 @@
 			
 		<!--	SERVICE	-->
         <service 
-        		android:name="RockOnNextGenService" 
+        		android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenService" 
         		android:exported="true"
         		android:process="org.abrantix.rockon.rockonnggl.serviceprocess"/>
         
 		<!-- 	MEDIA BUTTON RECEIVER	-->
-    	<receiver android:name="MediaButtonIntentReceiver">
+    	<receiver android:name="org.abrantix.rockon.rockonnggl.MediaButtonIntentReceiver">
 			<intent-filter
 				android:priority="3" >
 				<action	android:name="android.intent.action.MEDIA_BUTTON"/>
@@ -92,7 +92,7 @@
 		
 		<!--	WIDGET	-->
 		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider"
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider"
 			android:label="³ Small">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -102,7 +102,7 @@
 		
 		<!--	WIDGET	3x3 -->
 		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider3x3"
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider3x3"
 			android:label="³ Medium">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -112,7 +112,7 @@
 		
 		<!--	WIDGET	4x4 -->
 		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider4x4"
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x4"
 			android:label="³ Large">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -122,7 +122,7 @@
 		
 		<!--	WIDGET	4x1 -->
 		<receiver 
-			android:name="RockOnNextGenAppWidgetProvider4x1"
+			android:name="org.abrantix.rockon.rockonnggl.RockOnNextGenAppWidgetProvider4x1"
 			android:label="³ Classic">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

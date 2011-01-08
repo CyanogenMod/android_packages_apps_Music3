@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<bool name="config_isMarketVersion">true</bool>
+	<bool name="config_enableLockScreen">true</bool>
+	<bool name="config_controlsOnBottom">false</bool>
+	<integer name="config_defaultRenderer">0</integer>
+</resources>
