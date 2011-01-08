@@ -2487,7 +2487,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPlayPauseClickHandler.hasMessages(0)){
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				try{
 					if(mService.isPlaying()){
 						setPlayButton();
@@ -2578,7 +2578,7 @@ public class RockOnNextGenGL extends Activity {
 		public void onClick(View v) {
 			if(!mNextClickHandler.hasMessages(0))
 			{
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				mNextClickHandler.sendEmptyMessage(0);
 //				mNextClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
@@ -2604,7 +2604,7 @@ public class RockOnNextGenGL extends Activity {
 		public void onClick(View v) {
 			if(!mPreviousClickHandler.hasMessages(0))
 			{
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				mPreviousClickHandler.sendEmptyMessage(0);
 //				mPreviousClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
@@ -2628,7 +2628,7 @@ public class RockOnNextGenGL extends Activity {
 		public void onClick(View v) {
 			if(!mRepeatClickHandler.hasMessages(0))
 			{
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				mRepeatClickHandler.sendEmptyMessage(0);
 //				mRepeatClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
@@ -2662,7 +2662,7 @@ public class RockOnNextGenGL extends Activity {
 		public void onClick(View v) {
 			if(!mShuffleClickHandler.hasMessages(0))
 			{
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				mShuffleClickHandler.sendEmptyMessage(0);
 //				mShuffleClickHandler.sendEmptyMessageDelayed(0, Constants.CLICK_ACTION_DELAY);
 			}
@@ -2694,7 +2694,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mSearchClickHandler.hasMessages(0)){
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				if(findViewById(R.id.search_container) ==  null)
 					showSearch();
 				else
@@ -2718,7 +2718,7 @@ public class RockOnNextGenGL extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(!mPlayQueueClickHandler.hasMessages(0)){
-				hapticFeedback(v);
+				APILevelChecker.getInstance().hapticFeedback(v);
 				mPlayQueueClickHandler.sendEmptyMessage(0);
 //				mPlayQueueClickHandler.sendEmptyMessageDelayed(
 //						0, 
@@ -3837,12 +3837,6 @@ public class RockOnNextGenGL extends Activity {
 		}
 	}
 	
-	private void hapticFeedback(View v)
-	{
-		if (android.os.Build.VERSION.SDK_INT >= 5)
-			v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-	}
-
 	/**
 	 * Broadcast Receivers
 	 */
