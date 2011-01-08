@@ -210,5 +210,7 @@
 	<string name="back">Back</string>
 	<string name="all">All</string>
 	<string name="none">None</string>
+	<string name="on">On</string>
+	<string name="off">Off</string>
 
 </resources>

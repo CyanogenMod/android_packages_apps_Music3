@@ -21,5 +21,8 @@
 	<string name="menu_option_title_theme">
 		Theme
 	</string>
+	<string name="menu_option_title_equalizer">
+		Equalizer
+	</string>
 </resources>
 

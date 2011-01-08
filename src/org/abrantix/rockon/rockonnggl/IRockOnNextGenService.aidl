@@ -50,6 +50,18 @@ interface IRockOnNextGenService
     void unregisterScreenOnReceiver();
     void prepareForCrash();
     
+    boolean 	isEqEnabled();
+	void 		enableEq();
+	void 		disableEq();
+	int[]		getEqBandHz();
+	int[]		getEqBandLevels();
+	int			getEqCurrentPreset();
+	String[]	getEqPresetNames();
+	int[]		getEqLevelRange();
+	int			getEqNumBands();
+	void		setEqBandLevel(int bandIdx, int level);
+	void		setEqPreset(int presetIdx);
+    
     void trackPage(String pageName);
     void trackEvent(String cat, String action, String label, int val);
     
