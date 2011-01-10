@@ -701,7 +701,7 @@ public class RockOnNextGenService extends Service {
     	if(mAnalytics != null) {
 	    	double start = System.currentTimeMillis();
 	    	mBindingTimes.add(new Double(System.currentTimeMillis()));
-        	mAnalytics.trackPageView("/Bind");
+//        	mAnalytics.trackPageView("/Bind");
             Log.i(TAG, "Time spent analysing: "+(System.currentTimeMillis()-start));
     	}
 	    mDelayedStopHandler.removeCallbacksAndMessages(null);
@@ -714,7 +714,7 @@ public class RockOnNextGenService extends Service {
     	if(mAnalytics != null) {
 	    	double start = System.currentTimeMillis();
 	    	mBindingTimes.add(new Double(System.currentTimeMillis()));
-	    	mAnalytics.trackPageView("/Rebind");
+//	    	mAnalytics.trackPageView("/Rebind");
 	    	Log.i(TAG, "Time spent analysing: "+(System.currentTimeMillis()-start));
     	}
     	mDelayedStopHandler.removeCallbacksAndMessages(null);
