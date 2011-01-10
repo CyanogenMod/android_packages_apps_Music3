@@ -21,4 +21,7 @@
 	<string name="menu_option_title_theme">
 		Thème
 	</string>
+	<string name="menu_option_title_equalizer">
+		Égaliseur
+	</string>
 </resources>
