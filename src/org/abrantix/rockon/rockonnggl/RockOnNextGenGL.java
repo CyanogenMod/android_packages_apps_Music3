@@ -442,9 +442,11 @@ public class RockOnNextGenGL extends Activity {
 
     	/* create the menu items */
     	for(int i=0; i<menuOptionsTitleArray.length; i++){
-//    		/* bypass releases for now */
-//    		if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_releases)))
-//    			continue;
+//    		/* bypass equalizer if it is not supported */
+    		if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_equalizer))) {
+    			if(!EqualizerWrapper.isSupported())
+    				continue;
+    		}
     		menu.add(
     				0, // subgroup 
     				menuOptionsIdxArray[i], // id 
@@ -463,6 +465,8 @@ public class RockOnNextGenGL extends Activity {
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_gallery);
     		else if(menuOptionsTitleArray[i].equals(getString(R.string.menu_option_title_concerts)))
     			menu.getItem(i).setIcon(android.R.drawable.ic_menu_today);
+    		// missing: releases
+    		// missing: equalizer
     	}
     	
     	return true;
@@ -584,6 +588,17 @@ public class RockOnNextGenGL extends Activity {
     				mThemeChoiceDialogClick);
     		mThemeDialog.show();
     	}
+    	/**
+    	 *  Equalizer 
+    	 */
+    	else if(item.getTitle().
+        		equals(getString(R.string.menu_option_title_equalizer)))
+        {
+//    		int priority = 0; // normal
+//    		int audioSessionId = 0; // the output mix
+//    		EqualizerWrapper eqWrapper = new EqualizerWrapper(priority, audioSessionId);
+    		startActivity(new Intent(this, EqualizerActivity.class));
+        }
     	/**
     	 *  Playlists 
     	 */
@@ -730,7 +745,8 @@ public class RockOnNextGenGL extends Activity {
 		
 		Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
-    	if(appCreateCount >= appCreateCountForDonation)
+    	if(getResources().getBoolean(R.bool.config_isMarketVersion)
+    		&& appCreateCount >= appCreateCountForDonation)
     	{    			
     		if(hasDonated)
     			appCreateCountForDonation += Constants.DONATION_AFTER_HAVING_DONATED_INTERVAL;
@@ -1947,7 +1963,7 @@ public class RockOnNextGenGL extends Activity {
     	/** Check which layout to use */
     	oBottomControls = 
     		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).
-    			getBoolean(Constants.prefkey_mControlsOnBottom, false);
+    			getBoolean(Constants.prefkey_mControlsOnBottom, getResources().getBoolean(R.bool.config_controlsOnBottom));
     	if(!oBottomControls)
     		setContentView(R.layout.navigator_main);
     	else
@@ -1999,7 +2015,7 @@ public class RockOnNextGenGL extends Activity {
         mRendererMode = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).
-        			getInt(Constants.prefkey_mRendererMode, Constants.RENDERER_CUBE);
+        			getInt(Constants.prefkey_mRendererMode, getResources().getInteger(R.integer.config_defaultRenderer));
         mTheme = 
         	PreferenceManager.
         		getDefaultSharedPreferences(getApplicationContext()).

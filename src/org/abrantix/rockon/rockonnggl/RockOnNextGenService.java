@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OptionalDataException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -76,7 +77,10 @@ public class RockOnNextGenService extends Service {
     private int mRockOnRepeatMode = Constants.REPEAT_NONE;
     private int mPlaylistId = Constants.PLAYLIST_UNKNOWN;
     
+    private boolean mUseAnalytics = true;
     GoogleAnalyticsTracker	mAnalytics;
+    
+    private EqualizerWrapper	mEqualizerWrapper;
     
     private MultiPlayer mPlayer;
     private String mFileToPlay;
@@ -262,15 +266,19 @@ public class RockOnNextGenService extends Service {
     public void onCreate() {
         super.onCreate();
         
-        mAnalytics = GoogleAnalyticsTracker.getInstance();
-        mAnalytics.start("UA-20349033-2", 6*60*60 /* every 6 hours */, this);
-//        mAnalytics.start("UA-20349033-2", this); 
+        mUseAnalytics = getResources().getBoolean(R.bool.config_isMarketVersion);
+        if (mUseAnalytics)
+    	{
+        	mAnalytics = GoogleAnalyticsTracker.getInstance();
+	        mAnalytics.start("UA-20349033-2", 6*60*60 /* every 6 hours */, this);
+	//        mAnalytics.start("UA-20349033-2", this);
+    	}
 
         Log.i(TAG, "SERVICE onCreate");
         
 //        mPreferences = getSharedPreferences("Music", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE);
         mPreferences = getSharedPreferences("CubedMusic", MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE); 
-        	//PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        //PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         
         mCardId = 0; // should be the serial number of the sd card
 //        mCardId = FileUtils.getFatVolumeId(Environment.getExternalStorageDirectory().getPath());
@@ -281,6 +289,9 @@ public class RockOnNextGenService extends Service {
         // Needs to be done in this thread, since otherwise ApplicationContext.getPowerManager() crashes.
         mPlayer = new MultiPlayer();
         mPlayer.setHandler(mMediaplayerHandler);
+        
+        // Reload Equalizer + Sound FX
+        loadEqualizerWrapper();
 
         reloadQueue();
         
@@ -343,6 +354,34 @@ public class RockOnNextGenService extends Service {
         	mAnalytics.stop();
         mWakeLock.release();
         super.onDestroy();
+    }
+    
+    private void loadEqualizerWrapper() {
+    	if(mEqualizerWrapper == null) {
+    		EqSettings settings = readEqSettingsFromPreferences();
+    		mEqualizerWrapper = new EqualizerWrapper(settings);
+    	}
+    	if(mPreferences.getBoolean(Constants.prefKey_mEqualizerEnabled, false)) {
+    		mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+    	}
+    }
+    
+    private EqSettings readEqSettingsFromPreferences() {
+    	String eqSettingsString = mPreferences.getString(Constants.prefKey_mEqualizerSettings, null);
+    	if(eqSettingsString != null) {
+			try {
+				return EqSettings.readFrom64String(eqSettingsString);
+			} catch (OptionalDataException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return new EqSettings();
+    	}
+		else
+    		return new EqSettings();
     }
     
     private final char hexdigits [] = new char [] {
@@ -2187,27 +2226,29 @@ public class RockOnNextGenService extends Service {
         	 * 
         	 ********************/
         	int duration = (int) (System.currentTimeMillis()-oLastRepeatChange);
-        	switch(mRepeatMode) {
-        	case Constants.REPEAT_NONE:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "NONE", duration);
-            	break;
-        	case Constants.REPEAT_ALL:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "ALL", duration);
-            	break;
-        	case Constants.REPEAT_CURRENT:
-        		mAnalytics.trackEvent("Duration", "Repeat Mode", "CURRENT", duration);
-                break;
-        	}
-        	switch(repeatmode) {
-    		case Constants.REPEAT_NONE:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "NONE", 0);
-        		break;
-        	case Constants.REPEAT_ALL:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "ALL", 0);
-        		break;
-        	case Constants.REPEAT_CURRENT:
-        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "CURRENT", 0);
-        		break;
+        	if (mAnalytics != null) {
+	        	switch(mRepeatMode) {
+	        	case Constants.REPEAT_NONE:
+	        		mAnalytics.trackEvent("Duration", "Repeat Mode", "NONE", duration);
+	            	break;
+	        	case Constants.REPEAT_ALL:
+	        		mAnalytics.trackEvent("Duration", "Repeat Mode", "ALL", duration);
+	            	break;
+	        	case Constants.REPEAT_CURRENT:
+	        		mAnalytics.trackEvent("Duration", "Repeat Mode", "CURRENT", duration);
+	                break;
+	        	}
+	        	switch(repeatmode) {
+	    		case Constants.REPEAT_NONE:
+	        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "NONE", 0);
+	        		break;
+	        	case Constants.REPEAT_ALL:
+	        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "ALL", 0);
+	        		break;
+	        	case Constants.REPEAT_CURRENT:
+	        		mAnalytics.trackEvent("User action", "Changed Repeat Mode", "CURRENT", 0);
+	        		break;
+	        	}
         	}
         	oLastRepeatChange = System.currentTimeMillis();
         	/***********************/
@@ -2509,6 +2550,138 @@ public class RockOnNextGenService extends Service {
     	}
     }
     
+    /**
+     * EQ
+     * @return
+     */
+    boolean isEqEnabled() {
+    	return mEqualizerWrapper.isEnabled();
+    }
+    
+    /**
+     * EQ
+     */
+    void enableEq() {
+//    	mEqualizerWrapper.mSettings.setEnabled();
+    	mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+		
+    	try {
+			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
+			mPreferences.edit().putBoolean(Constants.prefKey_mEqualizerEnabled, true); // a little dupe
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * EQ
+     */
+	void disableEq() {
+		mEqualizerWrapper.disable();
+    	try {
+			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
+			mPreferences.edit().putBoolean(Constants.prefKey_mEqualizerEnabled, false); // a little dupe
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * EQ
+	 * @return
+	 */
+	int[] getEqBandHz() {
+		// TODO:
+		int numBands = mEqualizerWrapper.getNumberOfBands();
+		int[] bandHzs = new int[numBands];
+		for(short i=0; i<numBands; i++) {
+			bandHzs[i] = mEqualizerWrapper.getCenterFreq(i);
+		}
+		return bandHzs;
+		
+//		return new int[]{20000, 100000, 1000000, 5000000, 10000000, 20000000};
+	}
+	
+	/**
+	 * EQ
+	 * @return
+	 */
+	int[] getEqBandLevels() {
+		int numBands = mEqualizerWrapper.getNumberOfBands();
+		int[] bandLevels = new int[numBands];
+		for(short i=0; i<numBands; i++) {
+			bandLevels[i] = mEqualizerWrapper.getBandLevel(i);
+		}
+		return bandLevels;
+		
+//		return new int[]{0, 255, 128, 0, 128, 255};
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	int	getEqCurrentPreset() {
+		return 0;
+	}
+	
+	/**
+	 * EQ
+	 * @return
+	 */
+	String[] getEqPresetNames() {
+		return new String[]{"Flat", "Mustard"};
+	}
+	
+	/**
+	 * EQ
+	 * @return
+	 */
+	int[] getEqLevelRange() {
+		short[] levels = mEqualizerWrapper.getBandLevelRange();
+		int[] levelsInt = new int[levels.length];
+		for(int i=0; i<levels.length; i++) {
+			levelsInt[i] = levels[i];
+		}
+		return levelsInt;
+		
+//		return new int[] {0, 255};
+//		return new int[] {0, 16, 32, 64, 96, 128, 160, 192, 224, 255};
+	}
+	
+	/**
+	 * EQ
+	 * @return
+	 */
+	int	getEqNumBands() {
+		return mEqualizerWrapper.getNumberOfBands();
+//		return 6;
+	}
+    
+	/**
+	 * EQ
+	 * @param bandIdx
+	 * @param level
+	 */
+	void setEqBandLevel(int bandIdx, int level) {
+		Log.i(TAG, "Setting band: "+bandIdx+" to "+(short)level);
+		mEqualizerWrapper.setBandLevel((short)bandIdx, (short) level);
+		/* save equalizer settings in the preferences */
+		try {
+			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * EQ
+	 * @param presetIx
+	 */
+	void setEqPreset(int presetIx) {
+		// TODO:
+	}
+	
     /**
      * Provides a unified interface for dealing with midi files and
      * other media files.
@@ -2833,6 +3006,62 @@ public class RockOnNextGenService extends Service {
 		@Override
 	    public void trackEvent(String cat, String action, String label, int val) {
 			mService.get().trackEvent(cat, action, label, val);
+		}
+
+		@Override
+		public void disableEq() throws RemoteException {
+			mService.get().disableEq();
+		}
+
+		@Override
+		public void enableEq() throws RemoteException {
+			mService.get().enableEq();
+		}
+
+		@Override
+		public int[] getEqBandHz() throws RemoteException {
+			return mService.get().getEqBandHz();
+		}
+
+		@Override
+		public int[] getEqBandLevels() throws RemoteException {
+			return mService.get().getEqBandLevels();
+		}
+
+		@Override
+		public int getEqCurrentPreset() throws RemoteException {
+			return mService.get().getEqCurrentPreset();
+		}
+
+		@Override
+		public int[] getEqLevelRange() throws RemoteException {
+			return mService.get().getEqLevelRange();
+		}
+
+		@Override
+		public int getEqNumBands() throws RemoteException {
+			return mService.get().getEqNumBands();
+		}
+
+		@Override
+		public String[] getEqPresetNames() throws RemoteException {
+			return mService.get().getEqPresetNames();
+		}
+
+		@Override
+		public boolean isEqEnabled() throws RemoteException {
+			return mService.get().isEqEnabled();
+		}
+
+		@Override
+		public void setEqBandLevel(int bandIdx, int level)
+				throws RemoteException {
+			mService.get().setEqBandLevel(bandIdx, level);
+		}
+
+		@Override
+		public void setEqPreset(int presetIdx) throws RemoteException {
+			mService.get().setEqPreset(presetIdx);
 		}
     
 		
