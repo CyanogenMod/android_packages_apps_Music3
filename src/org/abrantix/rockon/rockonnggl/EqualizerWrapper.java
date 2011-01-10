@@ -22,9 +22,15 @@ public class EqualizerWrapper {
 //	public EqualizerWrapper(int priority, int audioSession) {
 		Class c;
 		try {
+			// new Equalizer(priority, audioSessionId)
 			c = Class.forName("android.media.audiofx.Equalizer");
 			Constructor constructor = c.getConstructor(new Class[]{int.class, int.class});
 			mEqualizer = constructor.newInstance(new Object[]{priority, audioSession});
+			// setEnabled
+			Method m = mEqualizer.getClass().getMethod("setEnabled", new Class[]{boolean.class});
+			m.invoke(mEqualizer, true);
+			
+			// EqSettings update
 			mSettings.setEnabled();
 			if(mSettings.isBogus()) {
 				Log.i(TAG, "Saved equalizer settings was bogus!");
@@ -52,6 +58,22 @@ public class EqualizerWrapper {
 	}
 	
 	public void disable() {
+		// setEnabled
+		try {
+			Method m = mEqualizer.getClass().getMethod("setEnabled", new Class[]{boolean.class});
+			m.invoke(mEqualizer, false);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		// my own stuff
 		mEnabled = false;
 		mSettings.setDisabled();
 		// HOW TO DISABLE THIS? Just make everything flat?
