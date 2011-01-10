@@ -22,10 +22,12 @@ public class EqualizerWrapper {
 //	public EqualizerWrapper(int priority, int audioSession) {
 		Class c;
 		try {
-			// new Equalizer(priority, audioSessionId)
-			c = Class.forName("android.media.audiofx.Equalizer");
-			Constructor constructor = c.getConstructor(new Class[]{int.class, int.class});
-			mEqualizer = constructor.newInstance(new Object[]{priority, audioSession});
+			if(mEqualizer == null) {
+				// new Equalizer(priority, audioSessionId)
+				c = Class.forName("android.media.audiofx.Equalizer");
+				Constructor constructor = c.getConstructor(new Class[]{int.class, int.class});
+				mEqualizer = constructor.newInstance(new Object[]{priority, audioSession});
+			}
 			// setEnabled
 			Method m = mEqualizer.getClass().getMethod("setEnabled", new Class[]{boolean.class});
 			m.invoke(mEqualizer, true);
