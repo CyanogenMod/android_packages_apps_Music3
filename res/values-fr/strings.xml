@@ -208,6 +208,8 @@ Le thème Tremblement de Terre necessite de traiter tes pochettes. C\'est une t�
 	<string name="back">Arrière</string>
 	<string name="all">Tous</string>
 	<string name="none">Aucun</string>
+	<string name="on">Activé</string>
+	<string name="off">Désactivé</string>
 
 </resources>
 

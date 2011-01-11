@@ -208,5 +208,7 @@
 	<string name="back">Atrás</string>
 	<string name="all">Todos</string>
 	<string name="none">Ninguno</string>
+	<string name="on">Activado</string>
+	<string name="off">Desactivado</string>
 
 </resources>
