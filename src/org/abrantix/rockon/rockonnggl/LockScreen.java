@@ -197,12 +197,29 @@ public class LockScreen extends Activity{
 		 */
 		if(Integer.parseInt(Build.VERSION.SDK) >= 5) // 5
 		{
-			getWindow().addFlags(
-				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-//                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
-//                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON); 
+			try {
+				getWindow().addFlags(
+					WindowManager.LayoutParams.class.getField("FLAG_SHOW_WHEN_LOCKED").getInt(null)
+					| WindowManager.LayoutParams.class.getField("FLAG_DISMISS_KEYGUARD").getInt(null)
+					| WindowManager.LayoutParams.class.getField("FLAG_SHOW_WALLPAPER").getInt(null));
+//				WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//              | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+////              | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+//      		| WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
+////              | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON); 
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		/**

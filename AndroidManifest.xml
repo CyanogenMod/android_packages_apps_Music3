@@ -62,8 +62,9 @@
             android:launchMode="singleTop"
             android:taskAffinity="org.abrantix.rockon.none"
             android:excludeFromRecents="true">
-<!--       		android:process="org.abrantix.rockon.rockonnggl.lockscreenprocess">-->
 		</activity>
+<!--       		android:process="org.abrantix.rockon.rockonnggl.lockscreenprocess">-->
+<!--			android:theme="@android:style/Theme.Wallpaper"-->
             
 <!--        android:theme="@android:style/Theme.Translucent"-->
 			
@@ -139,7 +140,6 @@
 		android:anyDensity="true" />
               
 	<uses-feature android:glEsVersion="0x00010000"/>
-	<!--              android:name="string" />-->
               
 	<uses-sdk android:minSdkVersion="3" />
 

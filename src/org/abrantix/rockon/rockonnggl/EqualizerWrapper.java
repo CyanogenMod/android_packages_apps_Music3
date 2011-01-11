@@ -224,15 +224,7 @@ public class EqualizerWrapper {
 				m.invoke(mEqualizer, new Object[]{band, level});
 				if(!keepSettings)
 					mSettings.mBandLevels[band] = level;
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -245,7 +237,12 @@ public class EqualizerWrapper {
 	}
 	
 	public String getSettings() throws IOException {
-		return mSettings.writeTo64String();
+		try {
+			return mSettings.writeTo64String();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return null;
 	}
 	
 	public void setProperties(EqSettings settings) {

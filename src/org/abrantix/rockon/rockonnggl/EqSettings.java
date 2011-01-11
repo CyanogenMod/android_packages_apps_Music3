@@ -7,8 +7,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import android.util.Base64;
+//import android.util.Base64;
 import android.util.Log;
 
 public class EqSettings implements Serializable{
@@ -108,21 +110,42 @@ public class EqSettings implements Serializable{
 		mBandLevels[bandIdx] = getBaseLevel() + Math.round(gainPercent*(getTopLevel()-getBaseLevel()));
 	}
 	
-	public String writeTo64String() throws IOException {
+	public String writeTo64String() {
 	    /** Write the object to a Base64 string. */
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    ObjectOutputStream oos = new ObjectOutputStream(baos);
-	    oos.writeObject(this);
-	    oos.close();
-	    return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT); 
+		try{
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    ObjectOutputStream oos = new ObjectOutputStream(baos);
+		    oos.writeObject(this);
+		    oos.close();
+		    
+		    /* A little bit of reflection */
+		    Class c = Class.forName("android.util.Base64");
+		    Method m = c.getMethod("encodeToString", new Class[]{byte[].class, int.class});
+		    String s = (String) m.invoke(null, new Object[]{baos.toByteArray(), c.getField("DEFAULT").getInt(null)});
+		    return s;
+	//	    return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
-	static EqSettings readFrom64String(String s) throws OptionalDataException, ClassNotFoundException, IOException {
+	static EqSettings readFrom64String(String s) {
 		/** Read the object from Base64 string. */
-	    byte [] data = Base64.decode(s, Base64.DEFAULT);
-	    ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-	    Object o  = ois.readObject();
-	    ois.close();
-	    return (EqSettings)o;
+		try {
+	//	    byte [] data = Base64.decode(s, Base64.DEFAULT);
+			/* A little bit of reflection */
+		    Class c = Class.forName("android.util.Base64");
+		    Method m = c.getMethod("decode", new Class[]{String.class, int.class});
+		    byte[] data = (byte[]) m.invoke(null, new Object[]{s, c.getField("DEFAULT").getInt(null)});
+		    
+		    ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+		    Object o  = ois.readObject();
+		    ois.close();
+		    return (EqSettings)o;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

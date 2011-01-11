@@ -1,5 +1,8 @@
 package org.abrantix.rockon.rockonnggl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.abrantix.rockon.rockonnggl.R;
 
 import android.app.Activity;
@@ -78,9 +81,25 @@ public class EqualizerActivity extends Activity{
 //		savedInstance.putBoolean(MANUAL_SEARCH, mManualSearch);
 	}
 	
-	@Override
+//	@Override
 	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
+		// Some reflection for 1.5
+		try {
+			Method m = Activity.class.getMethod("onAttachedWindow", new Class[]{});
+			m.invoke(this, new Object[]{});
+//			super.onAttachedToWindow();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	    Window window = getWindow();
 	    // Eliminates color banding
 	    window.setFormat(PixelFormat.RGBA_8888);

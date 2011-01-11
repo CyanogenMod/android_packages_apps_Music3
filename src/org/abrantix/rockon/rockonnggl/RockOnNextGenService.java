@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Random;
@@ -291,7 +292,8 @@ public class RockOnNextGenService extends Service {
         mPlayer.setHandler(mMediaplayerHandler);
         
         // Reload Equalizer + Sound FX
-        loadEqualizerWrapper();
+        if(EqualizerWrapper.isSupported())
+        	loadEqualizerWrapper();
 
         reloadQueue();
         
@@ -362,7 +364,21 @@ public class RockOnNextGenService extends Service {
     		mEqualizerWrapper = new EqualizerWrapper(settings);
     	}
     	if(mPreferences.getBoolean(Constants.prefKey_mEqualizerEnabled, false)) {
-    		mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+			try {
+				Method m = MediaPlayer.class.getMethod("getAudioSessionId", new Class[]{});
+	    		mEqualizerWrapper.enable(0, (Integer) m.invoke(mPlayer.mMediaPlayer, new Object[]{}));
+//	    		mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
     	}
     }
     
@@ -371,11 +387,7 @@ public class RockOnNextGenService extends Service {
     	if(eqSettingsString != null) {
 			try {
 				return EqSettings.readFrom64String(eqSettingsString);
-			} catch (OptionalDataException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return new EqSettings();
@@ -2563,7 +2575,22 @@ public class RockOnNextGenService extends Service {
      */
     void enableEq() {
 //    	mEqualizerWrapper.mSettings.setEnabled();
-    	mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+    	/* A little bit of reflection to maintain compatibility */
+		try {
+//	    	mEqualizerWrapper.enable(0, mPlayer.mMediaPlayer.getAudioSessionId());
+			Method m = MediaPlayer.class.getMethod("getAudioSessionId", new Class[]{});
+    		mEqualizerWrapper.enable(0, (Integer) m.invoke(mPlayer.mMediaPlayer, new Object[]{}));
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 		
     	try {
 			mPreferences.edit().putString(Constants.prefKey_mEqualizerSettings, mEqualizerWrapper.getSettings()).commit();
