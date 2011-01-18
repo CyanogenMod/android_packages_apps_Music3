@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    BROWSING CATEGORIES-->
+    <string name="browse_cat_album">アルバム</string>
+    <string name="browse_cat_artists">アーティスト</string>
+    <string name="browse_cat_songs">曲</string>
+
+    <!--    GENERAL STUFF -->
+    <string name="album">アルバム</string>
+    <string name="albums">アルバム</string>
+
+    <!--    INTRO SCREEN-->
+    <string name="intro_text_1">ロック</string>
+    <string name="intro_text_2">オン</string>
+    <string name="intro_text_3">ネクストジェネレーション</string>
+    <string name="app_name">音楽³</string>
+
+    <!--    ALBUM ART MESSAGES-->
+    <string name="get_art_dialog_title">³ アルバムアート</string>
+    <string name="get_art_dialog_message">
+        ³は足りないアルバムアートをインターネットから取得できます。今すぐ取得しますか? (これには10枚で約1分かかります。Wi-Fi接続で行うことをお奨めします。)
+    </string>
+    <string name="get_art_dialog_yes">はい!</string>
+    <string name="get_art_dialog_no">あとで</string>
+
+    <!--    ART DOWNLOAD MESSAGES-->
+    <string name="art_download_no_inet">インターネット接続がありません!</string>
+    <string name="art_download_progress_title">アルバムアートをダウンロード中</string>
+    <string name="art_download_cancel">キャンセル</string>
+    <string name="art_download_progress_initial_message">アルバムアートを検索中...</string>
+
+    <!--    NO SDCARD MESSAGES -->
+    <string name="no_sd_card_dialog_title">SDカードがありません!</string>
+    <string name="no_sd_card_dialog_message">SDカードを装着してください...</string>
+    <string name="no_sd_card_dialog_continue_anyway">とにかく続ける</string>
+    <string name="no_sd_card_dialog_exit">終了</string>
+    <!--    NO MUSIC MESSAGES -->
+    <string name="no_music_dialog_title">このプレイリストいは曲がありません!</string>
+    <string name="no_music_dialog_message">このプレイリストの曲がSDカードに見つかりません。アプリケーションを再起動するか、プレイリストを変更してみてください。</string>
+    <string name="no_music_dialog_continue_anyway">とにかく続ける</string>
+    <string name="no_music_dialog_exit">終了</string>
+
+    <!--    DOWNLOAD CONCERTS APP MESSAGES-->
+    <string name="concert_app_install_dialog_title">コンサート³をインストール</string>
+    <string name="concert_app_install_dialog_message">この機能は Concerts³ のインストールが必要です。今すぐインストールしますか?</string>
+    <string name="concert_app_install_dialog_ok">はい</string>
+    <string name="concert_app_install_dialog_cancel">いいえ、ほっといてください!</string>
+    <string name="concert_app_install_no_market_app_msg">おっと! マーケットアプリがインストールされてないようです。</string>
+
+    <!--    DOWNLOAD RELEASES APP MESSAGES-->
+    <string name="releases_app_install_dialog_title">Releases³をインストール</string>
+    <string name="releases_app_install_dialog_message">この機能は Releases³ のインストールが必要です。今すぐインストールしますか?</string>
+    <string name="releases_app_install_dialog_ok">はい</string>
+    <string name="releases_app_install_dialog_cancel">いいえ、ほっといてください!</string>
+    <string name="releases_app_install_no_market_app_msg">おっと! マーケットアプリがインストールされていないようです。</string>
+
+    <!--    TOASTER MESSAGES    -->
+    <string name="song_added_to_playlist">曲をキューしました</string>
+    <string name="song_removed_from_playlist">曲を削除しました</string>
+    <string name="album_art_changed">アルバムアートを変更しました</string>
+    <string name="playlist_empty_toast">エラー!プレイリストは空です!</string>
+    <string name="playqueue_empty_toast">キューは空です!</string>
+    <string name="not_an_album_toast">すみません、これはアーティストであってアルバムではありません!</string>
+    <string name="playlist_queued_toast">プレイリストをキューしました</string>
+    <string name="generic_error_toast">エラー!</string>
+    <string name="playlist_deleted_toast">プレイリストを削除しました!</string>
+    <string name="song_deleted_toast">トラックを削除しました!</string>
+
+    <!--     SEARCH -->
+    <string name="search_hint">曲名あるいはアーティスト名</string>
+
+    <!--    PLAY QUEUE    -->
+    <string name="play_queue_title">再生キュー</string>
+    <string name="clear_playlist_dialog_option">クリア</string>
+    <string name="create_playlist_dialog_option">保存</string>
+
+    <!--    SONG LISTS MORE RESULTS -->
+    <string name="song_list_more_results">曲...</string>
+
+    <!--    CREATE PLAYLIST DIALOG -->
+    <string name="create_playlist_dialog_title">プレイリスト名</string>
+    <string name="create_playlist_dialog_save_option">保存</string>
+    <string name="create_playlist_dialog_text_hint">プレイリストの名前を入力...</string>
+
+    <!--    DELETE SONG DIALOG    -->
+    <string name="song_delete_confirm_title">曲を削除</string>
+    <string name="song_delete_message">この曲を削除してもよいですか? この操作は元に戻せません。</string>
+    <string name="song_delete_positive_button">はい!</string>
+    <string name="song_delete_negative_button">いいえ</string>
+
+    <!--    DELETE PLAYLIST DIALOG    -->
+    <string name="playlist_delete_confirm_title">プレイリストの削除</string>
+    <string name="playlist_delete_message">このプレイリストを削除してもよいですか?</string>
+    <string name="playlist_delete_positive_button">はい!</string>
+    <string name="playlist_delete_negative_button">いいえ</string>
+
+    <!--    CREATE PLAYLIST TOASTER    -->
+    <string name="create_playlist_toaster_added_part_1">プレイリストに曲を追加しました</string>
+    <string name="create_playlist_toaster_failed">プレイリストの作成に失敗しました!</string>
+    <string name="create_playlist_toaster_name_required">プレイリストの名前は必須です...</string>
+
+    <!--    -->
+
+    <!--    ALBUM SONG LIST DIALOG -->
+    <string name="album_song_list_play_all">すべて再生</string>
+    <string name="album_song_list_queue_all">すべてキュー</string>
+
+    <!--    SONG OPTIONS DIALOG    -->
+    <string name="song_option_play_now">今すぐ再生</string>
+    <string name="song_option_add_to_queue">キューに追加</string>
+    <string name="song_option_delete">削除</string>
+
+    <!--    PLAYLIST OPTIONS DIALOG    -->
+    <string name="playlist_option_play_now">再生</string>
+    <string name="playlist_option_add_to_queue">キューに追加</string>
+    <string name="playlist_option_delete">削除</string>
+
+    <!--    PLAYLIST DIALOG        -->
+    <string name="playlist_dialog_title">プレイリストを選択</string>
+    <string name="playlist_dialog_cancel">キャンセル</string>
+    <string name="playlist_all_title">すべて再生</string>
+    <string name="playlist_most_recent_title">最近の</string>
+    <string name="playlist_most_played_title">よく聴く</string>
+
+    <!--     VIEW MODES DIALOG -->
+    <string name="view_mode_cube">³</string>
+    <string name="view_mode_wall">Wall</string>
+    <string name="view_mode_boring">Boring</string>
+    <string name="view_mode_morph">Morph Flow</string>
+
+    <!--     THEMES DIALOG -->
+    <string name="theme_normal">通常</string>
+    <string name="theme_halftone">ハーフトーン</string>
+    <string name="theme_earthquake">アースクエイク</string>
+
+    <!--    THEME PROCESSING MESSAGES    -->
+    <string name="art_processing_progress_title">アルバムアートを処理中</string>
+    <string name="art_processing_cancel">キャンセル</string>
+    <string name="art_processing_go_background">バックグラウンドで実行</string>
+    <string name="art_processing_progress_initial_message">アルバムアートを検索中...</string>
+
+    <!--    HALF TONE DIALOG -->
+    <string name="half_tone_dialog_title">ハーフトーンテーマ</string>
+    <string name="half_tone_dialog_message">
+        ハーフトーンは現在のアルバムアートに対していくらかの処理が必要です。この処理には少し時間がかかります。(30アルバムに約1分程度)
+    </string>
+    <string name="half_tone_dialog_yes">実行する!</string>
+    <string name="half_tone_dialog_no">やめておく!</string>
+
+    <!--    EARTHQUAKE DIALOG -->
+    <string name="earthquake_dialog_title">アースクエイクテーマ</string>
+    <string name="earthquake_dialog_message">
+        アースクエイクは現在のアルバムアートにいくらかの処理が必要です。しかし、この処理はすぐ終わりますのでご安心ください。(100アルバムに10秒程度).
+    </string>
+    <string name="earthquake_dialog_yes">実行する!</string>
+    <string name="earthquake_dialog_no">やめておく!</string>
+
+    <!--    ACTIVITY INTENTS (some of them)-->
+    <string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+
+    <!--    NOTIFICATION STRINGS -->
+    <string name="unknown_album_name">不明なアルバム</string>
+    <string name="unknown_artist_name">不明なアーティスト</string>
+
+    <!--     MANUAL ALBUM ART MSGS -->
+    <string name="manual_albumart_error">エラー</string>
+    <string name="manual_albumart_no_album_specified">アルバムを特定できません!</string>
+    <string name="manual_albumart_source">ソース</string>
+    <string name="manual_albumart_source_local">ローカル</string>
+    <string name="manual_albumart_source_internet">インターネット</string>
+    <string name="manual_albumart_resolution_loading">ロード中...</string>
+    <string name="manual_albumart_resolution_unavailable">利用不可</string>
+
+    <string name="manual_input_enable">手動検索</string>
+    <string name="manual_input_artist">アーティスト</string>
+    <string name="manual_input_album">アルバム</string>
+
+    <!--    DONATE MSG    -->
+    <string name="donate_title">寄付</string>
+    <string name="donate_msg">³ はフリーなオープンソースの音楽プレイヤーで、私が暇な時間につくっています。もし気に入っていただけたら ³の開発の手助けのために、寄付をお考えください。以下の手段で寄付を行うことができます:</string>
+    <string name="donate_using">寄付する</string>
+    <string name="donate_back_to_app">戻る</string>
+
+    <!--    UNLOCK SCREEN    -->
+    <string name="unlock_screen">アンロック</string>
+
+    <!--    WIDGET STRINGS    -->
+    <string name="widget_app_start">³を開始</string>
+
+    <!--    BUG REPORTS    -->
+    <string name="bug_report_intro_part_one">すみません!\n\n3 (Cubed) v</string>
+    <string name="bug_report_intro_part_two">クラッシュしました! このメールを送ってください。この問題を解析して修正できるかもしれません。\n</string>
+
+<!--    <string name="bug_report_intro">-->
+<!--        "Sorry!\n\nRockOn v\"-->
+<!--        <xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!--        \" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
+<!--    </string>-->
+
+    <!--    DIRECTORY FILTER    -->
+    <string name="directories_on_sdcard">あなたのSDカードには次のようなディレクトリがあります:</string>
+    <string name="select_all">すべて選択</string>
+    <string name="unselect_all">すべて選択解除</string>
+
+    <!--    GENERIC STUFF -->
+    <string name="ok">Ok</string>
+    <string name="back">戻る</string>
+    <string name="all">すべて</string>
+    <string name="none">なし</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
+
+</resources>
