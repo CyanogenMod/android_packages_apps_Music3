@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="menu_option_title_get_art">
+		앨범아트 얻기
+	</string>
+	<string name="menu_option_title_preferences">
+		설정
+	</string>
+	<string name="menu_option_title_playlist_id">
+		재생목록
+	</string>
+	<string name="menu_option_title_concerts">
+		Concerts
+	</string>
+	<string name="menu_option_title_releases">
+		Releases
+	</string>
+	<string name="menu_option_title_view_mode">
+		보기 방식
+	</string>
+	<string name="menu_option_title_theme">
+		테마
+	</string>
+	<string name="menu_option_title_equalizer">
+		이퀄라이저
+	</string>
+</resources>
+

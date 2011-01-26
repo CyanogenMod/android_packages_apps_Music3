@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--	VERSION	-->
+    <string name="preference_key_version">버전</string>
+    
+	<!--	DOWNLOAD STATE    -->
+    <string name="preference_key_downloading_art_state">아트 다운로드 중</string>
+    
+	<!--	PLAYLIST STATE    -->
+<!--    <string name="preference_key_playlist_id">mPlaylistId</string>-->
+        
+	<!--	HEADSET BUTTONS    -->
+    <string name="preference_key_use_headset_buttons">UseHeadset</string>
+    <string name="preference_title_use_headset_buttons">헤드셋 사용</string>
+    <string name="preference_summary_use_headset_buttons">헤드셋으로 부터 재생, 일시정지, 노래 건너띄기 입력을 받아옵니다.</string>
+
+	<!--	LOCK PORTRAIT    -->
+    <string name="preference_key_lock_portrait">LockPortrait</string>
+    <string name="preference_title_lock_portrait">세로방향 잠금</string>
+    <string name="preference_summary_lock_portrait">화면이 가로방향으로 전환되지 않게 합니다.</string>
+
+	<!--	LOCK SCREEN    -->
+    <string name="preference_key_lock_screen">LockScreen</string>
+    <string name="preference_title_lock_screen">잠금 화면</string>
+    <string name="preference_summary_lock_screen">잠금화면에서 컨트롤을 표시합니다.</string>
+
+	<!--	FULL SCREEN    -->
+    <string name="preference_key_full_screen">mFullScreen</string>
+    <string name="preference_title_full_screen">전체 화면</string>
+    <string name="preference_summary_full_screen">플레이어를 전체화면으로 실행합니다.</string>
+
+	<!--	CONTROLS ON BOTTOM    -->
+    <string name="preference_key_controls_on_bottom">mControlsOnBottom</string>
+    <string name="preference_title_controls_on_bottom">엄지손가락 제어</string>
+    <string name="preference_summary_controls_on_bottom">제어창을 화면 아래쪽에 배치합니다.</string>
+
+	<!-- 	QUEUE ON CLICK -->
+	<string name="preference_key_queue_on_click">mQueueOnClick</string>
+	<string name="preference_title_queue_on_click">클릭으로 큐에 추가</string>
+	<string name="preference_summary_queue_on_click">노래가 선택되었을 때, 즉시 재생하지 않고 큐에 추가합니다.</string>
+
+	<!--	PREFER ARTIST SORTING    -->
+    <string name="preference_key_prefer_artist_sorting">mPreferArtistSorting</string>
+    <string name="preference_title_prefer_artist_sorting">선호 아티스트 정렬</string>
+    <string name="preference_summary_prefer_artist_sorting">앨범을 아티스트 이름으로 정렬합니다.</string>
+
+	<!--	PREFERENCE CATEGORIES    -->
+    <string name="preference_category_general">일반</string>
+    <string name="preference_category_sorting">정렬</string>
+    <string name="preference_category_album_art">앨범 아트</string>
+    <string name="preference_category_other">기타</string>
+    
+	<!--	EMBEDDED ALBUM ART ONLY    -->
+	<string name="preference_key_embedded_album_art">mUseAlwaysEmbeddedAlbumArt</string>
+    <string name="preference_title_embedded_album_art">항상 ID3 아트 사용</string>
+    <string name="preference_summary_embedded_album_art">낮은 해상도이더라도 내장된 아트를 사용합니다.</string>
+
+    <!--    SCROBBLING -->
+    <string name="preference_scrobble_list_key">scrobbling</string>
+    <string name="preference_scrobble_list_title">Last.fm Scrobbling</string>
+    <string name="preference_scrobble_list_summary">사용할 scrobbler를 선택합니다.</string>
+    
+    <string name="preference_scrobble_name_dont">사용 안함</string>
+    <string name="preference_scrobble_name_sls">Simple Last.fm Scrobbler</string>
+    <string name="preference_scrobble_name_sd">Scrobble Droid</string>
+    <string name="preference_scrobble_value_dont">no</string>
+    <string name="preference_scrobble_value_sls">sls</string>
+    <string name="preference_scrobble_value_sd">sd</string>
+    
+	<!--	CLEAR ALBUM ART    -->
+	<string name="preference_key_clear_album_art">clearAlbumArtKey</string>
+    <string name="preference_title_clear_album_art">앨범 아트 초기화</string>
+    <string name="preference_summary_clear_album_art">앨범 아트가 잘못된 앨범이나 아티스트 정보를 가지고 있을 때 사용합니다.</string>
+    <string name="preference_dialog_title_clear_album_art">앨범 아트 초기화</string>
+    <string name="preference_dialog_message_clear_album_art">앨범 아트가 잘못된 앨범이나 아티스트 정보를 가지고 있을 때 사용합니다. 실행 시 /sdcard/albumthumbs/RockOnNg 디렉터리의 내용이 삭제됩니다. 초기화 후 \'앨범아트 얻기\' 메뉴를 사용하여 앨범 아트를 다운로드 하십시오.</string>
+    <string name="preference_dialog_positive_text_clear_album_art">실행!</string>
+    <string name="preference_dialog_negative_text_clear_album_art">아니요. 괜찮습니다.</string>
+    
+	<!--	DONATE    -->
+    <string name="preference_key_donate">donate</string>
+    <string name="preference_title_donate">기부하기</string>
+    
+	<!--	ADDITIONAL PREFERENCE CATEGORIES    -->
+    <string name="preference_category_storage">저장소</string>
+    
+    <!--	STORAGE TYPE    -->
+    <string name="preference_key_storage_type">mStorageType</string>
+    <string name="preference_title_storage_type"></string>
+    <string name="preference_title_storage_type_internal">내부</string>
+    <string name="preference_title_storage_type_external">외부</string>
+    <string name="preference_summary_storage_type"></string>
+    <string name="preference_storage_free">사용가능</string>
+    <string name="preference_storage_dialog_title">저장소 유형</string>
+    <string name="preference_storage_media_not_mounted">미디어 없음.</string>
+    
+    <!--	DIRECTORY FILTER    -->
+    <string name="preference_key_directory_filter">mDirectoryFilter</string>
+    <string name="preference_title_directory_filter">디렉터리 필터</string>
+    <string name="preference_summary_directory_filter">음악이 들어있는 디렉터리를 선택하십시오.</string>
+</resources>

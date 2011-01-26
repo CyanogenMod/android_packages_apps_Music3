@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!--	BROWSING CATEGORIES-->
+	<string name="browse_cat_album">앨범</string>
+	<string name="browse_cat_artists">아티스트</string>
+	<string name="browse_cat_songs">노래</string>
+	
+	<!--	GENERAL STUFF -->
+	<string name="album">앨범</string>
+	<string name="albums">앨범들</string>
+	
+	
+	<!--	INTRO SCREEN-->
+    <string name="intro_text_1">Rock</string>
+    <string name="intro_text_2">On</string>
+    <string name="intro_text_3">NextGen</string>
+    <string name="app_name">Music³</string>
+
+	<!--    ALBUM ART MESSAGES-->
+	<string name="get_art_dialog_title">³ 앨범 아트</string>
+	<string name="get_art_dialog_message">³ 인터넷을 통하여 앨범에 누락된 아트정보를 가져올 수 있습니다. 지금 실행하시겠습니까? (앨범 10개당 1분 이내의 시간이 소요되며 Wifi 연결 상태에서 실행하기를 권장합니다).</string>
+	<string name="get_art_dialog_yes">예!</string>
+	<string name="get_art_dialog_no">아니요. 나중에 하겠습니다.</string>
+	
+	<!--	ART DOWNLOAD MESSAGES-->
+	<string name="art_download_no_inet">인터넷 연결을 사용할 수 없음!</string>
+	<string name="art_download_progress_title">앨범 아트 다운로드 중</string>
+	<string name="art_download_cancel">취소</string>
+	<string name="art_download_progress_initial_message">앨범 아트 검색중...</string>
+	
+	<!--	NO SDCARD MESSAGES -->
+	<string name="no_sd_card_dialog_title">SD 카드가 없습니다!</string>
+	<string name="no_sd_card_dialog_message">SD 카드를 삽입하세요...</string>
+	<string name="no_sd_card_dialog_continue_anyway">계속</string>
+	<string name="no_sd_card_dialog_exit">끝내기</string>
+	<!--	NO MUSIC MESSAGES -->
+	<string name="no_music_dialog_title">이 목록에는 음악이 없습니다!</string>
+	<string name="no_music_dialog_message">SD 카드의 이 재생 목록에서는 아무 음악도 찾을 수가 없습니다. 응용프로그램을 다시 실행하거나 재생 목록을 변경하여 주십시오.</string>
+	<string name="no_music_dialog_continue_anyway">계속</string>
+	<string name="no_music_dialog_exit">끝내기</string>
+	
+	<!--	DOWNLOAD CONCERTS APP MESSAGES-->
+	<string name="concert_app_install_dialog_title">Concerts³ 설치</string>
+	<string name="concert_app_install_dialog_message">이 기능은 Concerts³의 설치가 필요합니다. 지금 설치하시겠습니까?</string>
+	<string name="concert_app_install_dialog_ok">예</string>
+	<string name="concert_app_install_dialog_cancel">아니요. 설치하지 않겠습니다!</string>
+	<string name="concert_app_install_no_market_app_msg">마켓 응용프로그램이 설치되어 있지 않습니다.</string>
+	
+	<!--	DOWNLOAD RELEASES APP MESSAGES-->
+	<string name="releases_app_install_dialog_title">Releases³ 설치</string>
+	<string name="releases_app_install_dialog_message">이 기능은 Releases³의 설치가 필요합니다. 지금 설치하시겠습니까?</string>
+	<string name="releases_app_install_dialog_ok">예</string>
+	<string name="releases_app_install_dialog_cancel">아니요. 설치하지 않겠습니다!</string>
+	<string name="releases_app_install_no_market_app_msg">마켓 응용프로그램이 설치되어 있지 않습니다.</string>
+	
+	<!--	TOASTER MESSAGES	-->
+	<string name="song_added_to_playlist">노래가 큐에 삽입되었음</string>
+	<string name="song_removed_from_playlist">노래가 제거되었음</string>
+	<string name="album_art_changed">앨범 아트가 변경되었음</string>
+	<string name="playlist_empty_toast">오류! 재생 목록이 비어있음!</string>
+	<string name="playqueue_empty_toast">큐가 비어있음!</string>
+	<string name="not_an_album_toast">죄송합니다. 이것은 앨범이 아니고 아티스트입니다.</string>
+	<string name="playlist_queued_toast">재생 목록이 큐에 삽입됨</string>
+	<string name="generic_error_toast">오류!</string>
+	<string name="playlist_deleted_toast">재생 목록이 삭제됨!</string>
+	<string name="song_deleted_toast">트랙이 삭제됨!</string>
+	
+	<!-- 	SEARCH -->
+	<string name="search_hint">노래 혹은 아티스트</string>
+	
+	<!--	PLAY QUEUE	-->
+	<string name="play_queue_title">큐 재생</string>
+	<string name="clear_playlist_dialog_option">초기화</string>
+	<string name="create_playlist_dialog_option">저장</string>
+	
+	<!--	SONG LISTS MORE RESULTS -->
+	<string name="song_list_more_results">노래들...</string>
+	
+	<!--	CREATE PLAYLIST DIALOG -->
+	<string name="create_playlist_dialog_title">재생 목록 선택</string>
+	<string name="create_playlist_dialog_save_option">저장</string>
+	<string name="create_playlist_dialog_text_hint">재생목록 이름을 입력하세요...</string>
+	
+	<!--	DELETE SONG DIALOG	-->
+	<string name="song_delete_confirm_title">노래 삭제</string>
+	<string name="song_delete_message">정말 삭제하시겠습니까? 삭제하면 복원하실 수 없습니다.</string>
+	<string name="song_delete_positive_button">예!</string>
+	<string name="song_delete_negative_button">아니요.</string>
+	
+	<!--	DELETE PLAYLIST DIALOG	-->
+	<string name="playlist_delete_confirm_title">재생 목록 삭제</string>
+	<string name="playlist_delete_message">정말 삭제하시겠습니까?</string>
+	<string name="playlist_delete_positive_button">예!</string>
+	<string name="playlist_delete_negative_button">아니요.</string>
+	
+	<!--	CREATE PLAYLIST TOASTER	-->
+	<string name="create_playlist_toaster_added_part_1">노래들이 재생 목록에 추가 되었습니다</string>
+	<string name="create_playlist_toaster_failed">재생 목록 생성 실패!</string>
+	<string name="create_playlist_toaster_name_required">재생 목록 이름이 필요함...</string>
+	
+	<!--	-->
+	
+	<!--	ALBUM SONG LIST DIALOG -->
+	<string name="album_song_list_play_all">모두 재생</string>
+	<string name="album_song_list_queue_all">모두 큐에 삽입</string>
+	
+	<!--	SONG OPTIONS DIALOG	-->
+	<string name="song_option_play_now">지금 재생</string>
+	<string name="song_option_add_to_queue">큐에 추가</string>
+	<string name="song_option_delete">삭제</string>
+	
+	<!--	PLAYLIST OPTIONS DIALOG	-->
+	<string name="playlist_option_play_now">지금 재생</string>
+	<string name="playlist_option_add_to_queue">큐에 추가</string>
+	<string name="playlist_option_delete">삭제</string>
+	
+	<!--	PLAYLIST DIALOG		-->
+	<string name="playlist_dialog_title">재생 목록 선택</string>
+	<string name="playlist_dialog_cancel">취소</string>
+	<string name="playlist_all_title">모두 재생</string>
+	<string name="playlist_most_recent_title">최근 목록</string>
+	<string name="playlist_most_played_title">가장 많이 재생된 것</string>
+	
+	<!-- 	VIEW MODES DIALOG -->
+	<string name="view_mode_cube">³</string>
+	<string name="view_mode_wall">Wall</string>
+	<string name="view_mode_boring">Boring</string>
+	<string name="view_mode_morph">Morph Flow</string>
+	
+	<!-- 	THEMES DIALOG -->
+	<string name="theme_normal">기본</string>
+	<string name="theme_halftone">하프 톤</string>
+	<string name="theme_earthquake">지진</string>
+	
+	<!--	THEME PROCESSING MESSAGES	-->
+	<string name="art_processing_progress_title">앨범 아트 처리중</string>
+	<string name="art_processing_cancel">취소</string>
+	<string name="art_processing_go_background">백라운드에서 실행</string>
+	<string name="art_processing_progress_initial_message">앨범 아트 검색 중...</string>
+	
+	<!--    HALF TONE DIALOG -->
+	<string name="half_tone_dialog_title">하프 톤 테마</string>
+	<string name="half_tone_dialog_message">하프 톤 적용은 현재 앨범아트에 약간의 처리가 필요합니다. 이것은 프로세서 집약적 처리 작업으로 시간이 조금 걸립니다 (앨범 30개당 1분이내).</string>
+	<string name="half_tone_dialog_yes">실행!</string>
+	<string name="half_tone_dialog_no">아니요. 실행하지 않습니다!</string>
+	
+	<!--    EARTHQUAKE DIALOG -->
+	<string name="earthquake_dialog_title">지진 테마</string>
+	<string name="earthquake_dialog_message">지진 적용은 현재 앨범아트에 약간의 처리가 필요합니다. 그러나 빠르게 처리되니 걱정하지 마십시오. (앨범 100개 기준 10초).</string>
+	<string name="earthquake_dialog_yes">실행!</string>
+	<string name="earthquake_dialog_no">아니요. 실행하지 않습니다!</string>
+	
+	
+	<!--	ACTIVITY INTENTS (some of them)-->
+	<string name="main_activity_intent">org.abrantix.rockon.rockonnggl.RockOnNextGenGL</string>
+	
+	<!--	NOTIFICATION STRINGS -->
+	<string name="unknown_album_name">알 수 없는 앨범</string>
+	<string name="unknown_artist_name">알 수 없는 아티스트</string>
+	
+	<!-- 	MANUAL ALBUM ART MSGS -->
+	<string name="manual_albumart_error">오류</string>
+	<string name="manual_albumart_no_album_specified">지정된 앨범이 없음!</string>
+	<string name="manual_albumart_source">소스</string>
+	<string name="manual_albumart_source_local">로컬</string>
+	<string name="manual_albumart_source_internet">인터넷</string>
+	<string name="manual_albumart_resolution_loading">불러오는 중...</string>
+	<string name="manual_albumart_resolution_unavailable">사용할 수 없음</string>
+	
+	<string name="manual_input_enable">수동 검색</string>
+	<string name="manual_input_artist">아티스트</string>
+	<string name="manual_input_album">앨범</string>
+	
+	<!--	DONATE MSG	-->
+	<string name="donate_title">기부하기</string>
+	<string name="donate_msg">³ 는 무료로 사용하실 수 있으며, 오픈 소스 음악 플레이어입니다. 이 플레이어에 만족하신다면 ³의 더 나은 성능 지원을 위하여 기부해주시면 감사하겠습니다. 다음 방법 중 하나로 기부하실수 있습니다:</string>
+	<string name="donate_using">Donate through</string>
+	<string name="donate_back_to_app">돌아가기</string>
+	
+	<!--	UNLOCK SCREEN	-->
+	<string name="unlock_screen">잠금 해제</string>
+	
+	<!--	WIDGET STRINGS	-->
+	<string name="widget_app_start">³ 시작</string>
+	
+	<!--	BUG REPORTS	-->
+	<string name="bug_report_intro_part_one">죄송합니다!\n\n3 (Cubed) v</string>
+	<string name="bug_report_intro_part_two">충돌이 발생하였습니다! 저희가 문제를 분석/해결할 수 있도록 메일을 보내주십시오.</string>
+	
+<!--	<string name="bug_report_intro">-->
+<!--		"Sorry!\n\nRockOn v\"-->
+<!--		<xliff:g id="APP_VERSION">%s</xliff:g>-->
+<!--		\" crashed! Please send this mail, so that we can analyze/fix the issue.\n"-->
+<!--	</string>-->
+
+	<!--	DIRECTORY FILTER	-->
+	<string name="directories_on_sdcard">SD 카드에 다음 디렉터리들이 있습니다:</string>
+	<string name="select_all">모두 선택</string>
+	<string name="unselect_all">모두 선택 해제</string>
+
+	<!--	GENERIC STUFF -->
+	<string name="ok">확인</string>
+	<string name="back">뒤로</string>
+	<string name="all">모두</string>
+	<string name="none">없음</string>
+	<string name="on">켜짐</string>
+	<string name="off">꺼짐</string>
+
+</resources>
