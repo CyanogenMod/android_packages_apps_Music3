@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preference_title_use_headset_buttons">Použít sluchátka</string>
+    <string name="preference_summary_use_headset_buttons">Využije tlačítko na sluchátkách pro přehrávání, pozastavení nebo přeskočení skladby.</string>
+    <string name="preference_title_lock_portrait">Uzamknout na šířku</string>
+    <string name="preference_summary_lock_portrait">Zamezit přepnutí zobrazení na šířku.</string>
+    <string name="preference_title_lock_screen">Uzamknout obrazovku</string>
+    <string name="preference_summary_lock_screen">Zobrazit ovládací prvky při zamknuté obrazovce.</string>
+    <string name="preference_title_full_screen">Celé obrazovka</string>
+    <string name="preference_summary_full_screen">spustit přehrávač na celé obrazovce.</string>
+    <string name="preference_title_controls_on_bottom">Ovládání palcem</string>
+    <string name="preference_summary_controls_on_bottom">Umístí ovládací prvky na spodní straně obrazovky.</string>
+    <string name="preference_title_queue_on_click">Přidání do fronty</string>
+    <string name="preference_summary_queue_on_click">Pokud je vybrána nějaká skladba, bude vložena do fronty přehrávání místo okamžitého přehrání.</string>
+    <string name="preference_title_prefer_artist_sorting">Třídít podle autorů</string>
+    <string name="preference_summary_prefer_artist_sorting">Třídit alba podle autorů místo návu alba.</string>
+    <string name="preference_category_general">Obecné</string>
+    <string name="preference_category_sorting">Třídit</string>
+    <string name="preference_category_album_art">Obal alba</string>
+    <string name="preference_category_other">Ostatní</string>
+    <string name="preference_title_embedded_album_art">Vždy použít obal v ID3</string>
+    <string name="preference_summary_embedded_album_art">Zobrazit vložený obrázek obalu i když máte zařízení s nízkým rozlišením.</string>
+    <string name="preference_scrobble_list_title">Last.fm Scrobblování</string>
+    <string name="preference_scrobble_list_summary">Zvolte scrobblera</string>
+    <string name="preference_scrobble_name_dont">Nescrobblovat</string>
+    <string name="preference_scrobble_name_sls">Jednoduchý Last.fm scrobbler</string>
+    <string name="preference_scrobble_name_sd">Scrobble Droid</string>
+    <string name="preference_scrobble_value_dont">ne</string>
+    <string name="preference_scrobble_value_sls">sls</string>
+    <string name="preference_scrobble_value_sd">sd</string>
+    <string name="preference_title_clear_album_art">Odstranit obal alba</string>
+    <string name="preference_summary_clear_album_art">Pomocí této funkce odstraníte obal alba pokud nepatří k danému albu/umělci.</string>
+    <string name="preference_dialog_title_clear_album_art">Odstranit obal alba</string>
+    <string name="preference_dialog_message_clear_album_art">Pomocí této funkce odstraníte obal alba pokud nepatří k danému albu/umělci. Operace smaže obsah adresáře /sdcard/albumthumbs/RockOnNg. Po provedení této operace zvolte \'Získat obal alba\'.</string>
+    <string name="preference_dialog_positive_text_clear_album_art">Provést!</string>
+    <string name="preference_dialog_negative_text_clear_album_art">Kdepak, obaly alb jsou správně.</string>
+    <string name="preference_title_donate">Přispět</string>
+    <string name="preference_category_storage">Úložiště</string>
+    <string name="preference_title_storage_type_internal">Interní</string>
+    <string name="preference_title_storage_type_external">Externí</string>
+    <string name="preference_storage_free">volné</string>
+    <string name="preference_storage_dialog_title">Typ úložiště</string>
+    <string name="preference_storage_media_not_mounted">Úložiště nepřipojeno.</string>
+    <string name="preference_title_directory_filter">Filtr adresářů</string>
+    <string name="preference_summary_directory_filter">Zvolte, které adresáře obsahují hudbu.</string>
+</resources>

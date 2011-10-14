@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_option_title_get_art">Získat obal alba</string>
+    <string name="menu_option_title_preferences">Nastavení</string>
+    <string name="menu_option_title_playlist_id">Seznamy skladeb</string>
+    <string name="menu_option_title_concerts">Koncerty</string>
+    <string name="menu_option_title_releases">Verze</string>
+    <string name="menu_option_title_view_mode">Režim zobrazení</string>
+    <string name="menu_option_title_theme">Motiv</string>
+    <string name="menu_option_title_equalizer">Ekvalizér</string>
+</resources>
+

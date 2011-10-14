@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browse_cat_album">Alba</string>
+    <string name="browse_cat_artists">Umělci</string>
+    <string name="browse_cat_songs">Skladby</string>
+
+    <string name="album">Album</string>
+    <string name="albums">Alba</string>
+
+    <string name="intro_text_1">Rock</string>
+    <string name="intro_text_2">On</string>
+    <string name="intro_text_3">NextGen</string>
+    <string name="app_name">Hudba³</string>
+
+    <string name="get_art_dialog_title">³ obal alba</string>
+    <string name="get_art_dialog_message">³ může stáhnout chybějící obaly alb z Internetu. Má se provést? (Stahování trvá přibližně 1 minutu pro každých 10 alb a je doporučeno být připojen pomocí WiFi).</string>
+    <string name="get_art_dialog_yes">Ano!</string>
+    <string name="get_art_dialog_no">Později</string>
+
+    <string name="art_download_no_inet">Není dostupné internetové spojení!</string>
+    <string name="art_download_progress_title">Stahování obalu alba</string>
+    <string name="art_download_cancel">Zrušit</string>
+    <string name="art_download_progress_initial_message">Vyhledává se obal\u2026</string>
+
+    <string name="no_sd_card_dialog_title">Není karta SD!</string>
+    <string name="no_sd_card_dialog_message">Prosím vložte kartu SD\u2026</string>
+    <string name="no_sd_card_dialog_continue_anyway">Přesto pokračovat</string>
+    <string name="no_sd_card_dialog_exit">Ukončit</string>
+
+    <string name="no_music_dialog_title">V tomto seznamu skladeb není nic co by se dalo přehrát!</string>
+    <string name="no_music_dialog_message">Nelze nalézt žádnou skladbu na kartě SD, prosím spustě aplikaci znovu nebo změňte seznam skladeb\u2026</string>
+    <string name="no_music_dialog_continue_anyway">Přesto pokračovat</string>
+    <string name="no_music_dialog_exit">Ukončit</string>
+
+    <string name="concert_app_install_dialog_title">Nainstalovat Koncerty³</string>
+    <string name="concert_app_install_dialog_message">Tato vlastnost vyžaduje instalaci aplikace Koncerty³. Přejete si jí nyní nainstalovat?</string>
+    <string name="concert_app_install_dialog_ok">Ano</string>
+    <string name="concert_app_install_dialog_cancel">Ne</string>
+    <string name="concert_app_install_no_market_app_msg">Ajajaj! Nenalezena aplikace Marketu.</string>
+
+    <string name="releases_app_install_dialog_title">Nainstalovat Vydání³</string>
+    <string name="releases_app_install_dialog_message">Tato vlastnost vyžaduje instalaci aplikace Vydání³. Přejete si jí nyní nainstalovat?</string>
+    <string name="releases_app_install_dialog_ok">Ano</string>
+    <string name="releases_app_install_dialog_cancel">Ne</string>
+    <string name="releases_app_install_no_market_app_msg">Ajajaj! Nenalezena aplikace Marketu.</string>
+
+    <string name="song_added_to_playlist">Skladba přidána</string>
+    <string name="song_removed_from_playlist">Skladba odebrána</string>
+    <string name="album_art_changed">Obal alba změněn</string>
+    <string name="playlist_empty_toast">Chyba! Seznam skladeb je prázdný!</string>
+    <string name="playqueue_empty_toast">Fronta je prázdná!</string>
+    <string name="not_an_album_toast">Pardon, toto je umělec, ne album!</string>
+    <string name="playlist_queued_toast">Seznam skladeb přidán do fronty</string>
+    <string name="generic_error_toast">Chyba!</string>
+    <string name="playlist_deleted_toast">Seznam skladeb smazán!</string>
+    <string name="song_deleted_toast">Stopa smazána!</string>
+
+    <string name="search_hint">Název skladby nebo jméno umělce</string>
+
+    <string name="play_queue_title">Přehrávání fronty</string>
+    <string name="clear_playlist_dialog_option">Smazat</string>
+    <string name="create_playlist_dialog_option">Uložit</string>
+
+    <string name="song_list_more_results">skladeb\u2026</string>
+
+    <string name="create_playlist_dialog_title">Zvolte název seznamu skladeb</string>
+    <string name="create_playlist_dialog_save_option">Uložit</string>
+    <string name="create_playlist_dialog_text_hint">Napiště název seznamu skladeb\u2026</string>
+
+    <string name="song_delete_confirm_title">Smazat skladbu</string>
+    <string name="song_delete_message">Opravdu chcete smazat skladbu? Tato operace nelze vrátit.</string>
+    <string name="song_delete_positive_button">Ano!</string>
+    <string name="song_delete_negative_button">Ne</string>
+
+    <string name="playlist_delete_confirm_title">Smazat seznam skladeb</string>
+    <string name="playlist_delete_message">Opravdu chcete smazat seznam skladeb?</string>
+    <string name="playlist_delete_positive_button">Ano!</string>
+    <string name="playlist_delete_negative_button">Ne</string>
+
+    <string name="create_playlist_toaster_added_part_1">Skladby přidány do seznamu skladeb</string>
+    <string name="create_playlist_toaster_failed">Selhalo vytvoření seznamu skladeb!</string>
+    <string name="create_playlist_toaster_name_required">Je vyžadován název seznamu skladeb\u2026</string>
+
+    <string name="album_song_list_play_all">Přehrát vše</string>
+    <string name="album_song_list_queue_all">Přidat vše</string>
+
+    <string name="song_option_play_now">Přehrát</string>
+    <string name="song_option_add_to_queue">Přidat do fronty</string>
+    <string name="song_option_delete">Smazat</string>
+
+    <string name="playlist_option_play_now">Přehrát</string>
+    <string name="playlist_option_add_to_queue">Přidat do fronty</string>
+    <string name="playlist_option_delete">Smazat</string>
+
+    <string name="playlist_dialog_title">Zvolte seznam skladeb</string>
+    <string name="playlist_dialog_cancel">Zrušit</string>
+    <string name="playlist_all_title">Přehrát vše</string>
+    <string name="playlist_most_recent_title">Nejnovější</string>
+    <string name="playlist_most_played_title">Nejpřehrávanější</string>
+
+    <string name="view_mode_cube">³</string>
+    <string name="view_mode_wall">Zeď</string>
+    <string name="view_mode_boring">Nuda</string>
+    <string name="view_mode_morph">Proměna</string>
+
+    <string name="theme_normal">Normální</string>
+    <string name="theme_halftone">Půltón</string>
+    <string name="theme_earthquake">Roztřesený</string>
+
+    <string name="art_processing_progress_title">Zpracovávají se obaly alb</string>
+    <string name="art_processing_cancel">Zrušit</string>
+    <string name="art_processing_go_background">Pokračovat na pozadí</string>
+    <string name="art_processing_progress_initial_message">Vyhledávají se obaly alb\u2026</string>
+
+    <string name="half_tone_dialog_title">Motiv půltón</string>
+    <string name="half_tone_dialog_message">Motiv půltón vyžaduje drobné zpracování obalu alba. Jedná se o zátěž na procesor a také to nějakou chvíli potrvá (přibližně 1 min na každých 30 alb).</string>
+    <string name="half_tone_dialog_yes">Provést!</string>
+    <string name="half_tone_dialog_no">Zatím nechci!</string>
+
+    <string name="earthquake_dialog_title">Motiv roztřesení</string>
+    <string name="earthquake_dialog_message">Motiv roztřesení vyžaduje drobné zpracování obalu alba. Tento motiv je ale velmi rychlý (10s na 100 alb).</string>
+    <string name="earthquake_dialog_yes">Provést!</string>
+    <string name="earthquake_dialog_no">Zatím nechci!</string>
+
+    <string name="unknown_album_name">Neznámé album</string>
+    <string name="unknown_artist_name">Neznámý umělec</string>
+
+    <string name="manual_albumart_error">Chyba</string>
+    <string name="manual_albumart_no_album_specified">Není vybrané album!</string>
+    <string name="manual_albumart_source">Zdroj</string>
+    <string name="manual_albumart_source_local">lokální</string>
+    <string name="manual_albumart_source_internet">Internet</string>
+    <string name="manual_albumart_resolution_loading">načítání\u2026</string>
+    <string name="manual_albumart_resolution_unavailable">nedostupné</string>
+
+    <string name="manual_input_enable">Ruční vyhledání</string>
+    <string name="manual_input_artist">Umělec</string>
+    <string name="manual_input_album">Album</string>
+
+    <string name="donate_title">Přispět</string>
+    <string name="donate_msg">³ je svobodný, open source přehrávač hudby, napsaný celý ve volném čase. Pokud ste si jej oblíbili, prosím zvažte přispění na podporu dalšího vývoje. Můžete tak učinit pomocí jedné z následujících možností:</string>
+    <string name="donate_using">Přispět pomocí</string>
+    <string name="donate_back_to_app">Jít zpět</string>
+
+    <string name="unlock_screen">Odemknout</string>
+
+    <string name="widget_app_start">Spusit ³</string>
+
+    <string name="bug_report_intro_part_one">Pardon!\n\n³ (Cubed) v</string>
+    <string name="bug_report_intro_part_two">havaroval! Prosím, zašlete tento e-mail k analýze problému a jeho nápravě.\n</string>
+
+    <string name="directories_on_sdcard">Vaše karta SD obsahuje následující adresáře:</string>
+    <string name="select_all">Vybrat vše</string>
+    <string name="unselect_all">Zrušit výběr</string>
+
+    <string name="ok">Ok</string>
+    <string name="back">Zpět</string>
+    <string name="all">Vše</string>
+    <string name="none">Nic</string>
+    <string name="on">Zap</string>
+    <string name="off">Vyp</string>
+
+</resources>
